@@ -79,6 +79,9 @@ plugins=(git vi-mode zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
+export EDITOR=nvim
+export VISUAL=nvim
+
 # User configuration
 bindkey -v
 bindkey -s 'ç' "fd --type d . --hidden | fzf --preview 'tree -C {} | head -50'^M"
@@ -87,13 +90,6 @@ bindkey -s 'ç' "fd --type d . --hidden | fzf --preview 'tree -C {} | head -50'^
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='vim'
-fi
 
 nv() {
   # Assumes all configs exist in directories named ~/.config/nvim-*
@@ -143,6 +139,13 @@ alias tree='eza --tree $eza_params'
 # to fix warnings when updating nvim
 alias g++='g++ -std=c++11'
 
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='vim'
+fi
+
 # AWS TOOL
 export LDAP_USER='f.brousseau-tremblay'
 awslogin () {
@@ -158,25 +161,6 @@ mdify(){
     $myfilename.docx \
     -o $myfilename.md
 }
-
-###-begin-grond-completions-###
-#
-# yargs command completion script
-#
-# Installation: grond completion >> ~/.zshrc
-#    or grond completion >> ~/.zsh_profile on OSX.
-#
-_grond_yargs_completions()
-{
-  local reply
-  local si=$IFS
-  IFS=$'
-' reply=($(COMP_CWORD="$((CURRENT-1))" COMP_LINE="$BUFFER" COMP_POINT="$CURSOR" grond --get-yargs-completions "${words[@]}"))
-  IFS=$si
-  _describe 'values' reply
-}
-compdef _grond_yargs_completions grond
-###-end-grond-completions-###
 
 autoload -Uz compinit
 zstyle ':completion:*' menu select
@@ -199,4 +183,26 @@ if type brew &>/dev/null; then
     compinit
 fi
 
+{{- if eq .chezmoi.hostname "WQVDJYK1JW" }}
+###-begin-grond-completions-###
+#
+# yargs command completion script
+#
+# Installation: grond completion >> ~/.zshrc
+#    or grond completion >> ~/.zsh_profile on OSX.
+#
+_grond_yargs_completions()
+{
+  local reply
+  local si=$IFS
+  IFS=$'
+' reply=($(COMP_CWORD="$((CURRENT-1))" COMP_LINE="$BUFFER" COMP_POINT="$CURSOR" grond --get-yargs-completions "${words[@]}"))
+  IFS=$si
+  _describe 'values' reply
+}
+compdef _grond_yargs_completions grond
+###-end-grond-completions-###
+
 source ~/.keprc
+
+{{- end}}
