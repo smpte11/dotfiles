@@ -79,9 +79,6 @@ plugins=(git vi-mode zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
-export EDITOR=nvim
-export VISUAL=nvim
-
 # User configuration
 bindkey -v
 bindkey -s 'ç' "fd --type d . --hidden | fzf --preview 'tree -C {} | head -50'^M"
@@ -121,7 +118,6 @@ function y() {
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-alias vim="nvim"
 alias zshconfig="nvim ~/.zshrc"
 alias ohmyzsh="nvim ~/.oh-my-zsh"
 alias nvimconfig="cd ~/.config/nvim/ && nvim ."
@@ -141,9 +137,11 @@ alias g++='g++ -std=c++11'
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
+  export EDITOR=nvim
+  export VISUAL=nvim
 else
-  export EDITOR='vim'
+  export EDITOR=nvim
+  export VISUAL=nvim
 fi
 
 # AWS TOOL
