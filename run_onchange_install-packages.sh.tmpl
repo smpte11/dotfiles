@@ -18,6 +18,9 @@ fi
 
 brew install go
 
+# tool dependent on npm
+npm install -g @bitwarden/cli
+
 # bazzite flatpacks
 {{- if eq .chezmoi.hostname "bazzite" }}
 flatpak -y install bitwarden
