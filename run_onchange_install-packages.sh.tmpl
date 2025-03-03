@@ -16,6 +16,8 @@ else
     echo "Volta already installed"
 fi
 
+brew install go
+
 # bazzite flatpacks
 {{- if eq .chezmoi.hostname "bazzite" }}
 flatpak -y install bitwarden
