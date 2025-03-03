@@ -24,4 +24,6 @@ npm install -g @bitwarden/cli
 # bazzite flatpacks
 {{- if eq .chezmoi.hostname "bazzite" }}
 flatpak -y install bitwarden
+flatpak install org.freedesktop.Platform.VulkanLayer.MangoHud
+flatpak override --user --env=MANGOHUD=1 com.valvesoftware.Steam
 {{- end }}
