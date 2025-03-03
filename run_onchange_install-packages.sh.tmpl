@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Common Mac and Linux Bazzite stuff
+
+## Command line tool
+brew install nushell nvim starship zoxide fzf
+
+## Lang toolchain
+
+if ! command -v volta &>/dev/null; then
+    curl https://get.volta.sh | bash
+    
+    # install latest LTS node
+    volta install node
+else 
+    echo "Volta already installed"
+fi
+
+# bazzite flatpacks
+{{- if eq .chezmoi.hostname "bazzite" }}
+flatpak -y install bitwarden
+{{- end }}
