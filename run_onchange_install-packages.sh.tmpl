@@ -9,11 +9,10 @@ brew install nushell nvim starship zoxide fzf
 
 if ! command -v volta &>/dev/null; then
     curl https://get.volta.sh | bash
-    
-    # install latest LTS node
-    volta install node
 else 
     echo "Volta already installed"
+    # install latest LTS node
+    volta install node
 fi
 
 brew install go
