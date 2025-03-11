@@ -5,7 +5,7 @@ command_timeout = 2500
 palette = 'kanagawa'
 
 format = """
-[┌─>](bold fg) $username\
+[┌─](bold fg)$username〔 $time〕\
 $hostname\
 $localip\
 $shlvl\
@@ -93,8 +93,7 @@ $status\
 $os\
 $container\
 $shell\
-[│](bold fg)   $time
-[└─>](bold fg) $line2
+[└─](bold fg) $line2
 """
 
 
