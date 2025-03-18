@@ -3,17 +3,31 @@
 # Common Mac and Linux Bazzite stuff
 
 ## Command line tool
-brew install nushell nvim starship zoxide fzf zellij
+brew install nushell nvim starship zoxide fzf zellij lazydocker
 
 ## Lang toolchain
-if ! command -v devpod  &>/dev/null; then
+if ! command -v devpod &> /dev/null; then
     curl -L -o devpod "https://github.com/loft-sh/devpod/releases/latest/download/devpod-linux-amd64" && sudo install -c -m 0755 devpod /usr/local/bin && rm -f devpod
 else 
     echo "Devpod already installed"
 fi
 
-if ! command -v volta &>/dev/null; then
+if ! command -v volta &> /dev/null; then
     curl https://get.volta.sh | bash
+
+    if command -v volta &> /dev/null; then
+        echo "Volta now installed"
+        echo "Installing node LTS"
+        volta install node
+
+        if ! command -v node &> /dev/null; then
+            echo "Node installed"
+        else
+            echo "Failed install Node"
+        fi
+    else
+        echo "Failed to install Volta"
+    fi
 else 
     echo "Volta already installed"
     # install latest LTS node
