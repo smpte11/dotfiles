@@ -12,37 +12,15 @@ else
     echo "Devpod already installed"
 fi
 
-if ! command -v volta &> /dev/null; then
-    curl https://get.volta.sh | bash
-
-    if command -v volta &> /dev/null; then
-        echo "Volta now installed"
-        echo "Installing node LTS"
-        volta install node
-
-        if ! command -v node &> /dev/null; then
-            echo "Node installed"
-        else
-            echo "Failed install Node"
-        fi
-    else
-        echo "Failed to install Volta"
-    fi
-else 
-    echo "Volta already installed"
-    # install latest LTS node
-    volta install node
-fi
-
-brew install go
+brew install go pnpm fnm
 
 # tool dependent on npm
 npm install -g @bitwarden/cli
 
 # bazzite flatpacks
 {{- if eq .chezmoi.hostname "bazzite" }}
-flatpak -y install bitwarden
-flatpak install org.freedesktop.Platform.VulkanLayer.MangoHud
 flatpak override --user --env=MANGOHUD=1 com.valvesoftware.Steam
-flatpak install flathub com.discordapp.Discord
+flatpak -y --system --or-update install bitwarden
+flatpak -y --system --or-update install org.freedesktop.Platform.VulkanLayer.MangoHud
+flatpak -y --system --or-update install flathub com.discordapp.Discord
 {{- end }}
