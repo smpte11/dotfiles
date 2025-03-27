@@ -1,5 +1,6 @@
 #!/bin/bash
 
+{{ if eq .chezmoi.hostname "bazzite" "aurora"}}
 echo "Generating CDI 󰥔..."
 sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
 nvidia-ctk cdi list
@@ -10,7 +11,7 @@ echo "Enabling device access for containers so I can use your GPU!"
 sudo setsebool -P container_use_devices true
 
 echo "Pulling Ollama image"
- ollama/ollama
+podman pull ollama/ollama
 
 echo "Creating systemd file for container..."
 
@@ -37,3 +38,4 @@ mkdir -p ~/.config/containers/systemd
 touch ~/.config/containers/systemd/ollama.container
 
 echo "$SYSTEMD_FILE_DEFINITION" | sudo tee ~/.config/containers/systemd/ollama.container
+{{ end }}
