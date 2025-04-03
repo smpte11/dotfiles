@@ -14,21 +14,17 @@ fi
 
 brew install go pnpm fnm uv
 
+if command -v fnm &> /dev/null; then
+    echo "fnm present. Installing node"
+    fnm install --lts
+    fnm use default
+fi
+
 # tool dependent on npm
 npm install -g @bitwarden/cli
 
 # bazzite flatpacks
-{{- if eq .chezmoi.hostname "bazzite" }}
-flatpak override --user --env=MANGOHUD=1 com.valvesoftware.Steam
+{{- if eq .chezmoi.hostname "bluefin-laptop" }}
 flatpak -y --system --or-update install bitwarden
 flatpak -y --system --or-update install vivaldi
-flatpak -y --system --or-update install org.freedesktop.Platform.VulkanLayer.MangoHud
-flatpak -y --system --or-update install flathub com.discordapp.Discord
 {{- end }}
-
-if ! command -v firefox &> /dev/null; then
-    echo "No firefox installed..."
-else 
-    # remove firefox
-    flatpak -y --noninteractive uninstall firefox
-fi
