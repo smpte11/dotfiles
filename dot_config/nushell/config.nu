@@ -17,10 +17,11 @@
 # You can remove these comments if you want or leave
 # them for future reference.
 
-mkdir ($nu.data-dir | path join "vendor/autoload")
-starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")
-
 source ~/.zoxide.nu
+source ~/.cache/carapace/init.nu
 source ~/.local/share/atuin/init.nu
 
-alias ll = ls -l
+$env.STARSHIP_CONFIG = $"($env.HOME)/.config/starship/.starship.toml"
+
+mkdir ($nu.data-dir | path join "vendor/autoload")
+starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")
