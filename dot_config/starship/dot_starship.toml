@@ -5,7 +5,7 @@ command_timeout = 2500
 palette = 'kanagawa'
 
 format = """
-[┌─](bold fg)$username〔 $time〕\
+[┌─](bold fg)$username〔$time〕\
 $hostname\
 $localip\
 $shlvl\
@@ -74,7 +74,6 @@ $nix_shell\
 $conda\
 $meson\
 $spack\
-$memory_usage\
 $aws\
 $gcloud\
 $openstack\
@@ -85,15 +84,19 @@ $env_var\
 $crystal\
 $custom\
 $sudo\
-$cmd_duration\
 $line_break\
 $jobs\
-$battery\
 $status\
 $os\
 $container\
 $shell\
 [└─](bold fg) $line2
+"""
+
+right_format = """
+$battery\
+$cmd_duration\
+$memory_usage\
 """
 
 
@@ -294,4 +297,3 @@ symbol = " "
 
 [gradle]
 symbol = "🅶 "
-
