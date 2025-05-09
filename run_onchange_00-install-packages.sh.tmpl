@@ -21,16 +21,14 @@ brew install nushell \
     television \
     ugrep \
     uutils-coreutils \
-    yq 
+    yq \
+    bitwarden-cli
 
 
-brew install go uv oven-sh/bun/bun
-
-# tool dependent on npm
-bun install -g @bitwarden/cli
+brew install go uv oven-sh/bun/bun node
 
 # bazzite flatpacks
 {{- if eq .chezmoi.hostname "bluefin-laptop" "bluefin-desktop" }}
-flatpak -y --system --or-update install bitwarden
-flatpak -y --system --or-update install vivaldi
+flatpak -y --system --or-update install com.bitwarden.desktop
+flatpak -y --system --or-update install com.vivaldi.Vivaldi
 {{- end }}
