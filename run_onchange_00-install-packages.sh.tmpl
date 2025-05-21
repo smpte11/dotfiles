@@ -2,6 +2,8 @@
 
 # Common Mac and Linux Bazzite stuff
 
+brew install go uv oven-sh/bun/bun node
+
 ## Command line tool
 brew install nushell \
     nvim \
@@ -24,9 +26,6 @@ brew install nushell \
     yq \
     bitwarden-cli \
     pnpm
-
-
-brew install go uv oven-sh/bun/bun node
 
 # bazzite flatpacks
 {{- if eq .chezmoi.hostname "bluefin-laptop" "bluefin-desktop" }}

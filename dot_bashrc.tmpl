@@ -31,19 +31,8 @@ export ZK_NOTEBOOK_DIR=~/notebook
 export EDITOR=nvim
 export VISUAL=nvim
 
-export PATH="/run/user/1000/fnm_multishells/23315_1742848841047/bin":"$PATH"
-export FNM_MULTISHELL_PATH="/run/user/1000/fnm_multishells/23315_1742848841047"
-export FNM_VERSION_FILE_STRATEGY="local"
-export FNM_DIR="/home/fbrousseau/.local/share/fnm"
-export FNM_LOGLEVEL="info"
-export FNM_NODE_DIST_MIRROR="https://nodejs.org/dist"
-export FNM_COREPACK_ENABLED="false"
-export FNM_RESOLVE_ENGINES="true"
-export FNM_ARCH="x64"
-
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
-eval "$(fnm env --use-on-cd --shell bash)"
 ### bling.sh source start
 test -f /usr/share/ublue-os/bling/bling.sh && source /usr/share/ublue-os/bling/bling.sh
 ### bling.sh source end
