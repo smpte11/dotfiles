@@ -165,7 +165,7 @@ keybinds clear-defaults=true {
         bind "Ctrl b" { SwitchToMode "tmux"; }
     }
     shared_except "locked" "scroll" "search" {
-        bind "Ctrl s" { SwitchToMode "scroll"; }
+        bind "Ctrl Shift S" { SwitchToMode "scroll"; }
     }
     shared_except "locked" "tab" {
         bind "Ctrl t" { SwitchToMode "tab"; }
@@ -200,7 +200,7 @@ keybinds clear-defaults=true {
         bind "j" { ScrollDown; }
         bind "k" { ScrollUp; }
         bind "l" { PageScrollDown; }
-        bind "Ctrl s" { SwitchToMode "normal"; }
+        bind "Ctrl Shift s" { SwitchToMode "normal"; }
         bind "u" { HalfPageScrollUp; }
     }
     entersearch {
@@ -272,7 +272,6 @@ load_plugins {
 //   - true
 //   - false (Default)
 // 
-simplified_ui true
 
 themes {
     custom_kanagawa {
