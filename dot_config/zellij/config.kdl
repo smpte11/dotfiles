@@ -271,7 +271,7 @@ load_plugins {
 // Options:
 //   - true
 //   - false (Default)
-// 
+simpfied_ui true
 
 themes {
     custom_kanagawa {
@@ -292,7 +292,7 @@ themes {
 // Choose the theme that is specified in the themes section.
 // Default: default
 // 
-theme "custom_kanagawa"
+theme "everforest-dark"
  
 // Choose the base input mode of zellij.
 // Default: normal
