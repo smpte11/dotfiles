@@ -245,54 +245,38 @@ keybinds clear-defaults=true {
 
 // Plugin aliases - can be used to change the implementation of Zellij
 // changing these requires a restart to take effect
-plugins {
-//    compact-bar location="zellij:compact-bar"
-    configuration location="zellij:configuration"
-    filepicker location="zellij:strider" {
-        cwd "/"
-    }
-    plugin-manager location="zellij:plugin-manager"
-    session-manager location="zellij:session-manager"
-    status-bar location="zellij:status-bar"
-    strider location="zellij:strider"
-    tab-bar location="zellij:tab-bar"
-    welcome-screen location="zellij:session-manager" {
-        welcome_screen true
-    }
-}
+// plugins {
+//     compact-bar location="zellij:compact-bar"
+//     configuration location="zellij:configuration"
+//     filepicker location="zellij:strider" {
+//         cwd "/"
+//     }
+//     plugin-manager location="zellij:plugin-manager"
+//     session-manager location="zellij:session-manager"
+//     status-bar location="zellij:status-bar"
+//     strider location="zellij:strider"
+//     tab-bar location="zellij:tab-bar"
+//     welcome-screen location="zellij:session-manager" {
+//         welcome_screen false
+//     }
+// }
 
 // Plugins to load in the background when a new session starts
 // eg. "file:/path/to/my-plugin.wasm"
 // eg. "https://example.com/my-plugin.wasm"
-load_plugins {
-}
+// load_plugins {
+// }
  
 // Use a simplified UI without special fonts (arrow glyphs)
 // Options:
 //   - true
 //   - false (Default)
-simpfied_ui true
-
-themes {
-    custom_kanagawa {
-        fg        "#DCD7BA"
-        bg        "#1F1F28"
-        black     "#1F1F28"
-        white     "#DCD7BA"
-        red       "#C34043"
-        orange    "#FFA066"
-        green     "#98BB6C"
-        yellow    "#DCA561"
-        blue      "#7E9CD8"
-        magenta   "#957FB8"
-        cyan      "#7FB4CA"
-    }
-}
+simplified_ui true
 
 // Choose the theme that is specified in the themes section.
 // Default: default
 // 
-theme "everforest-dark"
+theme "kanagawa"
  
 // Choose the base input mode of zellij.
 // Default: normal
