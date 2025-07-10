@@ -19,3 +19,9 @@ if command -v filen >/dev/null; then
 else
     curl -sL https://filen.io/cli.sh | bash
 fi
+
+if command -v gh >/dev/null; then
+    echo "GitHub CLI is already installed"
+else
+    brew install gh
+fi
