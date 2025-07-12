@@ -31,7 +31,7 @@ brew install nushell \
     pnpm
 
 # bazzite flatpacks
-{{- if eq .chezmoi.hostname "bluefin-laptop" "bluefin-desktop" }}
+{{- if or (contains "bazzite" .chezmoi.hostname) (contains "bluefin" .chezmoi.hostname) }}
 flatpak -y --system --or-update install com.bitwarden.desktop
 flatpak -y --system --or-update install com.vivaldi.Vivaldi
 {{- end }}
