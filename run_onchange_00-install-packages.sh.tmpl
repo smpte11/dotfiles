@@ -25,6 +25,10 @@ brew install nushell \
     bitwarden-cli \
     pnpm
 
+## install npm tools
+npm install -g @devcontainers/cli
+
+
 # bazzite flatpacks
 {{- if or (contains "bazzite" .chezmoi.hostname) (contains "bluefin" .chezmoi.hostname) }}
 flatpak -y --system --or-update install com.bitwarden.desktop

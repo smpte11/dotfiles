@@ -31,6 +31,3 @@ sourceDir = {{ .chezmoi.sourceDir | quote }}
 
 [cd]
     command = "/home/linuxbrew/.linuxbrew/bin/nu"
-
-[hooks.read-source-state.pre]
-    command = ".local/share/chezmoi/.install-prerequisites.sh"
