@@ -1,0 +1,87 @@
+# ~/.config/starship.toml
+
+# Inserts a blank line between shell prompts
+add_newline = true
+
+# Change the default prompt format
+format = """
+[](color_blue)\
+$username\
+$hostname\
+[](bg:color_purple fg:color_blue)\
+$directory\
+[](bg:color_green fg:color_purple)\
+$git_branch\
+$git_status\
+[](bg:color_red fg:color_green)\
+$docker\
+[](fg:color_red)\
+"""
+
+right_format = """
+[](fg:color_blue)\
+$python\
+$kubernetes\
+[](fg:color_red bg:color_blue)\
+$custom\
+[](fg:color_red)\
+"""
+
+# Change the default prompt characters
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+
+# Shows the username
+[username]
+style_user = "bold dimmed blue"
+show_always = true
+
+# Shows the machine's hostname
+[hostname]
+style = "bold dimmed blue"
+ssh_only = false
+disabled = false
+
+# Shows current directory
+[directory]
+style = "bold"
+truncation_length = 8
+
+# Shows current git branch
+[git_branch]
+style = "bold green"
+
+# Shows current git status
+[git_status]
+style = "bold green"
+stashed = ""
+ahead = "⇡"
+behind = "⇣"
+diverged = "⇕"
+untracked = ""
+renamed = "»"
+modified = ""
+deleted = ""
+
+[docker]
+disabled = true
+
+# Shows current python version
+[python]
+style = "bold green"
+pyenv_version_name = true
+format = 'via [${symbol} (${version} )]($style)'
+symbol = "🐍"
+
+# Shows kubernetes context and namespace
+[kubernetes]
+format = 'on [⛵ ($user on )($cluster in )$namespace]($style) '
+style = "bold green"
+disabled = false
+
+[custom.insidedocker]
+command = "test -f /.dockerenv && echo ''"
+when = "test -f /.dockerenv"
+format = "inside [🐋](blue bold)"
+disabled = true
