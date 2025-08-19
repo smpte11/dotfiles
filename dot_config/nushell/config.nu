@@ -28,3 +28,4 @@ starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.n
 
 alias ll = ls -l
 alias leet = nvim leetcode.nvim
+alias gearlever = flatpak run it.mijorus.gearlever
