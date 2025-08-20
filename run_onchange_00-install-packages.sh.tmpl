@@ -32,5 +32,5 @@ npm install -g @devcontainers/cli
 # bazzite flatpacks
 {{- if or (contains "bazzite" .chezmoi.hostname) (contains "bluefin" .chezmoi.hostname) }}
 flatpak -y --system --or-update install com.bitwarden.desktop
-flatpak -y --system --or-update install com.vivaldi.Vivaldi
+flatpak -y --system --or-update install it.mijorus.gearlever
 {{- end }}
