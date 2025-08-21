@@ -84,12 +84,12 @@ $env_var\
 $crystal\
 $custom\
 $sudo\
-$line_break\
 $jobs\
 $status\
 $os\
 $container\
 $shell\
+$line_break\
 [└─](bold fg) $line2
 """
 
