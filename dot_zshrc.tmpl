@@ -80,6 +80,8 @@ plugins=(git vi-mode zsh-syntax-highlighting)
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
+export XDG_CONFIG_HOME="/Users/f.brousseau-tremblay/.config"
+
 bindkey -v
 bindkey -s 'ç' "fd --type d . --hidden | fzf --preview 'tree -C {} | head -50'^M"
 

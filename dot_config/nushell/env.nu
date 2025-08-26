@@ -55,8 +55,11 @@ use std "path add"
 # path add ($env.CARGO_HOME | path join "bin")
 # path add ($env.HOME | path join ".local" "bin")
 # $env.PATH = ($env.PATH | uniq)
-path add /home/linuxbrew/.linuxbrew/bin
-path add /home/fbrousseau/.bun/bin
+
+if $nu.os-info.name != "macos" {
+    path add /home/linuxbrew/.linuxbrew/bin
+    path add /home/fbrousseau/.bun/bin
+}
 
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:
 # $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/linuxbrew/.linuxbrew/bin')
