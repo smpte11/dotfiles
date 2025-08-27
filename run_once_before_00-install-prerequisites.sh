@@ -5,23 +5,31 @@ set -ex
 detect_container() {
     # Docker (rootful)
     if [ -f /.dockerenv ]; then
+        echo ".dockerenv detected"
         return 0
     fi
     # Docker or LXC via cgroup
     if grep -qaE 'docker|lxc' /proc/1/cgroup 2>/dev/null; then
+        echo "lxc detected"
         return 0
     fi
     # Podman (rootful or rootless)
     if [ -f /run/.containerenv ]; then
+        echo ".containerenv detected"
         return 0
     fi
     # Podman environment variable
     if [ "${container:-}" = "podman" ]; then
+        echo "podman env detected"
         return 0
     fi
-    # User namespace (rootless container hint)
-    if [ -f /proc/1/uid_map ] && ! grep -qE '^0:0:' /proc/1/uid_map; then
-        return 0
+
+    # An additional check can be made against /proc/1/cgroup, which often
+    # contains "docker" or "kubepods" in a containerized environment.
+    # This is another strong indicator.
+    if [[ -f /proc/1/cgroup ]] && grep -Eq '/(docker|kubepods)' /proc/1/cgroup; then
+        echo "In docker or kubepods"
+        return 0 # Success (true)
     fi
     return 1
 }
