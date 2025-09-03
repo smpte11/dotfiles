@@ -38,16 +38,31 @@ id-case = "lower"
 [extra]
 author = "Felix Brousseau-Tremblay"
 
-
-# GROUP OVERRIDES
 [group.daily]
 paths = ["journal/daily"]
 
 [group.daily.note]
 # %Y-%m-%d is actually the default format, so you could use {{format-date now}} instead.
-filename = "{{format-date now '%Y-%m-%d'}}"
+filename = "perso-{{format-date now '%Y-%m-%d'}}"
 extension = "md"
-template = "daily.md"
+
+
+[group.work]
+paths = ["work"]
+
+[group.work.note]
+# %Y-%m-%d is actually the default format, so you could use {{format-date now}} instead.
+filename = "work-{{format-date now '%Y-%m-%d'}}"
+extension = "md"
+
+# [group.work]
+# paths = ["work"]
+#
+# [group.work.note]
+# %Y-%m-%d is actually the default format, so you could use {{format-date now}} instead.
+# filename = "work-{{format-date now '%Y-%m-%d'}}"
+# extension = "md"
+# template = "daily.md"
 
 # MARKDOWN SETTINGS
 [format.markdown]

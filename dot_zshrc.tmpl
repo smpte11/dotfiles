@@ -90,6 +90,8 @@ bindkey -s 'ç' "fd --type d . --hidden | fzf --preview 'tree -C {} | head -50'^
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
+export ZK_NOTEBOOK_DIR="$HOME/notebook"
+
 nv() {
   # Assumes all configs exist in directories named ~/.config/nvim-*
   local config=$(fd --max-depth 1 --glob 'nvim-*' ~/.config | fzf --prompt="Neovim Configs > " --height=~50% --layout=reverse --border --exit-0)
@@ -187,7 +189,6 @@ fi
 
 # filen
 PATH=$PATH:~/.filen-cli/bin
-
 
 {{- if eq .chezmoi.hostname "WQVDJYK1JW" }}
 ###-begin-grond-completions-###
