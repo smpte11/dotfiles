@@ -33,7 +33,7 @@ if [[ "$(uname -s)" != "Darwin" ]] && [ "$(id -u)" -eq 0 ]; then
         # The Homebrew installer within the script is smart enough to use `sudo`
         # for system-level dependencies, and devcontainer users typically have passwordless sudo.
         if command -v sudo >/dev/null 2>&1; then
-            exec sudo -u "$TARGET_USER" -H -- "$0" "$@"
+            exec sudo --preserve-env=HOME,PATH,DOTFILES_USER -u "$TARGET_USER" -H -- "$0" "$@"
         elif command -v gosu >/dev/null 2>&1; then
             exec gosu "$TARGET_USER" "$0" "$@"
         elif command -v su-exec >/dev/null 2>&1; then
