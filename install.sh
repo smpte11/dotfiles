@@ -1,5 +1,51 @@
 #!/bin/bash
 
+# On Linux, detect user context and switch if necessary (for devcontainer scenarios)
+if [[ "$(uname -s)" != "Darwin" ]] && [ "$(id -u)" -eq 0 ]; then
+    # We are root on Linux. Check for a non-root user to switch to.
+    # Priority:
+    # 1. DOTFILES_USER environment variable
+    # 2. 'vscode' user
+    # 3. User with UID 1000
+    TARGET_USER=""
+    if [ -n "${DOTFILES_USER-}" ]; then
+        # Check if user exists
+        if id -u "$DOTFILES_USER" >/dev/null 2>&1; then
+            TARGET_USER="$DOTFILES_USER"
+        else
+            echo "Warning: User '$DOTFILES_USER' specified in DOTFILES_USER env var not found. Ignoring."
+        fi
+    fi
+
+    # If DOTFILES_USER was not set or not found, try vscode user
+    if [ -z "$TARGET_USER" ] && getent passwd vscode >/dev/null 2>&1; then
+        TARGET_USER="vscode"
+    fi
+
+    # If still no user, try UID 1000
+    if [ -z "$TARGET_USER" ] && getent passwd 1000 >/dev/null 2>&1; then
+        TARGET_USER=$(getent passwd 1000 | cut -d: -f1)
+    fi
+
+    if [ -n "$TARGET_USER" ] && [ "$TARGET_USER" != "root" ]; then
+        echo "Running as root on Linux. Switching to user '$TARGET_USER' to continue installation."
+        # Re-execute this script as the target user.
+        # The Homebrew installer within the script is smart enough to use `sudo`
+        # for system-level dependencies, and devcontainer users typically have passwordless sudo.
+        if command -v sudo >/dev/null 2>&1; then
+            exec sudo -u "$TARGET_USER" -H -- "$0" "$@"
+        elif command -v gosu >/dev/null 2>&1; then
+            exec gosu "$TARGET_USER" "$0" "$@"
+        elif command -v su-exec >/dev/null 2>&1; then
+            exec su-exec "$TARGET_USER" "$0" "$@"
+        else
+            echo "ERROR: Cannot switch to user '$TARGET_USER'." >&2
+            echo "Please install 'sudo', 'gosu', or 'su-exec' to proceed." >&2
+            exit 1
+        fi
+    fi
+fi
+
 # -e: exit on error
 # -u: exit on unset variables
 set -eu
