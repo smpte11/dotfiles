@@ -40,7 +40,9 @@ else
     if [[ "$(uname)" = "Darwin" ]]; then
         echo "No need for Cider on MacOS"
     else
-        bw login
+        if [[ "$(bw status --raw | jq -r .status)" == "unauthenticated" ]]; then
+            bw login
+        fi
 
         if [[ -z "${BW_SESSION:-}" ]]; then
             BW_SESSION="$(bw unlock --raw)"
