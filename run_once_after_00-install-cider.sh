@@ -40,16 +40,18 @@ else
     if [[ "$(uname)" = "Darwin" ]]; then
         echo "No need for Cider on MacOS"
     else
-        bw login
+        if ! command -v jq >/dev/null; then
+            echo "JQ should be installed. Aborting..."
+            exit 1
+        fi
+
+        if [[ "$(bw status --raw | jq -r .status)" == "unauthenticated" ]]; then
+            bw login
+        fi
 
         if [[ -z "${BW_SESSION:-}" ]]; then
             BW_SESSION="$(bw unlock --raw)"
             export BW_SESSION
-        fi
-
-        if ! command -v jq >/dev/null; then
-            echo "JQ should be installed. Aborting..."
-            exit 1
         fi
 
         FILENAME="cider-v3.0.2-linux-x64.AppImage"
