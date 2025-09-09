@@ -8,7 +8,7 @@ if [[ "$(uname -s)" != "Darwin" ]] && [ "$(id -u)" -eq 0 ]; then
     # 2. 'vscode' user
     # 3. User with UID 1000
     TARGET_USER=""
-    if [ -n "${DOTFILES_USER-}" ]; then
+    if [ -n "${DOTFILES_USER:-}" ]; then
         # Check if user exists
         if id -u "$DOTFILES_USER" >/dev/null 2>&1; then
             TARGET_USER="$DOTFILES_USER"
