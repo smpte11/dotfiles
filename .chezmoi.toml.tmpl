@@ -23,6 +23,13 @@
 {{-   writeToStdout "💡 Tip: you can re-enter your name and email with `chezmoi init --data=false`.\n" -}}
 {{- end -}}
 
+{{ $brew_path := ""}}
+{{ if eq .chezmoi.os "darwin" }}
+{{ $brew_path = "/opt/homebrew/bin/nu" }}
+{{ else }}
+{{ $brew_path = "/home/linuxbrew/.linuxbrew/bin/nu" }}
+{{ end }}
+
 sourceDir = {{ .chezmoi.sourceDir | quote }}
 
 [data]
@@ -30,4 +37,16 @@ sourceDir = {{ .chezmoi.sourceDir | quote }}
     name = {{ $name | quote }}
 
 [cd]
-    command = "/home/linuxbrew/.linuxbrew/bin/nu"
+    command = {{ $brew_path | quote }}
+
+[diff]
+    pager = "delta"
+
+[merge]
+    command = "nvim"
+    args = [
+        "-d",
+        {{ printf "%q" "{{ .Destination }}" }},
+        {{ printf "%q" "{{ .Source }}" }},
+        {{ printf "%q" "{{ .Target }}" }},
+    ]

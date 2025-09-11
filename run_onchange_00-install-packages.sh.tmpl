@@ -24,11 +24,11 @@ brew install nushell \
     uutils-coreutils \
     yq \
     bitwarden-cli \
-    gemini-cli
+    gemini-cli \
+    git-delta
 
 ## install npm tools
 npm install -g @devcontainers/cli
-
 
 # bazzite flatpacks
 {{- if or (contains "bazzite" .chezmoi.hostname) (contains "bluefin" .chezmoi.hostname) }}
