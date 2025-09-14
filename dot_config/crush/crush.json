@@ -1,0 +1,46 @@
+{
+    "$schema": "https://charm.land/crush.json",
+    "lsp": {
+        "go": {
+            "command": "gopls",
+            "env": {
+                "GOTOOLCHAIN": "go1.24.5"
+            }
+        }
+    },
+    "providers": {
+        "ollama": {
+            "name": "Ollama",
+            "base_url": "http://localhost:11434/v1",
+            "type": "openai",
+            "models": [
+                {
+                    "name": "Qwen Coder",
+                    "id": "qwen3-coder:latest",
+                    "context_window": 256000,
+                    "default_max_tokens": 20000
+                },
+                {
+                    "id": "hf.co/unsloth/Qwen3-Coder-30B-A3B-Instruct-GGUF:UD-Q4_K_XL",
+                    "name": "Qwen3-Coder-30B (Unsloth)",
+                    "context_window": 256000,
+                    "default_max_tokens": 20000
+                },
+                {
+                    "id": "deepseek-coder-v2:latest",
+                    "name": "DeepSeek Coder v2",
+                    "context_window": 256000,
+                    "default_max_tokens": 20000
+                },
+                {
+                    "id": "gpt-oss:latest",
+                    "name": "GPT-OSS 20B"
+                },
+                {
+                    "id": "granite-code:latest",
+                    "name": "Granite"
+                }
+            ]
+        }
+    }
+}
