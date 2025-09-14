@@ -25,7 +25,17 @@ brew install nushell \
     yq \
     bitwarden-cli \
     gemini-cli \
-    git-delta
+    git-delta \
+    charmbracelet/tap/crush
+
+# NPM
+npm install -g @charmland/crush
+
+# Arch Linux (btw)
+yay -S crush-bin
+
+# Nix
+nix run github:numtide/nix-ai-tools#crush
 
 ## install npm tools
 npm install -g @devcontainers/cli

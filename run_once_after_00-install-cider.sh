@@ -54,7 +54,7 @@ else
             exit 1
         fi
 
-        FILENAME="cider-v3.0.2-linux-x64.AppImage"
+        FILENAME="cider-v3.1.2-linux-x64.AppImage"
 
         echo "Fetching from Bitwarden Filen credentials..."
         FILEN_USERNAME="$(bw get item Filen | jq -r ".login.username")"

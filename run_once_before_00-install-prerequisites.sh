@@ -40,6 +40,12 @@ else
     brew install bitwarden-cli
 fi
 
+if command -v bws >/dev/null; then
+    echo "bitwarden-secrets-cli already installed"
+else
+    curl https://bws.bitwarden.com/install | sh
+fi
+
 if command -v gh >/dev/null; then
     echo "GitHub CLI is already installed"
 else
