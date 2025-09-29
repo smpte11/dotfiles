@@ -1,41 +1,53 @@
 #!/bin/bash
 
-# Common Mac and Linux Bazzite/Bluefin stuff
+set -eufo pipefail
 
-## Command line tool
-brew install nushell \
-    nvim \
-    starship \
-    zoxide \
-    fzf \
-    zellij \
-    tmux \
-    lazydocker \
-    httpie \
-    carapace \
-    zk \
-    atuin \
-    direnv \
-    fd \
-    ripgrep \
-    tealdeer \
-    television \
-    ugrep \
-    uutils-coreutils \
-    yq \
-    bitwarden-cli \
-    gemini-cli \
-    git-delta \
-    charmbracelet/tap/crush
+echo "Installing packages declaratively..."
 
-# cask
-brew install --cask lm-studio
+# Install brew packages (available on both macOS and Linux)
+if command -v brew >/dev/null 2>&1; then
+    echo "Installing brew packages..."
+    brew bundle --verbose --file=/dev/stdin <<EOF
+{{ range .packages.brews.packages -}}
+brew {{ . | quote }}
+{{ end -}}
+{{ if eq .chezmoi.os "darwin" -}}
+{{ range .packages.casks.packages -}}
+cask {{ . | quote }}
+{{ end -}}
+{{ end -}}
+EOF
+    echo "Brew packages installed successfully"
+else
+    echo "Homebrew not found, skipping brew packages"
+fi
 
-## install npm tools
-npm install -g @devcontainers/cli
-
-# bazzite flatpacks
+# Install flatpak packages (Bazzite/Bluefin only)
 {{- if or (contains "bazzite" .chezmoi.hostname) (contains "bluefin" .chezmoi.hostname) }}
-flatpak -y --system --or-update install com.bitwarden.desktop
-flatpak -y --system --or-update install it.mijorus.gearlever
+if command -v flatpak >/dev/null 2>&1; then
+    echo "Installing flatpak packages..."
+    {{ range .packages.flatpaks.packages -}}
+    echo "Installing {{ . }}..."
+    flatpak install -y --system --or-update {{ . | quote }}
+    {{ end -}}
+    echo "Flatpak packages installed successfully"
+else
+    echo "Flatpak not found, skipping flatpak packages"
+fi
+{{- else }}
+echo "Not on Bazzite/Bluefin, skipping flatpak packages"
 {{- end }}
+
+# Install npm packages (cross-platform)
+if command -v npm >/dev/null 2>&1; then
+    echo "Installing npm packages..."
+    {{ range .packages.npm.packages -}}
+    echo "Installing {{ . }}..."
+    npm install -g {{ . | quote }}
+    {{ end -}}
+    echo "npm packages installed successfully"
+else
+    echo "npm not found, skipping npm packages"
+fi
+
+echo "Package installation complete!"

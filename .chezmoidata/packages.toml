@@ -1,0 +1,47 @@
+# Package declarations for declarative installation
+# This file defines packages that should be installed on different platforms
+
+[packages.brews]
+packages = [
+  "nushell",
+  "nvim", 
+  "starship",
+  "zoxide",
+  "fzf",
+  "zellij",
+  "tmux",
+  "lazydocker",
+  "httpie",
+  "carapace",
+  "zk",
+  "atuin",
+  "direnv",
+  "fd",
+  "ripgrep",
+  "tealdeer",
+  "television",
+  "ugrep",
+  "uutils-coreutils",
+  "yq",
+  "bitwarden-cli",
+  "gemini-cli",
+  "git-delta",
+  "charmbracelet/tap/crush",
+  "glow"
+]
+
+[packages.casks]
+packages = [
+  "lm-studio"
+]
+
+[packages.flatpaks]
+packages = [
+  "com.bitwarden.desktop",
+  "it.mijorus.gearlever"
+]
+
+[packages.npm]
+packages = [
+  "@devcontainers/cli"
+]
