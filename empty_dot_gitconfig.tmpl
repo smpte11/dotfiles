@@ -8,3 +8,44 @@
 [core]
     fsmonitor = true
     untrackedCache = true
+	hooksPath = /Users/f.brousseau-tremblay/.githooks
+	autocrlf = input
+[lfs]
+	locksverify = false
+	setlockablereadonly = false
+[fetch]
+	pruneTags = true
+	prune = true
+[merge]
+	conflictStyle = zdiff3
+[pull]
+	rebase = true
+[rerere]
+	enabled = true
+[commit]
+	verbose = true
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+	renames = copies
+[rebase]
+	autoStash = true
+	autoSquash = true
+	updateRefs = true
+[pack]
+	useSparse = true
+[branch]
+	sort = committerdate
+[help]
+	autocorrect = prompt
+[push]
+	default = current
+	autoSetupRemote = true
+[tag]
+	sort = refname
+[feature]
+	manyFiles = false
+[log]
+	date = iso
+[checkout]
+	workers = 0
