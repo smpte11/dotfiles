@@ -3,45 +3,39 @@
 
 [packages.brews]
 packages = [
-  "nushell",
-  "nvim", 
-  "starship",
-  "zoxide",
-  "fzf",
-  "zellij",
-  "tmux",
-  "lazydocker",
-  "httpie",
-  "carapace",
-  "zk",
-  "atuin",
-  "direnv",
-  "fd",
-  "ripgrep",
-  "tealdeer",
-  "television",
-  "ugrep",
-  "uutils-coreutils",
-  "yq",
-  "bitwarden-cli",
-  "gemini-cli",
-  "git-delta",
-  "charmbracelet/tap/crush",
-  "glow"
+    "nushell",
+    "nvim",
+    "starship",
+    "zoxide",
+    "fzf",
+    "zellij",
+    "tmux",
+    "lazydocker",
+    "httpie",
+    "carapace",
+    "zk",
+    "atuin",
+    "direnv",
+    "fd",
+    "ripgrep",
+    "tealdeer",
+    "television",
+    "ugrep",
+    "uutils-coreutils",
+    "yq",
+    "bitwarden-cli",
+    "gemini-cli",
+    "git-delta",
+    "charmbracelet/tap/crush",
+    "glow",
+    "mob",
 ]
 
 [packages.casks]
-packages = [
-  "lm-studio"
-]
+packages = ["lm-studio"]
 
 [packages.flatpaks]
-packages = [
-  "com.bitwarden.desktop",
-  "it.mijorus.gearlever"
-]
+packages = ["com.bitwarden.desktop", "it.mijorus.gearlever"]
 
 [packages.npm]
-packages = [
-  "@devcontainers/cli"
-]
+packages = ["@devcontainers/cli"]
