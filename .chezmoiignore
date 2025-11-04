@@ -5,3 +5,7 @@ README.md
 
 !.config/tmux/plugins/
 .config/tmux/plugins/**
+
+.config/kitty/kitty-themes/
+.config/kitty/kitty-themes/**
+.config/kitty/symlink_theme.conf

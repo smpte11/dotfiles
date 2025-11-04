@@ -26,7 +26,6 @@ packages = [
     "bitwarden-cli",
     "gemini-cli",
     "git-delta",
-    "charmbracelet/tap/crush",
     "glow",
     "mob",
 ]

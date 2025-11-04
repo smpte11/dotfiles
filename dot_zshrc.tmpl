@@ -92,26 +92,6 @@ bindkey -s 'ç' "fd --type d . --hidden | fzf --preview 'tree -C {} | head -50'^
 
 export ZK_NOTEBOOK_DIR="$HOME/notebook"
 
-nv() {
-  # Assumes all configs exist in directories named ~/.config/nvim-*
-  local config=$(fd --max-depth 1 --glob 'nvim-*' ~/.config | fzf --prompt="Neovim Configs > " --height=~50% --layout=reverse --border --exit-0)
- 
-  # If I exit fzf without selecting a config, don't open Neovim
-  [[ -z $config ]] && echo "No config selected" && return
- 
-  # Open Neovim with the selected config
-  NVIM_APPNAME=$(basename $config) nvim $@
-}
-
-# yazi
-function y() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-		builtin cd -- "$cwd"
-	fi
-	rm -f -- "$tmp"
-}
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -148,11 +128,6 @@ else
   export VISUAL=nvim
 fi
 
-# AWS TOOL
-export LDAP_USER='f.brousseau-tremblay'
-awslogin () {
-  kep aws login --duration 120
-}
 
 # GDocs to MD
 mdify(){
@@ -190,29 +165,6 @@ fi
 # filen
 PATH=$PATH:~/.filen-cli/bin
 
-{{- if eq .chezmoi.hostname "WQVDJYK1JW" }}
-###-begin-grond-completions-###
-#
-# yargs command completion script
-#
-# Installation: grond completion >> ~/.zshrc
-#    or grond completion >> ~/.zsh_profile on OSX.
-#
-_grond_yargs_completions()
-{
-  local reply
-  local si=$IFS
-  IFS=$'
-' reply=($(COMP_CWORD="$((CURRENT-1))" COMP_LINE="$BUFFER" COMP_POINT="$CURSOR" grond --get-yargs-completions "${words[@]}"))
-  IFS=$si
-  _describe 'values' reply
-}
-compdef _grond_yargs_completions grond
-###-end-grond-completions-###
-
-source ~/.keprc
-
-{{- end}}
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/Users/f.brousseau-tremblay/.lmstudio/bin"
 # End of LM Studio CLI section
