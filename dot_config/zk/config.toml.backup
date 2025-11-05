@@ -9,12 +9,11 @@ dir = "~/notebook"
 # This is used to generate slugs or with date formats.
 language = "en"
 
-# The default title used for new note, if no --title flag is provided.
+# The default title used for new note, if no `--title` flag is provided.
 default-title = "Untitled"
 
 # Template used to generate a note's filename, without extension.
-# Using timestamp + slugified title for sortable, readable filenames
-filename = "{{format-date now 'timestamp'}}-{{slug title}}"
+filename = "{{id}}-{{slug title}}"
 
 # The file extension used for the notes.
 extension = "md"
@@ -40,24 +39,21 @@ id-case = "lower"
 author = "Felix Brousseau-Tremblay"
 
 # GROUP OVERRIDES
-
-# Personal journal group
-[group.personal-journal]
+[group.daily]
 paths = ["journal/daily"]
-
-[group.personal-journal.note]
+[group.daily.note]
+# %Y-%m-%d is actually the default format, so you could use {{format-date now}} instead.
 filename = "perso-{{format-date now '%Y-%m-%d'}}"
 extension = "md"
-template = "personal-journal.md"
 
-# Work journal group
-[group.work-journal]
+
+[group.work]
 paths = ["work"]
 
-[group.work-journal.note]
+[group.work.note]
+# %Y-%m-%d is actually the default format, so you could use {{format-date now}} instead.
 filename = "work-{{format-date now '%Y-%m-%d'}}"
 extension = "md"
-template = "work-journal.md"
 
 
 # MARKDOWN SETTINGS
