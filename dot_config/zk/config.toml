@@ -52,7 +52,7 @@ template = "personal-journal.md"
 
 # Work journal group
 [group.work-journal]
-paths = ["work"]
+paths = ["work/journal"]
 
 [group.work-journal.note]
 filename = "work-{{format-date now '%Y-%m-%d'}}"

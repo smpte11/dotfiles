@@ -1,6 +1,7 @@
 [user]
     email = {{ .email | quote }}
     name = {{ .name | quote }}
+    signingkey = ~/.ssh/kivra-felbro.pub
 [init]
     defaultBranch = main
 [github]
@@ -48,3 +49,5 @@
 	date = iso
 [checkout]
 	workers = 0
+[gpg]
+    format = ssh
