@@ -1,0 +1,12 @@
+[theme]
+name = "minischeme-dark"
+
+[colors]
+alertinfo   = "#42f7ff"
+alertwarn   = "#cc7e46"
+alerterror  = "#ffcfa0"
+annotation  = "#46a436"
+base        = "#e2e98f"
+guidance    = "#46a436"
+important   = "#ca6ecf"
+title       = "#42f7ff"
