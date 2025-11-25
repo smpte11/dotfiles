@@ -2,7 +2,7 @@ command_timeout = 2500
 
 "$schema" = 'https://starship.rs/config-schema.json'
 
-palette = 'kanagawa'
+palette = 'minischeme'
 
 format = """
 [┌─](bold fg)$username〔$time〕\
@@ -117,6 +117,44 @@ purple = '#957FB8'
 red = '#E46876'
 yellow = '#FF9E3B'
 
+# Minischeme Dark
+[palettes.minischeme]
+bg = "#112641"           # base00, background
+bg_alt = "#3a475e"       # base01
+surface = "#606b81"      # base02
+overlay = "#8691a7"      # base03
+muted = "#d5dc81"        # base04
+fg = "#e2e98f"           # base05, foreground
+fg_bright = "#eff69c"    # base06
+white = "#fcffaa"        # base07
+yellow = "#ffcfa0"       # base08 (used as yellowish highlight)
+orange = "#cc7e46"       # base09
+green = "#46a436"        # base0A
+green_bright = "#9ff895" # base0B
+purple = "#ca6ecf"       # base0C
+blue = "#42f7ff"         # base0D
+pink = "#ffc4ff"         # base0E
+cyan = "#00a5c5"         # base0F
+
+# Minischeme Light
+[palettes.minischeme_light]
+bg = "#e2e5ca"           # base00, background
+bg_alt = "#bcbfa4"       # base01
+surface = "#979a7e"      # base02
+overlay = "#73765a"      # base03
+muted = "#324490"        # base04
+fg = "#002a83"           # base05, foreground
+fg_bright = "#0000e4"    # base06
+white = "#080500"        # base07
+yellow = "#5e2200"       # base08
+orange = "#a86400"       # base09
+green = "#008818"        # base0A
+green_bright = "#004500" # base0B
+purple = "#b34aad"       # base0C
+blue = "#004b76"         # base0D
+pink = "#7d0077"         # base0E
+cyan = "#0086ae"         # base0F
+
 [aws]
 format = '[$symbol(profile: "$profile" )(\(region: $region\) )]($style)'
 disabled = false
@@ -160,6 +198,7 @@ symbol = " "
 symbol = " "
 
 [git_branch]
+style = "bold underline white"
 symbol = " "
 
 [git_commit]
