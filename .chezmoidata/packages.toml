@@ -4,8 +4,6 @@
 [packages.brews]
 packages = [
     "git",
-    "gcc",
-    "make",
     "unzip",
     "nushell",
     "nvim",
