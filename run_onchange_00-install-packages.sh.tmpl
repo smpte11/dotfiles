@@ -20,6 +20,27 @@ EOF
     echo "Brew packages installed successfully"
 else
     echo "Homebrew not found, skipping brew packages"
+
+    # Helper for sudo
+    SUDO=""
+    if [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1; then
+        SUDO="sudo"
+    fi
+
+    # Fallback to system package manager for essentials
+    if command -v apt-get >/dev/null 2>&1; then
+        echo "Installing essentials via apt-get..."
+        $SUDO apt-get update && $SUDO apt-get install -y git gcc make curl ca-certificates unzip
+    elif command -v apk >/dev/null 2>&1; then
+        echo "Installing essentials via apk..."
+        $SUDO apk add git gcc make curl ca-certificates unzip
+    elif command -v dnf >/dev/null 2>&1; then
+        echo "Installing essentials via dnf..."
+        $SUDO dnf install -y git gcc make curl ca-certificates unzip
+    elif command -v pacman >/dev/null 2>&1; then
+        echo "Installing essentials via pacman..."
+        $SUDO pacman -Syu --noconfirm git gcc make curl ca-certificates unzip
+    fi
 fi
 
 # Install flatpak packages (Bazzite/Bluefin only)
