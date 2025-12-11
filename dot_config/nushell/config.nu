@@ -22,6 +22,7 @@ source ~/.cache/carapace/init.nu
 source ~/.local/share/atuin/init.nu
 
 $env.STARSHIP_CONFIG = $"($env.HOME)/.config/starship/.starship.toml"
+$env.config.edit_mode = 'vi'
 
 mkdir ($nu.data-dir | path join "vendor/autoload")
 starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")

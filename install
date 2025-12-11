@@ -1,0 +1,166 @@
+#!/usr/bin/env bash
+# Make install script robust for both vscode and root users; configure brew shellenv for bash/zsh;
+# non-interactive chezmoi apply; avoid hardcoded paths
+
+set -euo pipefail
+
+# Detect platform
+OS="$(uname -s)"
+
+# Detect current user and home
+USER_NAME="$(id -un)"
+USER_HOME="${HOME}"
+
+# Utilities
+have() { command -v "$1" >/dev/null 2>&1; }
+
+apt_install() {
+  local pkgs=("$@")
+  if have apt-get; then
+    if have sudo && [ "$(id -u)" -ne 0 ]; then
+      sudo apt-get update -y
+      sudo apt-get install -y "${pkgs[@]}"
+    else
+      apt-get update -y || true
+      apt-get install -y "${pkgs[@]}"
+    fi
+  fi
+}
+
+# Configure Homebrew for current user without hardcoding paths
+configure_brew() {
+  local brew_bin=""
+  local hb_prefix=""
+
+  if [ "$OS" = "Darwin" ]; then
+    # Apple Silicon default
+    hb_prefix="/opt/homebrew"
+    if [ -x "$hb_prefix/bin/brew" ]; then
+      brew_bin="$hb_prefix/bin/brew"
+    elif have brew; then
+      brew_bin="$(command -v brew)"
+    fi
+    # If brew not present, install macOS Homebrew
+    if [ -z "$brew_bin" ]; then
+      NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      if [ -x "$hb_prefix/bin/brew" ]; then
+        brew_bin="$hb_prefix/bin/brew"
+      elif have brew; then
+        brew_bin="$(command -v brew)"
+      fi
+    fi
+  else
+    # Linuxbrew default
+    hb_prefix="/home/linuxbrew/.linuxbrew"
+    if [ -x "$hb_prefix/bin/brew" ]; then
+      brew_bin="$hb_prefix/bin/brew"
+    elif have brew; then
+      brew_bin="$(command -v brew)"
+    fi
+    # If brew not present, install Linuxbrew
+    if [ -z "$brew_bin" ]; then
+      NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      if [ -x "$hb_prefix/bin/brew" ]; then
+        brew_bin="$hb_prefix/bin/brew"
+      elif have brew; then
+        brew_bin="$(command -v brew)"
+      fi
+    fi
+  fi
+
+  # If we now have brew, set up shellenv and rc files
+  if [ -n "$brew_bin" ]; then
+    # Make current shell aware for subsequent steps
+    eval "$("$brew_bin" shellenv)"
+
+    local shellenv_eval='eval "$('"$brew_bin"' shellenv)"'
+
+    # Update bashrc
+    if [ -f "$USER_HOME/.bashrc" ] || [ "${SHELL##*/}" = "bash" ]; then
+      if ! grep -qs 'brew shellenv' "$USER_HOME/.bashrc"; then
+        echo >> "$USER_HOME/.bashrc"
+        echo "$shellenv_eval" >> "$USER_HOME/.bashrc"
+      fi
+    fi
+
+    # Update zshrc
+    if [ -f "$USER_HOME/.zshrc" ] || [ "${SHELL##*/}" = "zsh" ]; then
+      if ! grep -qs 'brew shellenv' "$USER_HOME/.zshrc"; then
+        echo >> "$USER_HOME/.zshrc"
+        echo "$shellenv_eval" >> "$USER_HOME/.zshrc"
+      fi
+    fi
+
+    # Base toolchain on Linux
+    if [ "$OS" != "Darwin" ]; then
+      apt_install build-essential || true
+      "$brew_bin" install gcc || true
+    fi
+  fi
+}
+
+# Ensure chezmoi available; install if missing without hardcoding paths
+ensure_chezmoi() {
+  if ! have chezmoi; then
+    # Try Homebrew if available
+    if have brew; then
+      brew install chezmoi
+    elif [ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+      /home/linuxbrew/.linuxbrew/bin/brew install chezmoi
+    else
+      # Fallback to official script to user's local bin
+      local bin_dir="$USER_HOME/.local/bin"
+      mkdir -p "$bin_dir"
+      if have curl; then
+        sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$bin_dir"
+      elif have wget; then
+        sh -c "$(wget -qO- get.chezmoi.io)" -- -b "$bin_dir"
+      else
+        echo "chezmoi install requires curl or wget" >&2
+        exit 1
+      fi
+      export PATH="$bin_dir:$PATH"
+    fi
+  fi
+}
+
+# Apply dotfiles non-interactively
+apply_dotfiles() {
+  # Resolve source dir:
+  # 1) Use the directory containing this script (common chezmoi pattern)
+  # 2) Else use $HOME/dotfiles if present
+  # 3) Else fall back to default chezmoi source
+  local script_path
+  script_path="$(command -v -- "$0")"
+  local script_dir
+  script_dir="$(cd -P -- "$(dirname -- "$script_path")" && pwd -P)"
+
+  local source_dir="$script_dir"
+  if [ ! -d "$source_dir" ] || [ ! -f "$source_dir/README.md" ] && [ ! -d "$source_dir/.git" ]; then
+    if [ -d "$USER_HOME/dotfiles" ]; then
+      source_dir="$USER_HOME/dotfiles"
+    else
+      source_dir="$USER_HOME/.local/share/chezmoi"
+    fi
+  fi
+
+  # Initialize and apply without prompts; prefer repo on conflicts
+  # Note: chezmoi init will set the source but not fail if already initialized
+  if have chezmoi; then
+    chezmoi init --source="$source_dir" || true
+    chezmoi apply --force
+  else
+    echo "chezmoi not found after installation step" >&2
+    exit 1
+  fi
+}
+
+main() {
+  configure_brew
+  ensure_chezmoi
+  apply_dotfiles
+
+  echo "Bootstrap completed for user '$USER_NAME' on '$OS' with HOME '$USER_HOME'."
+}
+
+main "$@"

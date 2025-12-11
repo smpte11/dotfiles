@@ -27,6 +27,8 @@ packages = [
     "git-delta",
     "glow",
     "mob",
+    "just",
+    "mise",
 ]
 
 [packages.casks]
