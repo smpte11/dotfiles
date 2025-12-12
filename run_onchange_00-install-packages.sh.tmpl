@@ -4,6 +4,40 @@ set -eufo pipefail
 
 echo "Installing packages declaratively..."
 
+# Install native Linux packages
+{{ if eq .chezmoi.os "linux" -}}
+echo "Installing native Linux packages..."
+packages="{{ .packages.linux.packages | join " " }}"
+
+if [ -n "$packages" ]; then
+    if command -v apt-get >/dev/null 2>&1; then
+        # Debian/Ubuntu
+        if [ "$(id -u)" -ne 0 ]; then SUDO="sudo"; else SUDO=""; fi
+        $SUDO apt-get update
+        $SUDO apt-get install -y $packages
+    elif command -v dnf >/dev/null 2>&1; then
+        # Fedora/RHEL
+        if [ "$(id -u)" -ne 0 ]; then SUDO="sudo"; else SUDO=""; fi
+        $SUDO dnf install -y $packages
+    elif command -v pacman >/dev/null 2>&1; then
+        # Arch Linux
+        if [ "$(id -u)" -ne 0 ]; then SUDO="sudo"; else SUDO=""; fi
+        $SUDO pacman -Syu --noconfirm $packages
+    elif command -v apk >/dev/null 2>&1; then
+        # Alpine Linux
+        if [ "$(id -u)" -ne 0 ]; then SUDO="sudo"; else SUDO=""; fi
+        $SUDO apk update
+        $SUDO apk add $packages
+    elif command -v zypper >/dev/null 2>&1; then
+        # openSUSE
+        if [ "$(id -u)" -ne 0 ]; then SUDO="sudo"; else SUDO=""; fi
+        $SUDO zypper install -y $packages
+    else
+        echo "No supported package manager found. Skipping native packages: $packages"
+    fi
+fi
+{{ end -}}
+
 # Install brew packages (available on both macOS and Linux)
 if command -v brew >/dev/null 2>&1; then
     echo "Installing brew packages..."

@@ -39,5 +39,8 @@ packages = ["lm-studio"]
 [packages.flatpaks]
 packages = ["com.bitwarden.desktop", "it.mijorus.gearlever"]
 
+[packages.linux]
+packages = ["gcc", "make", "unzip", "curl", "wget"]
+
 [packages.npm]
 packages = ["@devcontainers/cli"]
