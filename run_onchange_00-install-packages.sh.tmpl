@@ -17,9 +17,13 @@ if command -v apt-get >/dev/null 2>&1; then
     $SUDO apt-get install -y build-essential $packages
 elif command -v dnf >/dev/null 2>&1; then
     # Fedora/RHEL
-    if [ "$(id -u)" -ne 0 ]; then SUDO="sudo"; else SUDO=""; fi
-    $SUDO dnf groupinstall -y "Development Tools"
-    $SUDO dnf install -y $packages
+    if command -v rpm-ostree >/dev/null 2>&1; then
+        echo "rpm-ostree detected, skipping dnf."
+    else
+        if [ "$(id -u)" -ne 0 ]; then SUDO="sudo"; else SUDO=""; fi
+        $SUDO dnf groupinstall -y "Development Tools"
+        $SUDO dnf install -y $packages
+    fi
 elif command -v apk >/dev/null 2>&1; then
     # Alpine Linux
     if [ "$(id -u)" -ne 0 ]; then SUDO="sudo"; else SUDO=""; fi

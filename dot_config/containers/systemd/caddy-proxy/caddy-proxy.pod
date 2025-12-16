@@ -1,0 +1,8 @@
+[Pod]
+PodName=caddy-proxy
+PublishPort=80:80
+PublishPort=443:443
+PublishPort=443:443/udp
+
+[Install]
+WantedBy=default.target

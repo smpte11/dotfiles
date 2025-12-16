@@ -31,6 +31,7 @@ packages = [
     "mob",
     "just",
     "mise",
+    "podlet",
 ]
 
 [packages.casks]
@@ -38,7 +39,6 @@ packages = ["lm-studio"]
 
 [packages.flatpaks]
 packages = ["com.bitwarden.desktop", "it.mijorus.gearlever"]
-
 
 
 [packages.linux]

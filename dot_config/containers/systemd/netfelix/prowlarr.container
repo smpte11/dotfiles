@@ -1,0 +1,14 @@
+[Container]
+ContainerName=prowlarr
+Environment=PUID=0 PGID=0 TZ=Europe/Stockholm
+Image=lscr.io/linuxserver/prowlarr:latest
+PublishPort=9696:9696
+Volume=/home/fbrousseau/.config/prowlarr:/config:Z
+Network=host
+Pod=netfelix.pod
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

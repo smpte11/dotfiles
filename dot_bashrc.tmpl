@@ -46,6 +46,7 @@ test -f /usr/share/ublue-os/bling/bling.sh && source /usr/share/ublue-os/bling/b
 
 # ALIASES
 alias gearlever='flatpak run it.mijorus.gearlever'
+alias update-mlib="systemctl --user restart plex.service && systemctl --user restart jellyfin.service"
 
 PATH=$PATH:~/.filen-cli/bin
 

@@ -1,0 +1,13 @@
+[Container]
+ContainerName=flaresolverr
+Environment=TZ=Europe/Stockholm LOG_LEVEL=info LOG_HTML=false CAPTCHA_SOLVER=none
+Image=ghcr.io/flaresolverr/flaresolverr:latest
+PublishPort=8191:8191
+Network=host
+Pod=netfelix.pod
+
+[Service]
+Restart=unless-stopped
+
+[Install]
+WantedBy=default.target

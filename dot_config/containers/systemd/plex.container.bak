@@ -1,0 +1,17 @@
+[Container]
+ContainerName=plex
+Environment=TZ=Etc/UTC
+Image=docker.io/plexinc/pms-docker
+Label=io.containers.autoupdate=registry
+PublishPort=32400:32400/tcp
+Volume=plex-config:/config:z
+Volume=plex-transcode:/transcode:z
+Volume=/var/home/fbrousseau/Videos:/videos:z
+Network=host
+Pod=netfelix.pod
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

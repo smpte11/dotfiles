@@ -1,0 +1,16 @@
+[Container]
+ContainerName=radarr
+Image=lscr.io/linuxserver/radarr:latest
+Label=io.containers.autoupdate=registry
+PublishPort=7878:7878/tcp
+Environment=PUID=0 PGID=0 TZ=Europe/Stockholm
+Volume=/home/fbrousseau/.config/radarr:/config:Z
+Volume=/run/media/system/media:/data:z
+Network=host
+Pod=netfelix.pod
+
+[Service]
+Restart=unless-stopped
+
+[Install]
+WantedBy=default.target

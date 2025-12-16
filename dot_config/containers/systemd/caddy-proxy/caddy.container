@@ -1,0 +1,9 @@
+[Container]
+Image=docker.io/library/caddy:2.10.2-alpine
+Volume=./Caddyfile:/etc/caddy/Caddyfile:Z
+Volume=caddy_data:/data
+Volume=caddy_config:/config
+Pod=caddy-poxy.pod
+
+[Service]
+Restart=unless-stopped

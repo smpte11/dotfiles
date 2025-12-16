@@ -1,0 +1,21 @@
+# jellyseerr.container
+[Container]
+ContainerName=jellyseerr
+Environment=LOG_LEVEL=debug TZ=Europe/Stockholm PORT=5055
+Image=ghcr.io/fallenbagel/jellyseerr:latest
+Label=io.containers.autoupdate=registry
+PublishPort=5055:5055
+RunInit=true
+Volume=/home/fbrousseau/.config/jellyseerr:/app/config:Z
+Network=host
+Pod=netfelix.pod
+
+[Service]
+Restart=always
+
+[Unit]
+After=jellyfin.container
+Requires=jellyfin.container
+
+[Install]
+WantedBy=default.target
