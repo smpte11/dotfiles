@@ -48,6 +48,16 @@ brew {{ . | quote }}
 cask {{ . | quote }}
 {{ end -}}
 {{ end -}}
+{{ if stat "/etc/arch-release" -}}
+{{ range .packages.brews.arch -}}
+brew {{ . | quote }}
+{{ end -}}
+{{ end -}}
+{{ if or (contains "bazzite" .chezmoi.hostname) (contains "bluefin" .chezmoi.hostname) -}}
+{{ range .packages.brews.bazzite -}}
+brew {{ . | quote }}
+{{ end -}}
+{{ end -}}
 EOF
     echo "Brew packages installed successfully"
 else

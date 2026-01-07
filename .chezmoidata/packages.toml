@@ -32,6 +32,8 @@ packages = [
     "mise",
     "podlet",
 ]
+arch = ["podman"]
+bazzite = []
 
 [packages.casks]
 packages = ["lm-studio"]
