@@ -3,7 +3,6 @@
 
 [packages.brews]
 packages = [
-    "git",
     "unzip",
     "nushell",
     "nvim",
@@ -42,7 +41,7 @@ packages = ["com.bitwarden.desktop", "it.mijorus.gearlever"]
 
 
 [packages.linux]
-packages = ["unzip", "curl", "wget"]
+packages = ["unzip", "curl", "wget", "git"]
 
 [packages.npm]
 packages = ["@devcontainers/cli"]
