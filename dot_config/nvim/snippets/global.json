@@ -1,0 +1,271 @@
+{
+  "Date Today": {
+    "prefix": "date",
+    "body": [
+      "$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE"
+    ],
+    "description": "Insert current date (YYYY-MM-DD)"
+  },
+
+  "Date Time": {
+    "prefix": "datetime",
+    "body": [
+      "$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND"
+    ],
+    "description": "Insert current date and time"
+  },
+
+  "ISO Date": {
+    "prefix": "isodate",
+    "body": [
+      "$CURRENT_YEAR-$CURRENT_MONTH-${CURRENT_DATE}T$CURRENT_HOUR:$CURRENT_MINUTE:${CURRENT_SECOND}Z"
+    ],
+    "description": "Insert ISO 8601 date format"
+  },
+
+  "TODO Comment": {
+    "prefix": "todo",
+    "body": [
+      "// TODO: ${1:Description}"
+    ],
+    "description": "TODO comment"
+  },
+
+  "FIXME Comment": {
+    "prefix": "fixme",
+    "body": [
+      "// FIXME: ${1:Description}"
+    ],
+    "description": "FIXME comment"
+  },
+
+  "NOTE Comment": {
+    "prefix": "note",
+    "body": [
+      "// NOTE: ${1:Description}"
+    ],
+    "description": "NOTE comment"
+  },
+
+  "HACK Comment": {
+    "prefix": "hack",
+    "body": [
+      "// HACK: ${1:Description}"
+    ],
+    "description": "HACK comment"
+  },
+
+  "Box Comment": {
+    "prefix": "box",
+    "body": [
+      "/*",
+      " * ${1:Title}",
+      " * ${2:Description}",
+      " */"
+    ],
+    "description": "Box comment block"
+  },
+
+  "Header Comment": {
+    "prefix": "header",
+    "body": [
+      "/**",
+      " * ${1:Title}",
+      " *",
+      " * @author ${2:Your Name}",
+      " * @date $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE",
+      " * @description ${3:Description}",
+      " */"
+    ],
+    "description": "File header comment"
+  },
+
+  "UUID": {
+    "prefix": "uuid",
+    "body": [
+      "${1:$UUID}"
+    ],
+    "description": "Generate UUID"
+  },
+
+  "Lorem Ipsum": {
+    "prefix": "lorem",
+    "body": [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+    ],
+    "description": "Lorem ipsum text"
+  },
+
+  "Short Lorem": {
+    "prefix": "lorem5",
+    "body": [
+      "Lorem ipsum dolor sit amet consectetur."
+    ],
+    "description": "Short lorem ipsum"
+  },
+
+  "Email": {
+    "prefix": "email",
+    "body": [
+      "${1:name}@${2:domain}.${3:com}"
+    ],
+    "description": "Email template"
+  },
+
+  "URL": {
+    "prefix": "url",
+    "body": [
+      "https://${1:www}.${2:example}.${3:com}"
+    ],
+    "description": "URL template"
+  },
+
+  "Shebang Bash": {
+    "prefix": "shebang",
+    "body": [
+      "#!/bin/bash"
+    ],
+    "description": "Bash shebang"
+  },
+
+  "Shebang Python": {
+    "prefix": "shebangpy",
+    "body": [
+      "#!/usr/bin/env python3"
+    ],
+    "description": "Python shebang"
+  },
+
+  "JSON Template": {
+    "prefix": "json",
+    "body": [
+      "{",
+      "  \"${1:key}\": \"${2:value}\",",
+      "  \"${3:key2}\": ${4:\"value2\"}",
+      "}"
+    ],
+    "description": "JSON object template"
+  },
+
+  "Array/List": {
+    "prefix": "array",
+    "body": [
+      "[",
+      "  ${1:\"item1\"},",
+      "  ${2:\"item2\"},",
+      "  ${3:\"item3\"}",
+      "]"
+    ],
+    "description": "Array/list template"
+  },
+
+  "Git Commit": {
+    "prefix": "commit",
+    "body": [
+      "${1:feat|fix|docs|style|refactor|test|chore}: ${2:brief description}",
+      "",
+      "${3:Detailed description of the change}",
+      "",
+      "${4:Closes #issue_number}"
+    ],
+    "description": "Conventional commit message"
+  },
+
+  "MIT License": {
+    "prefix": "mit",
+    "body": [
+      "MIT License",
+      "",
+      "Copyright (c) $CURRENT_YEAR ${1:Your Name}",
+      "",
+      "Permission is hereby granted, free of charge, to any person obtaining a copy",
+      "of this software and associated documentation files (the \"Software\"), to deal",
+      "in the Software without restriction, including without limitation the rights",
+      "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell",
+      "copies of the Software, and to permit persons to whom the Software is",
+      "furnished to do so, subject to the following conditions:",
+      "",
+      "The above copyright notice and this permission notice shall be included in all",
+      "copies or substantial portions of the Software."
+    ],
+    "description": "MIT License template"
+  },
+
+  "Debug Print": {
+    "prefix": "debug",
+    "body": [
+      "console.log('DEBUG: ${1:variable}', ${1:variable});"
+    ],
+    "description": "Debug print statement"
+  },
+
+  "Time Measurement": {
+    "prefix": "timer",
+    "body": [
+      "console.time('${1:timer}');",
+      "${2:// Code to measure}",
+      "console.timeEnd('${1:timer}');"
+    ],
+    "description": "Time measurement block"
+  },
+
+  "Warning": {
+    "prefix": "warning",
+    "body": [
+      "⚠️  WARNING: ${1:Warning message}"
+    ],
+    "description": "Warning with emoji"
+  },
+
+  "Error": {
+    "prefix": "error",
+    "body": [
+      "❌ ERROR: ${1:Error message}"
+    ],
+    "description": "Error with emoji"
+  },
+
+  "Success": {
+    "prefix": "success",
+    "body": [
+      "✅ SUCCESS: ${1:Success message}"
+    ],
+    "description": "Success with emoji"
+  },
+
+  "Info": {
+    "prefix": "info",
+    "body": [
+      "ℹ️  INFO: ${1:Info message}"
+    ],
+    "description": "Info with emoji"
+  },
+
+  "Section Divider": {
+    "prefix": "divider",
+    "body": [
+      "// ============================================================================",
+      "// ${1:Section Title}",
+      "// ============================================================================"
+    ],
+    "description": "Section divider"
+  },
+
+  "File Path": {
+    "prefix": "filepath",
+    "body": [
+      "${WORKSPACE_NAME}/${TM_DIRECTORY}/${TM_FILENAME}"
+    ],
+    "description": "Current file path"
+  },
+
+  "Author Signature": {
+    "prefix": "signature",
+    "body": [
+      "// Author: ${1:Your Name}",
+      "// Date: $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE",
+      "// File: $TM_FILENAME"
+    ],
+    "description": "Author signature"
+  }
+}

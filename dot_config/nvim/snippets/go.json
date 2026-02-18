@@ -1,0 +1,298 @@
+{
+  "Main Function": {
+    "prefix": "main",
+    "body": [
+      "package main",
+      "",
+      "import \"fmt\"",
+      "",
+      "func main() {",
+      "\t${1:fmt.Println(\"Hello, World!\")}",
+      "}"
+    ],
+    "description": "Main function template"
+  },
+
+  "Function": {
+    "prefix": "func",
+    "body": [
+      "func ${1:functionName}(${2:params}) ${3:returnType} {",
+      "\t${4:// Function body}",
+      "\treturn ${5:result}",
+      "}"
+    ],
+    "description": "Function definition"
+  },
+
+  "Method": {
+    "prefix": "method",
+    "body": [
+      "func (${1:receiver} ${2:ReceiverType}) ${3:MethodName}(${4:params}) ${5:returnType} {",
+      "\t${6:// Method body}",
+      "\treturn ${7:result}",
+      "}"
+    ],
+    "description": "Method definition"
+  },
+
+  "Struct": {
+    "prefix": "struct",
+    "body": [
+      "type ${1:StructName} struct {",
+      "\t${2:Field1} ${3:Type1} `json:\"${4:field1}\"`",
+      "\t${5:Field2} ${6:Type2} `json:\"${7:field2}\"`",
+      "}"
+    ],
+    "description": "Struct definition with JSON tags"
+  },
+
+  "Interface": {
+    "prefix": "interface",
+    "body": [
+      "type ${1:InterfaceName} interface {",
+      "\t${2:MethodName}(${3:params}) ${4:returnType}",
+      "}"
+    ],
+    "description": "Interface definition"
+  },
+
+  "If Error": {
+    "prefix": "iferr",
+    "body": [
+      "if err != nil {",
+      "\t${1:return err}",
+      "}"
+    ],
+    "description": "If error check"
+  },
+
+  "Error Handling": {
+    "prefix": "errcheck",
+    "body": [
+      "${1:result}, err := ${2:functionCall}()",
+      "if err != nil {",
+      "\t${3:return nil, err}",
+      "}",
+      "${4:// Use result}"
+    ],
+    "description": "Error handling pattern"
+  },
+
+  "For Loop": {
+    "prefix": "for",
+    "body": [
+      "for ${1:i} := ${2:0}; ${1:i} < ${3:length}; ${1:i}++ {",
+      "\t${4:// Loop body}",
+      "}"
+    ],
+    "description": "For loop"
+  },
+
+  "For Range": {
+    "prefix": "forr",
+    "body": [
+      "for ${1:index, value} := range ${2:slice} {",
+      "\t${3:// Range body}",
+      "}"
+    ],
+    "description": "For range loop"
+  },
+
+  "Goroutine": {
+    "prefix": "go",
+    "body": [
+      "go func() {",
+      "\t${1:// Goroutine body}",
+      "}()"
+    ],
+    "description": "Anonymous goroutine"
+  },
+
+  "Channel": {
+    "prefix": "chan",
+    "body": [
+      "${1:ch} := make(chan ${2:Type}${3:, bufferSize})"
+    ],
+    "description": "Channel creation"
+  },
+
+  "Select": {
+    "prefix": "select",
+    "body": [
+      "select {",
+      "case ${1:value} := <-${2:channel1}:",
+      "\t${3:// Handle value}",
+      "case ${4:channel2} <- ${5:value}:",
+      "\t${6:// Send value}",
+      "default:",
+      "\t${7:// Default case}",
+      "}"
+    ],
+    "description": "Select statement"
+  },
+
+  "HTTP Handler": {
+    "prefix": "httphandler",
+    "body": [
+      "func ${1:handlerName}(w http.ResponseWriter, r *http.Request) {",
+      "\t${2:// Handler logic}",
+      "\tw.Header().Set(\"Content-Type\", \"application/json\")",
+      "\tw.WriteHeader(http.StatusOK)",
+      "\tjson.NewEncoder(w).Encode(${3:response})",
+      "}"
+    ],
+    "description": "HTTP handler function"
+  },
+
+  "HTTP Server": {
+    "prefix": "httpserver",
+    "body": [
+      "mux := http.NewServeMux()",
+      "mux.HandleFunc(\"${1:/path}\", ${2:handlerFunc})",
+      "",
+      "server := &http.Server{",
+      "\tAddr:    \":${3:8080}\",",
+      "\tHandler: mux,",
+      "}",
+      "",
+      "log.Fatal(server.ListenAndServe())"
+    ],
+    "description": "Basic HTTP server setup"
+  },
+
+  "JSON Marshal": {
+    "prefix": "jsonmarshal",
+    "body": [
+      "${1:data}, err := json.Marshal(${2:object})",
+      "if err != nil {",
+      "\treturn err",
+      "}"
+    ],
+    "description": "JSON marshal with error handling"
+  },
+
+  "JSON Unmarshal": {
+    "prefix": "jsonunmarshal",
+    "body": [
+      "var ${1:result} ${2:StructType}",
+      "err := json.Unmarshal(${3:data}, &${1:result})",
+      "if err != nil {",
+      "\treturn err",
+      "}"
+    ],
+    "description": "JSON unmarshal with error handling"
+  },
+
+  "Test Function": {
+    "prefix": "test",
+    "body": [
+      "func Test${1:FunctionName}(t *testing.T) {",
+      "\t${2:// Test setup}",
+      "\tgot := ${3:functionCall}()",
+      "\twant := ${4:expectedResult}",
+      "",
+      "\tif got != want {",
+      "\t\tt.Errorf(\"got %v, want %v\", got, want)",
+      "\t}",
+      "}"
+    ],
+    "description": "Test function template"
+  },
+
+  "Benchmark": {
+    "prefix": "benchmark",
+    "body": [
+      "func Benchmark${1:FunctionName}(b *testing.B) {",
+      "\tfor i := 0; i < b.N; i++ {",
+      "\t\t${2:functionToTest}()",
+      "\t}",
+      "}"
+    ],
+    "description": "Benchmark function"
+  },
+
+  "Switch": {
+    "prefix": "switch",
+    "body": [
+      "switch ${1:variable} {",
+      "case ${2:value1}:",
+      "\t${3:action1}",
+      "case ${4:value2}:",
+      "\t${5:action2}",
+      "default:",
+      "\t${6:defaultAction}",
+      "}"
+    ],
+    "description": "Switch statement"
+  },
+
+  "Type Switch": {
+    "prefix": "typeswitch",
+    "body": [
+      "switch ${1:v} := ${2:interface}.(type) {",
+      "case ${3:Type1}:",
+      "\t${4:// Handle Type1}",
+      "case ${5:Type2}:",
+      "\t${6:// Handle Type2}",
+      "default:",
+      "\t${7:// Handle unknown type}",
+      "}"
+    ],
+    "description": "Type switch"
+  },
+
+  "Defer": {
+    "prefix": "defer",
+    "body": [
+      "defer func() {",
+      "\t${1:// Cleanup code}",
+      "}()"
+    ],
+    "description": "Defer statement"
+  },
+
+  "Context": {
+    "prefix": "context",
+    "body": [
+      "ctx, cancel := context.WithTimeout(context.Background(), ${1:10*time.Second})",
+      "defer cancel()",
+      "",
+      "${2:// Use context}"
+    ],
+    "description": "Context with timeout"
+  },
+
+  "WaitGroup": {
+    "prefix": "waitgroup",
+    "body": [
+      "var wg sync.WaitGroup",
+      "",
+      "for ${1:i} := 0; ${1:i} < ${2:numGoroutines}; ${1:i}++ {",
+      "\twg.Add(1)",
+      "\tgo func(${3:param} ${4:Type}) {",
+      "\t\tdefer wg.Done()",
+      "\t\t${5:// Goroutine work}",
+      "\t}(${6:argument})",
+      "}",
+      "",
+      "wg.Wait()"
+    ],
+    "description": "WaitGroup pattern"
+  },
+
+  "Slice Declaration": {
+    "prefix": "slice",
+    "body": [
+      "${1:slice} := make([]${2:Type}, ${3:length}, ${4:capacity})"
+    ],
+    "description": "Slice declaration"
+  },
+
+  "Map Declaration": {
+    "prefix": "map",
+    "body": [
+      "${1:mapVar} := make(map[${2:KeyType}]${3:ValueType})"
+    ],
+    "description": "Map declaration"
+  }
+}

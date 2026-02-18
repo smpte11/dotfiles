@@ -1,0 +1,310 @@
+{
+  "Function Declaration": {
+    "prefix": "function",
+    "body": [
+      "function ${1:functionName}(${2:params}): ${3:returnType} {",
+      "  ${4:// Function body}",
+      "  return ${5:result};",
+      "}"
+    ],
+    "description": "Function declaration with types"
+  },
+
+  "Arrow Function": {
+    "prefix": "arrow",
+    "body": [
+      "const ${1:functionName} = (${2:params}): ${3:returnType} => {",
+      "  ${4:// Function body}",
+      "  return ${5:result};",
+      "};"
+    ],
+    "description": "Arrow function with types"
+  },
+
+  "Interface": {
+    "prefix": "interface",
+    "body": [
+      "interface ${1:InterfaceName} {",
+      "  ${2:property1}: ${3:Type1};",
+      "  ${4:property2}: ${5:Type2};",
+      "  ${6:method}(${7:params}): ${8:ReturnType};",
+      "}"
+    ],
+    "description": "Interface definition"
+  },
+
+  "Type Alias": {
+    "prefix": "type",
+    "body": [
+      "type ${1:TypeName} = ${2:Type};"
+    ],
+    "description": "Type alias"
+  },
+
+  "Class": {
+    "prefix": "class",
+    "body": [
+      "class ${1:ClassName} {",
+      "  private ${2:property}: ${3:Type};",
+      "",
+      "  constructor(${4:params}) {",
+      "    this.${2:property} = ${5:value};",
+      "  }",
+      "",
+      "  public ${6:method}(${7:params}): ${8:ReturnType} {",
+      "    ${9:// Method body}",
+      "    return ${10:result};",
+      "  }",
+      "}"
+    ],
+    "description": "Class with constructor and method"
+  },
+
+  "Abstract Class": {
+    "prefix": "abstract class",
+    "body": [
+      "abstract class ${1:AbstractClassName} {",
+      "  protected ${2:property}: ${3:Type};",
+      "",
+      "  constructor(${4:params}) {",
+      "    this.${2:property} = ${5:value};",
+      "  }",
+      "",
+      "  abstract ${6:abstractMethod}(${7:params}): ${8:ReturnType};",
+      "",
+      "  protected ${9:concreteMethod}(): ${10:ReturnType} {",
+      "    ${11:// Method body}",
+      "    return ${12:result};",
+      "  }",
+      "}"
+    ],
+    "description": "Abstract class with abstract and concrete methods"
+  },
+
+  "Enum": {
+    "prefix": "enum",
+    "body": [
+      "enum ${1:EnumName} {",
+      "  ${2:VALUE1} = '${3:value1}',",
+      "  ${4:VALUE2} = '${5:value2}',",
+      "  ${6:VALUE3} = '${7:value3}',",
+      "}"
+    ],
+    "description": "String enum"
+  },
+
+  "Generic Function": {
+    "prefix": "generic",
+    "body": [
+      "function ${1:functionName}<${2:T}>(${3:param}: ${2:T}): ${2:T} {",
+      "  ${4:// Function body}",
+      "  return ${3:param};",
+      "}"
+    ],
+    "description": "Generic function"
+  },
+
+  "Promise": {
+    "prefix": "promise",
+    "body": [
+      "const ${1:promiseFunction} = (): Promise<${2:Type}> => {",
+      "  return new Promise((resolve, reject) => {",
+      "    ${3:// Async operation}",
+      "    try {",
+      "      const result = ${4:operation};",
+      "      resolve(result);",
+      "    } catch (error) {",
+      "      reject(error);",
+      "    }",
+      "  });",
+      "};"
+    ],
+    "description": "Promise function"
+  },
+
+  "Async Function": {
+    "prefix": "async",
+    "body": [
+      "async function ${1:functionName}(${2:params}): Promise<${3:ReturnType}> {",
+      "  try {",
+      "    const ${4:result} = await ${5:asyncOperation};",
+      "    return ${4:result};",
+      "  } catch (error) {",
+      "    ${6:// Error handling}",
+      "    throw error;",
+      "  }",
+      "}"
+    ],
+    "description": "Async function with error handling"
+  },
+
+  "Try Catch": {
+    "prefix": "try",
+    "body": [
+      "try {",
+      "  ${1:// Try block}",
+      "} catch (error) {",
+      "  ${2:// Error handling}",
+      "  console.error(error);",
+      "} finally {",
+      "  ${3:// Finally block}",
+      "}"
+    ],
+    "description": "Try-catch-finally block"
+  },
+
+  "React Component": {
+    "prefix": "rfc",
+    "body": [
+      "import React from 'react';",
+      "",
+      "interface ${1:ComponentName}Props {",
+      "  ${2:prop1}: ${3:Type1};",
+      "  ${4:prop2}: ${5:Type2};",
+      "}",
+      "",
+      "const ${1:ComponentName}: React.FC<${1:ComponentName}Props> = ({ ${6:prop1, prop2} }) => {",
+      "  ${7:// Component logic}",
+      "",
+      "  return (",
+      "    <div>",
+      "      ${8:// JSX content}",
+      "    </div>",
+      "  );",
+      "};",
+      "",
+      "export default ${1:ComponentName};"
+    ],
+    "description": "React functional component with props"
+  },
+
+  "React Hook": {
+    "prefix": "hook",
+    "body": [
+      "import { useState, useEffect } from 'react';",
+      "",
+      "export const use${1:HookName} = (${2:params}): ${3:ReturnType} => {",
+      "  const [${4:state}, set${5:State}] = useState<${6:StateType}>(${7:initialValue});",
+      "",
+      "  useEffect(() => {",
+      "    ${8:// Effect logic}",
+      "  }, [${9:dependencies}]);",
+      "",
+      "  return { ${4:state}, set${5:State} };",
+      "};"
+    ],
+    "description": "Custom React hook"
+  },
+
+  "API Call": {
+    "prefix": "api",
+    "body": [
+      "const ${1:apiFunction} = async (${2:params}): Promise<${3:ResponseType}> => {",
+      "  const response = await fetch('${4:api_url}', {",
+      "    method: '${5:GET}',",
+      "    headers: {",
+      "      'Content-Type': 'application/json',",
+      "      ${6:// Additional headers}",
+      "    },",
+      "    ${7:body: JSON.stringify(data),}",
+      "  });",
+      "",
+      "  if (!response.ok) {",
+      "    throw new Error(`HTTP error! status: ${response.status}`);",
+      "  }",
+      "",
+      "  return response.json() as ${3:ResponseType};",
+      "};"
+    ],
+    "description": "API call function"
+  },
+
+  "Utility Type": {
+    "prefix": "utility",
+    "body": [
+      "type ${1:UtilityName}<T> = {",
+      "  ${2:[K in keyof T]: T[K] extends string ? number : T[K];}",
+      "};"
+    ],
+    "description": "Utility type with mapped types"
+  },
+
+  "Conditional Type": {
+    "prefix": "conditional",
+    "body": [
+      "type ${1:ConditionalType}<T> = T extends ${2:ConditionType} ? ${3:TrueType} : ${4:FalseType};"
+    ],
+    "description": "Conditional type"
+  },
+
+  "Discriminated Union": {
+    "prefix": "union",
+    "body": [
+      "type ${1:UnionName} = ",
+      "  | { type: '${2:TYPE1}'; ${3:property1}: ${4:Type1}; }",
+      "  | { type: '${5:TYPE2}'; ${6:property2}: ${7:Type2}; }",
+      "  | { type: '${8:TYPE3}'; ${9:property3}: ${10:Type3}; };"
+    ],
+    "description": "Discriminated union type"
+  },
+
+  "Module Export": {
+    "prefix": "export",
+    "body": [
+      "export { ${1:exportName} } from './${2:module}';",
+      "export type { ${3:TypeName} } from './${4:typeModule}';"
+    ],
+    "description": "Module exports"
+  },
+
+  "Test Case": {
+    "prefix": "test",
+    "body": [
+      "describe('${1:TestSuiteName}', () => {",
+      "  test('${2:test description}', () => {",
+      "    // Arrange",
+      "    const ${3:input} = ${4:testInput};",
+      "    const ${5:expected} = ${6:expectedOutput};",
+      "",
+      "    // Act",
+      "    const ${7:result} = ${8:functionToTest}(${3:input});",
+      "",
+      "    // Assert",
+      "    expect(${7:result}).toBe(${5:expected});",
+      "  });",
+      "});"
+    ],
+    "description": "Jest test case"
+  },
+
+  "Decorator": {
+    "prefix": "decorator",
+    "body": [
+      "function ${1:DecoratorName}(${2:params}) {",
+      "  return function <T extends { new (...args: any[]): {} }>(constructor: T) {",
+      "    return class extends constructor {",
+      "      ${3:// Decorator logic}",
+      "    };",
+      "  };",
+      "}"
+    ],
+    "description": "Class decorator"
+  },
+
+  "Namespace": {
+    "prefix": "namespace",
+    "body": [
+      "namespace ${1:NamespaceName} {",
+      "  export interface ${2:InterfaceName} {",
+      "    ${3:property}: ${4:Type};",
+      "  }",
+      "",
+      "  export function ${5:functionName}(${6:params}): ${7:ReturnType} {",
+      "    ${8:// Function body}",
+      "    return ${9:result};",
+      "  }",
+      "}"
+    ],
+    "description": "Namespace declaration"
+  }
+}

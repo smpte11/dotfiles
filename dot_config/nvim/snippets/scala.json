@@ -1,0 +1,394 @@
+{
+  "Class Definition": {
+    "prefix": "class",
+    "body": [
+      "class ${1:ClassName}(${2:parameters}) {",
+      "  ${3:// Class body}",
+      "}"
+    ],
+    "description": "Class definition"
+  },
+
+  "Case Class": {
+    "prefix": "case class",
+    "body": [
+      "case class ${1:ClassName}(${2:field1}: ${3:Type1}, ${4:field2}: ${5:Type2})"
+    ],
+    "description": "Case class definition"
+  },
+
+  "Object": {
+    "prefix": "object",
+    "body": [
+      "object ${1:ObjectName} {",
+      "  ${2:// Object body}",
+      "}"
+    ],
+    "description": "Object definition"
+  },
+
+  "Main Method": {
+    "prefix": "main",
+    "body": [
+      "def main(args: Array[String]): Unit = {",
+      "  ${1:// Main logic}",
+      "}"
+    ],
+    "description": "Main method"
+  },
+
+  "Function Definition": {
+    "prefix": "def",
+    "body": [
+      "def ${1:functionName}(${2:parameters}): ${3:ReturnType} = {",
+      "  ${4:// Function body}",
+      "}"
+    ],
+    "description": "Function definition"
+  },
+
+  "Lambda": {
+    "prefix": "lambda",
+    "body": [
+      "(${1:x}) => ${2:x * 2}"
+    ],
+    "description": "Lambda expression"
+  },
+
+  "Pattern Match": {
+    "prefix": "match",
+    "body": [
+      "${1:expression} match {",
+      "  case ${2:pattern1} => ${3:result1}",
+      "  case ${4:pattern2} => ${5:result2}",
+      "  case _ => ${6:default}",
+      "}"
+    ],
+    "description": "Pattern matching"
+  },
+
+  "For Comprehension": {
+    "prefix": "for",
+    "body": [
+      "for {",
+      "  ${1:x} <- ${2:collection}",
+      "  ${3:condition}",
+      "} yield ${4:transformation}"
+    ],
+    "description": "For comprehension"
+  },
+
+  "Try-Catch": {
+    "prefix": "try",
+    "body": [
+      "try {",
+      "  ${1:risky_operation}",
+      "} catch {",
+      "  case ${2:ExceptionType}(${3:message}) => ${4:handler}",
+      "  case _ => ${5:default_handler}",
+      "}"
+    ],
+    "description": "Try-catch block"
+  },
+
+  "Option Handling": {
+    "prefix": "option",
+    "body": [
+      "${1:optionValue} match {",
+      "  case Some(${2:value}) => ${3:handle_value}",
+      "  case None => ${4:handle_none}",
+      "}"
+    ],
+    "description": "Option pattern matching"
+  },
+
+  "Iron Refined Type": {
+    "prefix": "iron",
+    "body": [
+      "import io.github.iltotore.iron.*",
+      "",
+      "type ${1:TypeName} = ${2:BaseType} :| ${3:Constraint}",
+      "",
+      "val ${4:value}: ${1:TypeName} = ${5:rawValue}.refine"
+    ],
+    "description": "Iron refinement type definition"
+  },
+
+  "Iron Constraint": {
+    "prefix": "ironconstraint",
+    "body": [
+      "import io.github.iltotore.iron.*",
+      "import io.github.iltotore.iron.constraint.numeric.*",
+      "",
+      "type ${1:PositiveInt} = Int :| Positive",
+      "type ${2:NonEmptyString} = String :| MinLength[1]",
+      "type ${3:ValidEmail} = String :| Match[\"^[\\\\w\\\\.-]+@[\\\\w\\\\.-]+\\\\.[a-zA-Z]{2,}$\"]"
+    ],
+    "description": "Common Iron constraints"
+  },
+
+  "Iron Opaque Type": {
+    "prefix": "ironopaque",
+    "body": [
+      "import io.github.iltotore.iron.*",
+      "",
+      "opaque type ${1:UserId} = Long :| Positive",
+      "",
+      "object ${1:UserId}:",
+      "  def apply(value: Long): Either[String, ${1:UserId}] = value.refineEither",
+      "  def unsafe(value: Long): ${1:UserId} = value.refine"
+    ],
+    "description": "Iron opaque type with smart constructor"
+  },
+
+  "Cats Effect IO": {
+    "prefix": "io",
+    "body": [
+      "import cats.effect.*",
+      "",
+      "def ${1:computation}: IO[${2:ResultType}] = ",
+      "  IO {",
+      "    ${3:side_effect}",
+      "  }.handleError { error =>",
+      "    ${4:fallback}",
+      "  }"
+    ],
+    "description": "Cats Effect IO computation"
+  },
+
+  "Cats Effect Resource": {
+    "prefix": "resource",
+    "body": [
+      "import cats.effect.*",
+      "",
+      "def ${1:resourceName}: Resource[IO, ${2:ResourceType}] =",
+      "  Resource.make(",
+      "    IO(${3:acquire_resource}) // acquire",
+      "  )(",
+      "    ${4:resource} => IO(${5:release_resource}) // release",
+      "  )"
+    ],
+    "description": "Cats Effect Resource"
+  },
+
+  "FS2 Stream": {
+    "prefix": "stream",
+    "body": [
+      "import fs2.*",
+      "import cats.effect.*",
+      "",
+      "val ${1:stream}: Stream[IO, ${2:ElementType}] = ",
+      "  Stream(${3:elements})",
+      "    .evalMap { ${4:element} =>",
+      "      IO(${5:transformation})",
+      "    }",
+      "    .handleErrorWith { ${6:error} =>",
+      "      Stream.emit(${7:fallback})",
+      "    }"
+    ],
+    "description": "FS2 Stream with error handling"
+  },
+
+  "Cats Validated": {
+    "prefix": "validated",
+    "body": [
+      "import cats.data.Validated",
+      "import cats.syntax.all.*",
+      "",
+      "def ${1:validate}(${2:input}: ${3:InputType}): Validated[${4:ErrorType}, ${5:ValidType}] = ",
+      "  (${6:validation1}, ${7:validation2}).mapN { (${8:v1}, ${9:v2}) =>",
+      "    ${10:construct_valid_result}",
+      "  }"
+    ],
+    "description": "Cats Validated for accumulating errors"
+  },
+
+  "Cats EitherT": {
+    "prefix": "eithert",
+    "body": [
+      "import cats.data.EitherT",
+      "import cats.effect.*",
+      "",
+      "def ${1:computation}: EitherT[IO, ${2:ErrorType}, ${3:SuccessType}] = ",
+      "  for {",
+      "    ${4:result1} <- EitherT(${5:operation1})",
+      "    ${6:result2} <- EitherT(${7:operation2})",
+      "  } yield ${8:final_result}"
+    ],
+    "description": "Cats EitherT monad transformer"
+  },
+
+  "Circe Encoder": {
+    "prefix": "encoder",
+    "body": [
+      "import io.circe.*",
+      "import io.circe.syntax.*",
+      "",
+      "given Encoder[${1:TypeName}] = Encoder.instance { ${2:value} =>",
+      "  Json.obj(",
+      "    \"${3:field1}\" -> ${2:value}.${3:field1}.asJson,",
+      "    \"${4:field2}\" -> ${2:value}.${4:field2}.asJson",
+      "  )",
+      "}"
+    ],
+    "description": "Circe JSON encoder"
+  },
+
+  "Circe Decoder": {
+    "prefix": "decoder",
+    "body": [
+      "import io.circe.*",
+      "",
+      "given Decoder[${1:TypeName}] = Decoder.instance { cursor =>",
+      "  for {",
+      "    ${2:field1} <- cursor.downField(\"${2:field1}\").as[${3:Type1}]",
+      "    ${4:field2} <- cursor.downField(\"${4:field2}\").as[${5:Type2}]",
+      "  } yield ${1:TypeName}(${2:field1}, ${4:field2})",
+      "}"
+    ],
+    "description": "Circe JSON decoder"
+  },
+
+  "Http4s Route": {
+    "prefix": "route",
+    "body": [
+      "import org.http4s.*",
+      "import org.http4s.dsl.io.*",
+      "import cats.effect.*",
+      "",
+      "val ${1:routes}: HttpRoutes[IO] = HttpRoutes.of[IO] {",
+      "  case GET -> Root / \"${2:path}\" =>",
+      "    ${3:computation}.flatMap { result =>",
+      "      Ok(result.asJson)",
+      "    }",
+      "",
+      "  case req @ POST -> Root / \"${4:path}\" =>",
+      "    req.as[${5:RequestType}].flatMap { body =>",
+      "      ${6:handle_request}",
+      "    }",
+      "}"
+    ],
+    "description": "Http4s route definition"
+  },
+
+  "Doobie Query": {
+    "prefix": "query",
+    "body": [
+      "import doobie.*",
+      "import doobie.implicits.*",
+      "",
+      "def ${1:queryName}(${2:param}: ${3:ParamType}): Query0[${4:ResultType}] = ",
+      "  sql\"\"\"",
+      "    SELECT ${5:columns}",
+      "    FROM ${6:table_name}",
+      "    WHERE ${7:condition} = $${2:param}",
+      "  \"\"\".query[${4:ResultType}]"
+    ],
+    "description": "Doobie SQL query"
+  },
+
+  "Refined Type (Legacy)": {
+    "prefix": "refined",
+    "body": [
+      "import eu.timepit.refined.*",
+      "import eu.timepit.refined.api.*",
+      "import eu.timepit.refined.numeric.*",
+      "",
+      "type ${1:TypeName} = ${2:BaseType} Refined ${3:Predicate}",
+      "",
+      "val ${4:value}: ${1:TypeName} = refineMV(${5:rawValue})"
+    ],
+    "description": "Refined type (legacy library)"
+  },
+
+  "Given Instance": {
+    "prefix": "given",
+    "body": [
+      "given ${1:InstanceName}: ${2:TypeClass}[${3:Type}] with",
+      "  def ${4:method}(${5:params}): ${6:ReturnType} = ${7:implementation}"
+    ],
+    "description": "Scala 3 given instance"
+  },
+
+  "Extension Method": {
+    "prefix": "extension",
+    "body": [
+      "extension (${1:value}: ${2:Type})",
+      "  def ${3:methodName}(${4:params}): ${5:ReturnType} = ${6:implementation}"
+    ],
+    "description": "Scala 3 extension method"
+  },
+
+  "Trait": {
+    "prefix": "trait",
+    "body": [
+      "trait ${1:TraitName} {",
+      "  def ${2:methodName}(${3:parameters}): ${4:ReturnType}",
+      "}"
+    ],
+    "description": "Trait definition"
+  },
+
+  "Sealed Trait": {
+    "prefix": "sealed trait",
+    "body": [
+      "sealed trait ${1:TraitName}",
+      "case object ${2:CaseObject1} extends ${1:TraitName}",
+      "case class ${3:CaseClass1}(${4:field}: ${5:Type}) extends ${1:TraitName}"
+    ],
+    "description": "Sealed trait with implementations"
+  },
+
+  "Test Spec": {
+    "prefix": "test",
+    "body": [
+      "\"${1:test description}\" should {",
+      "  \"${2:behavior description}\" in {",
+      "    ${3:test_implementation}",
+      "    ${4:actual} shouldBe ${5:expected}",
+      "  }",
+      "}"
+    ],
+    "description": "ScalaTest spec"
+  },
+
+  "Type Alias": {
+    "prefix": "type",
+    "body": [
+      "type ${1:AliasName} = ${2:ActualType}"
+    ],
+    "description": "Type alias"
+  },
+
+  "Higher Kinded Type": {
+    "prefix": "hkt",
+    "body": [
+      "def ${1:methodName}[F[_]: ${2:TypeClass}](${3:param}: F[${4:Type}]): F[${5:ReturnType}] = {",
+      "  ${6:implementation}",
+      "}"
+    ],
+    "description": "Higher kinded type method"
+  },
+
+  "Collection Operations": {
+    "prefix": "collection",
+    "body": [
+      "${1:collection}",
+      "  .filter(${2:predicate})",
+      "  .map(${3:transformation})",
+      "  .fold(${4:initial})(${5:operation})"
+    ],
+    "description": "Common collection operations chain"
+  },
+
+  "Partial Function": {
+    "prefix": "partial",
+    "body": [
+      "val ${1:partialFunc}: PartialFunction[${2:InputType}, ${3:OutputType}] = {",
+      "  case ${4:pattern1} => ${5:result1}",
+      "  case ${6:pattern2} => ${7:result2}",
+      "}"
+    ],
+    "description": "Partial function definition"
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "Function Definition": {
+    "prefix": "def",
+    "body": [
+      "def ${1:function_name}(${2:args}) do",
+      "  ${3:body}",
+      "end"
+    ],
+    "description": "Public function definition"
+  },
+
+  "Private Function": {
+    "prefix": "defp",
+    "body": [
+      "defp ${1:function_name}(${2:args}) do",
+      "  ${3:body}",
+      "end"
+    ],
+    "description": "Private function definition"
+  },
+
+  "Module": {
+    "prefix": "defmodule",
+    "body": [
+      "defmodule ${1:ModuleName} do",
+      "  ${2:@moduledoc \"\"\"",
+      "  ${3:Module description}",
+      "  \"\"\"}",
+      "",
+      "  ${4:# Module content}",
+      "end"
+    ],
+    "description": "Module definition with documentation"
+  },
+
+  "GenServer": {
+    "prefix": "genserver",
+    "body": [
+      "defmodule ${1:ServerName} do",
+      "  use GenServer",
+      "",
+      "  # Client API",
+      "  def start_link(${2:initial_state}) do",
+      "    GenServer.start_link(__MODULE__, ${2:initial_state}, name: __MODULE__)",
+      "  end",
+      "",
+      "  def ${3:get_state}() do",
+      "    GenServer.call(__MODULE__, :get_state)",
+      "  end",
+      "",
+      "  # Server Callbacks",
+      "  @impl true",
+      "  def init(${4:initial_state}) do",
+      "    {:ok, ${4:initial_state}}",
+      "  end",
+      "",
+      "  @impl true",
+      "  def handle_call(:get_state, _from, state) do",
+      "    {:reply, state, state}",
+      "  end",
+      "",
+      "  @impl true",
+      "  def handle_cast(${5:msg}, state) do",
+      "    {:noreply, state}",
+      "  end",
+      "end"
+    ],
+    "description": "Complete GenServer template"
+  },
+
+  "Case": {
+    "prefix": "case",
+    "body": [
+      "case ${1:expression} do",
+      "  ${2:pattern1} -> ${3:result1}",
+      "  ${4:pattern2} -> ${5:result2}",
+      "  _ -> ${6:default_result}",
+      "end"
+    ],
+    "description": "Case expression"
+  },
+
+  "Cond": {
+    "prefix": "cond",
+    "body": [
+      "cond do",
+      "  ${1:condition1} -> ${2:result1}",
+      "  ${3:condition2} -> ${4:result2}",
+      "  true -> ${5:default_result}",
+      "end"
+    ],
+    "description": "Cond expression"
+  },
+
+  "With": {
+    "prefix": "with",
+    "body": [
+      "with ${1:{:ok, result1} <- expression1},",
+      "     ${2:{:ok, result2} <- expression2} do",
+      "  ${3:success_case}",
+      "else",
+      "  ${4:error_pattern} -> ${5:error_handling}",
+      "end"
+    ],
+    "description": "With expression for happy path"
+  },
+
+  "Test": {
+    "prefix": "test",
+    "body": [
+      "test \"${1:test description}\" do",
+      "  ${2:# Test implementation}",
+      "  assert ${3:actual} == ${4:expected}",
+      "end"
+    ],
+    "description": "ExUnit test case"
+  },
+
+  "Describe Block": {
+    "prefix": "describe",
+    "body": [
+      "describe \"${1:description}\" do",
+      "  ${2:# Test cases}",
+      "end"
+    ],
+    "description": "ExUnit describe block"
+  },
+
+  "Pipe": {
+    "prefix": "pipe",
+    "body": [
+      "${1:data}",
+      "|> ${2:function1}()",
+      "|> ${3:function2}()",
+      "|> ${4:function3}()"
+    ],
+    "description": "Pipe operator chain"
+  },
+
+  "Map Update": {
+    "prefix": "mapupdate",
+    "body": [
+      "%{${1:map} | ${2:key} => ${3:value}}"
+    ],
+    "description": "Map update syntax"
+  },
+
+  "Struct Definition": {
+    "prefix": "defstruct",
+    "body": [
+      "defstruct ${1:field1}: ${2:default1}, ${3:field2}: ${4:default2}"
+    ],
+    "description": "Struct definition"
+  },
+
+  "Protocol Definition": {
+    "prefix": "defprotocol",
+    "body": [
+      "defprotocol ${1:ProtocolName} do",
+      "  @doc \"${2:Protocol description}\"",
+      "  def ${3:function_name}(${4:data})",
+      "end"
+    ],
+    "description": "Protocol definition"
+  },
+
+  "Protocol Implementation": {
+    "prefix": "defimpl",
+    "body": [
+      "defimpl ${1:ProtocolName}, for: ${2:DataType} do",
+      "  def ${3:function_name}(${4:data}) do",
+      "    ${5:implementation}",
+      "  end",
+      "end"
+    ],
+    "description": "Protocol implementation"
+  },
+
+  "Receive": {
+    "prefix": "receive",
+    "body": [
+      "receive do",
+      "  ${1:pattern1} -> ${2:action1}",
+      "  ${3:pattern2} -> ${4:action2}",
+      "after",
+      "  ${5:timeout} -> ${6:timeout_action}",
+      "end"
+    ],
+    "description": "Receive block"
+  },
+
+  "Try-Rescue": {
+    "prefix": "try",
+    "body": [
+      "try do",
+      "  ${1:risky_operation}",
+      "rescue",
+      "  ${2:ErrorType} -> ${3:error_handler}",
+      "end"
+    ],
+    "description": "Try-rescue block"
+  },
+
+  "Supervision Tree": {
+    "prefix": "supervisor",
+    "body": [
+      "defmodule ${1:SupervisorName} do",
+      "  use Supervisor",
+      "",
+      "  def start_link(init_arg) do",
+      "    Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)",
+      "  end",
+      "",
+      "  @impl true",
+      "  def init(_init_arg) do",
+      "    children = [",
+      "      ${2:{ChildModule, []}}",
+      "    ]",
+      "",
+      "    Supervisor.init(children, strategy: ${3::one_for_one})",
+      "  end",
+      "end"
+    ],
+    "description": "Supervisor template"
+  },
+
+  "Doc": {
+    "prefix": "doc",
+    "body": [
+      "@doc \"\"\"",
+      "${1:Function description}",
+      "",
+      "## Examples",
+      "",
+      "    iex> ${2:example_call}",
+      "    ${3:expected_result}",
+      "",
+      "\"\"\""
+    ],
+    "description": "Function documentation with example"
+  },
+
+  "Spec": {
+    "prefix": "spec",
+    "body": [
+      "@spec ${1:function_name}(${2:arg_types}) :: ${3:return_type}"
+    ],
+    "description": "Function spec"
+  }
+}

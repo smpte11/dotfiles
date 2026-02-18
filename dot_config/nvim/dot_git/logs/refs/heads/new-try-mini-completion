@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 42189ab9b5e8fe80d938365604bdb7631408034e Felix Brousseau-Tremblay <felix.brousseau-tremblay@kivra.com> 1763975834 +0100	branch: Created from main
+42189ab9b5e8fe80d938365604bdb7631408034e 7860b0440eeef032485fab7341761b0055d65a1a Felix Brousseau-Tremblay <felix.brousseau-tremblay@kivra.com> 1764055583 +0100	commit: feat(completion): mini completion experiment
+7860b0440eeef032485fab7341761b0055d65a1a e4b9ddf846001fac26648bcb71551982e20731c1 Felix Brousseau-Tremblay <felix.brousseau-tremblay@kivra.com> 1764055945 +0100	commit: Modified colors
+e4b9ddf846001fac26648bcb71551982e20731c1 dac215266fa7a1a301c3730069faf4c7a2dfa36b Felix Brousseau-Tremblay <felix.brousseau-tremblay@kivra.com> 1764066757 +0100	commit: Tweak transparency and diff settings for mini.nvim plugins

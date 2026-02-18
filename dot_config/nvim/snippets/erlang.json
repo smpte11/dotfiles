@@ -1,0 +1,200 @@
+{
+  "Function Definition": {
+    "prefix": "fun",
+    "body": [
+      "${1:function_name}(${2:Args}) ->",
+      "    ${3:Body}."
+    ],
+    "description": "Basic function definition"
+  },
+
+  "Function with Guard": {
+    "prefix": "fung",
+    "body": [
+      "${1:function_name}(${2:Args}) when ${3:Guard} ->",
+      "    ${4:Body}."
+    ],
+    "description": "Function with guard clause"
+  },
+
+  "Export": {
+    "prefix": "export",
+    "body": [
+      "-export([${1:function}/${2:arity}])."
+    ],
+    "description": "Export function"
+  },
+
+  "Module": {
+    "prefix": "module",
+    "body": [
+      "-module(${1:module_name}).",
+      "-export([${2:function}/${3:arity}]).",
+      "",
+      "${4:% Module implementation}"
+    ],
+    "description": "Basic module template"
+  },
+
+  "Case Expression": {
+    "prefix": "case",
+    "body": [
+      "case ${1:Expression} of",
+      "    ${2:Pattern1} -> ${3:Result1};",
+      "    ${4:Pattern2} -> ${5:Result2};",
+      "    _ -> ${6:DefaultResult}",
+      "end"
+    ],
+    "description": "Case expression"
+  },
+
+  "If Expression": {
+    "prefix": "if",
+    "body": [
+      "if",
+      "    ${1:Condition1} -> ${2:Result1};",
+      "    ${3:Condition2} -> ${4:Result2};",
+      "    true -> ${5:DefaultResult}",
+      "end"
+    ],
+    "description": "If expression"
+  },
+
+  "Try-Catch": {
+    "prefix": "try",
+    "body": [
+      "try ${1:Expression} of",
+      "    ${2:Pattern} -> ${3:Result}",
+      "catch",
+      "    ${4:Error}:${5:Reason} -> ${6:ErrorHandler}",
+      "end"
+    ],
+    "description": "Try-catch block"
+  },
+
+  "Receive": {
+    "prefix": "receive",
+    "body": [
+      "receive",
+      "    ${1:Pattern1} -> ${2:Action1};",
+      "    ${3:Pattern2} -> ${4:Action2}",
+      "after ${5:Timeout} ->",
+      "    ${6:TimeoutAction}",
+      "end"
+    ],
+    "description": "Receive block with timeout"
+  },
+
+  "Gen Server": {
+    "prefix": "genserver",
+    "body": [
+      "-module(${1:server_name}).",
+      "-behaviour(gen_server).",
+      "",
+      "-export([start_link/0, stop/0]).",
+      "-export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).",
+      "",
+      "start_link() ->",
+      "    gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).",
+      "",
+      "stop() ->",
+      "    gen_server:stop(?MODULE).",
+      "",
+      "init([]) ->",
+      "    {ok, ${2:InitialState}}.",
+      "",
+      "handle_call(${3:Request}, _From, State) ->",
+      "    {reply, ${4:Reply}, State}.",
+      "",
+      "handle_cast(${5:Msg}, State) ->",
+      "    {noreply, State}.",
+      "",
+      "handle_info(${6:Info}, State) ->",
+      "    {noreply, State}.",
+      "",
+      "terminate(_Reason, _State) ->",
+      "    ok.",
+      "",
+      "code_change(_OldVsn, State, _Extra) ->",
+      "    {ok, State}."
+    ],
+    "description": "Complete gen_server template"
+  },
+
+  "List Comprehension": {
+    "prefix": "lc",
+    "body": [
+      "[${1:Expression} || ${2:Pattern} <- ${3:List}${4:, Condition}]"
+    ],
+    "description": "List comprehension"
+  },
+
+  "Spawn": {
+    "prefix": "spawn",
+    "body": [
+      "spawn(${1:Module}, ${2:Function}, [${3:Args}])"
+    ],
+    "description": "Spawn new process"
+  },
+
+  "Spawn Link": {
+    "prefix": "spawnlink",
+    "body": [
+      "spawn_link(${1:Module}, ${2:Function}, [${3:Args}])"
+    ],
+    "description": "Spawn linked process"
+  },
+
+  "Record Definition": {
+    "prefix": "record",
+    "body": [
+      "-record(${1:record_name}, {",
+      "    ${2:field1} = ${3:default1},",
+      "    ${4:field2} = ${5:default2}",
+      "})."
+    ],
+    "description": "Record definition"
+  },
+
+  "EUnit Test": {
+    "prefix": "test",
+    "body": [
+      "${1:test_name}_test() ->",
+      "    ${2:Expected} = ${3:ActualExpression},",
+      "    ?assertEqual(${2:Expected}, ${3:ActualExpression})."
+    ],
+    "description": "EUnit test case"
+  },
+
+  "Include": {
+    "prefix": "include",
+    "body": [
+      "-include(\"${1:filename}.hrl\")."
+    ],
+    "description": "Include header file"
+  },
+
+  "Define": {
+    "prefix": "define",
+    "body": [
+      "-define(${1:MACRO_NAME}, ${2:Value})."
+    ],
+    "description": "Define macro"
+  },
+
+  "Spec": {
+    "prefix": "spec",
+    "body": [
+      "-spec ${1:function_name}(${2:ArgTypes}) -> ${3:ReturnType}."
+    ],
+    "description": "Function specification"
+  },
+
+  "Type Definition": {
+    "prefix": "type",
+    "body": [
+      "-type ${1:type_name}() :: ${2:type_definition}."
+    ],
+    "description": "Type definition"
+  }
+}

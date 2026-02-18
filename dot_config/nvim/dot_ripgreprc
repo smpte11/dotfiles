@@ -1,0 +1,23 @@
+# Ripgrep configuration for Neovim workspace
+# This file configures ripgrep behavior when used within this project
+
+# Show hidden files and directories
+--hidden
+
+# Don't search in git directories
+--glob=!.git/
+
+# Don't search in common build/dependency directories
+--glob=!node_modules/
+--glob=!target/
+--glob=!dist/
+--glob=!build/
+
+# Don't search in minified files
+--glob=!*.min.js
+--glob=!*.min.css
+
+# Don't search in lock files
+--glob=!package-lock.json
+--glob=!yarn.lock
+--glob=!Cargo.lock

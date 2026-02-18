@@ -1,0 +1,347 @@
+{
+  "Function Definition": {
+    "prefix": "def",
+    "body": [
+      "def ${1:function_name}(${2:params}) -> ${3:ReturnType}:",
+      "    \"\"\"${4:Function description}.",
+      "    ",
+      "    Args:",
+      "        ${5:param_description}",
+      "    ",
+      "    Returns:",
+      "        ${6:return_description}",
+      "    \"\"\"",
+      "    ${7:pass}"
+    ],
+    "description": "Function definition with type hints and docstring"
+  },
+
+  "Class Definition": {
+    "prefix": "class",
+    "body": [
+      "class ${1:ClassName}:",
+      "    \"\"\"${2:Class description}.\"\"\"",
+      "",
+      "    def __init__(self, ${3:params}) -> None:",
+      "        \"\"\"Initialize ${1:ClassName}.",
+      "        ",
+      "        Args:",
+      "            ${4:param_description}",
+      "        \"\"\"",
+      "        ${5:self.attribute = attribute}",
+      "",
+      "    def ${6:method_name}(self, ${7:params}) -> ${8:ReturnType}:",
+      "        \"\"\"${9:Method description}.\"\"\"",
+      "        ${10:pass}"
+    ],
+    "description": "Class definition with constructor and method"
+  },
+
+  "Main Guard": {
+    "prefix": "main",
+    "body": [
+      "if __name__ == \"__main__\":",
+      "    ${1:main()}"
+    ],
+    "description": "Main guard"
+  },
+
+  "Try Except": {
+    "prefix": "try",
+    "body": [
+      "try:",
+      "    ${1:# Try block}",
+      "except ${2:Exception} as ${3:e}:",
+      "    ${4:# Exception handling}",
+      "    print(f\"Error: {${3:e}}\")",
+      "finally:",
+      "    ${5:# Finally block}"
+    ],
+    "description": "Try-except-finally block"
+  },
+
+  "List Comprehension": {
+    "prefix": "lc",
+    "body": [
+      "[${1:expression} for ${2:item} in ${3:iterable}${4: if condition}]"
+    ],
+    "description": "List comprehension"
+  },
+
+  "Dictionary Comprehension": {
+    "prefix": "dc",
+    "body": [
+      "{${1:key}: ${2:value} for ${3:item} in ${4:iterable}${5: if condition}}"
+    ],
+    "description": "Dictionary comprehension"
+  },
+
+  "Generator Function": {
+    "prefix": "gen",
+    "body": [
+      "def ${1:generator_name}(${2:params}) -> Generator[${3:YieldType}, None, None]:",
+      "    \"\"\"${4:Generator description}.\"\"\"",
+      "    for ${5:item} in ${6:iterable}:",
+      "        yield ${7:expression}"
+    ],
+    "description": "Generator function"
+  },
+
+  "Async Function": {
+    "prefix": "async def",
+    "body": [
+      "async def ${1:async_function}(${2:params}) -> ${3:ReturnType}:",
+      "    \"\"\"${4:Async function description}.\"\"\"",
+      "    ${5:result} = await ${6:async_operation}",
+      "    return ${5:result}"
+    ],
+    "description": "Async function definition"
+  },
+
+  "Context Manager": {
+    "prefix": "with",
+    "body": [
+      "with ${1:context_manager} as ${2:variable}:",
+      "    ${3:# Context block}"
+    ],
+    "description": "With statement (context manager)"
+  },
+
+  "Custom Context Manager": {
+    "prefix": "contextmanager",
+    "body": [
+      "from contextlib import contextmanager",
+      "",
+      "@contextmanager",
+      "def ${1:context_name}(${2:params}):",
+      "    \"\"\"${3:Context manager description}.\"\"\"",
+      "    ${4:# Setup}",
+      "    try:",
+      "        yield ${5:resource}",
+      "    finally:",
+      "        ${6:# Cleanup}"
+    ],
+    "description": "Custom context manager using contextlib"
+  },
+
+  "Dataclass": {
+    "prefix": "dataclass",
+    "body": [
+      "from dataclasses import dataclass",
+      "",
+      "@dataclass",
+      "class ${1:DataClassName}:",
+      "    \"\"\"${2:Dataclass description}.\"\"\"",
+      "    ${3:field1}: ${4:Type1}",
+      "    ${5:field2}: ${6:Type2} = ${7:default_value}",
+      "    ",
+      "    def ${8:method_name}(self) -> ${9:ReturnType}:",
+      "        \"\"\"${10:Method description}.\"\"\"",
+      "        return ${11:result}"
+    ],
+    "description": "Dataclass definition"
+  },
+
+  "Property": {
+    "prefix": "property",
+    "body": [
+      "@property",
+      "def ${1:property_name}(self) -> ${2:ReturnType}:",
+      "    \"\"\"${3:Property description}.\"\"\"",
+      "    return self._${1:property_name}",
+      "",
+      "@${1:property_name}.setter",
+      "def ${1:property_name}(self, value: ${4:ValueType}) -> None:",
+      "    \"\"\"Set ${1:property_name}.\"\"\"",
+      "    self._${1:property_name} = value"
+    ],
+    "description": "Property with getter and setter"
+  },
+
+  "Lambda": {
+    "prefix": "lambda",
+    "body": [
+      "lambda ${1:params}: ${2:expression}"
+    ],
+    "description": "Lambda function"
+  },
+
+  "Decorator": {
+    "prefix": "decorator",
+    "body": [
+      "def ${1:decorator_name}(func):",
+      "    \"\"\"${2:Decorator description}.\"\"\"",
+      "    def wrapper(*args, **kwargs):",
+      "        ${3:# Pre-processing}",
+      "        result = func(*args, **kwargs)",
+      "        ${4:# Post-processing}",
+      "        return result",
+      "    return wrapper"
+    ],
+    "description": "Function decorator"
+  },
+
+  "Test Function": {
+    "prefix": "test",
+    "body": [
+      "def test_${1:function_name}():",
+      "    \"\"\"Test ${2:description}.\"\"\"",
+      "    # Arrange",
+      "    ${3:input_data} = ${4:test_input}",
+      "    ${5:expected} = ${6:expected_output}",
+      "    ",
+      "    # Act",
+      "    ${7:result} = ${8:function_to_test}(${3:input_data})",
+      "    ",
+      "    # Assert",
+      "    assert ${7:result} == ${5:expected}"
+    ],
+    "description": "Test function (pytest style)"
+  },
+
+  "Pytest Fixture": {
+    "prefix": "fixture",
+    "body": [
+      "@pytest.fixture",
+      "def ${1:fixture_name}():",
+      "    \"\"\"${2:Fixture description}.\"\"\"",
+      "    ${3:# Setup}",
+      "    yield ${4:resource}",
+      "    ${5:# Teardown}"
+    ],
+    "description": "Pytest fixture"
+  },
+
+  "Type Alias": {
+    "prefix": "typealias",
+    "body": [
+      "${1:AliasName} = ${2:ActualType}"
+    ],
+    "description": "Type alias"
+  },
+
+  "Protocol": {
+    "prefix": "protocol",
+    "body": [
+      "from typing import Protocol",
+      "",
+      "class ${1:ProtocolName}(Protocol):",
+      "    \"\"\"${2:Protocol description}.\"\"\"",
+      "    ",
+      "    def ${3:method_name}(self, ${4:params}) -> ${5:ReturnType}:",
+      "        \"\"\"${6:Method description}.\"\"\"",
+      "        ..."
+    ],
+    "description": "Protocol definition"
+  },
+
+  "Enum": {
+    "prefix": "enum",
+    "body": [
+      "from enum import Enum",
+      "",
+      "class ${1:EnumName}(Enum):",
+      "    \"\"\"${2:Enum description}.\"\"\"",
+      "    ${3:VALUE1} = \"${4:value1}\"",
+      "    ${5:VALUE2} = \"${6:value2}\"",
+      "    ${7:VALUE3} = \"${8:value3}\""
+    ],
+    "description": "Enum definition"
+  },
+
+  "FastAPI Endpoint": {
+    "prefix": "fastapi",
+    "body": [
+      "@app.${1:get}(\"${2:/path}\")",
+      "async def ${3:endpoint_name}(${4:params}) -> ${5:ResponseType}:",
+      "    \"\"\"${6:Endpoint description}.\"\"\"",
+      "    ${7:# Endpoint logic}",
+      "    return ${8:response}"
+    ],
+    "description": "FastAPI endpoint"
+  },
+
+  "Pydantic Model": {
+    "prefix": "pydantic",
+    "body": [
+      "from pydantic import BaseModel",
+      "",
+      "class ${1:ModelName}(BaseModel):",
+      "    \"\"\"${2:Model description}.\"\"\"",
+      "    ${3:field1}: ${4:Type1}",
+      "    ${5:field2}: ${6:Type2} = ${7:default_value}",
+      "    ",
+      "    class Config:",
+      "        ${8:# Configuration options}"
+    ],
+    "description": "Pydantic model"
+  },
+
+  "Logger Setup": {
+    "prefix": "logger",
+    "body": [
+      "import logging",
+      "",
+      "logger = logging.getLogger(__name__)",
+      "",
+      "# Usage:",
+      "# logger.info(\"${1:Info message}\")",
+      "# logger.error(\"${2:Error message}\")",
+      "# logger.debug(\"${3:Debug message}\")"
+    ],
+    "description": "Logger setup"
+  },
+
+  "File Reading": {
+    "prefix": "readfile",
+    "body": [
+      "with open(\"${1:filename}\", \"r\", encoding=\"utf-8\") as file:",
+      "    ${2:content} = file.read()",
+      "    ${3:# Process content}"
+    ],
+    "description": "File reading with context manager"
+  },
+
+  "JSON Operations": {
+    "prefix": "json",
+    "body": [
+      "import json",
+      "",
+      "# Read JSON",
+      "with open(\"${1:file.json}\", \"r\") as f:",
+      "    ${2:data} = json.load(f)",
+      "",
+      "# Write JSON",
+      "with open(\"${3:output.json}\", \"w\") as f:",
+      "    json.dump(${4:data}, f, indent=2)"
+    ],
+    "description": "JSON read and write operations"
+  },
+
+  "HTTP Request": {
+    "prefix": "requests",
+    "body": [
+      "import requests",
+      "",
+      "response = requests.${1:get}(\"${2:url}\"${3:, json=data})",
+      "response.raise_for_status()",
+      "${4:result} = response.json()"
+    ],
+    "description": "HTTP request with requests library"
+  },
+
+  "CLI Argument Parser": {
+    "prefix": "argparse",
+    "body": [
+      "import argparse",
+      "",
+      "parser = argparse.ArgumentParser(description=\"${1:Program description}\")",
+      "parser.add_argument(\"${2:argument}\", help=\"${3:Argument description}\")",
+      "parser.add_argument(\"--${4:option}\", default=\"${5:default}\", help=\"${6:Option description}\")",
+      "",
+      "args = parser.parse_args()",
+      "${7:# Use args.argument and args.option}"
+    ],
+    "description": "Command line argument parser"
+  }
+}
