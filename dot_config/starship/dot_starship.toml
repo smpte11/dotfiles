@@ -16,11 +16,7 @@ $directory\
 $vcsh\
 $fossil_branch\
 $fossil_metrics\
-$git_branch\
-$git_commit\
-$git_state\
-$git_metrics\
-$git_status\
+${custom.jj}\
 $hg_branch\
 $pijul_channel\
 $docker_context\
@@ -199,11 +195,15 @@ symbol = " "
 symbol = " "
 
 [git_branch]
+disabled = true
 style = "bold underline white"
 symbol = " "
 
 [git_commit]
 tag_symbol = '  '
+
+[git_status]
+disabled = true
 
 [golang]
 symbol = " "
@@ -337,3 +337,8 @@ symbol = " "
 
 [gradle]
 symbol = "🅶 "
+
+[custom.jj]
+when = "jj-starship detect"
+shell = ["jj-starship"]
+format = "$output "

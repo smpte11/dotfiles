@@ -31,6 +31,8 @@ packages = [
     "just",
     "mise",
     "podlet",
+    "Valkyrie00/homebrew-bbrew/bbrew",
+    "dmmulroy/tap/jj-starship"
 ]
 
 [packages.casks]

@@ -1,0 +1,53 @@
+#:schema https://jj-vcs.github.io/jj/latest/config-schema.json
+
+[ui]
+# paginate = "never"
+# # Use codediff for interactive diffing (squash -i, split, etc.)
+# diff-editor = "codediff"
+# # Use codediff's specialized 3-way merge UI for conflict resolution
+# merge-editor = "codediff-merge"
+#
+# [merge-tools.codediff]
+# program = "nvim"
+# # --cmd "packadd codediff.nvim": Forces the plugin to load immediately
+# # -c "CodeDiff": Runs the diff engine after the files are loaded
+# edit-args = ["--cmd", "packadd codediff.nvim", "$left", "$right", "-c", "CodeDiff"]
+#
+# [merge-tools.codediff-merge]
+# program = "nvim"
+# # Forces the plugin to load, opens the output file, and starts merge mode
+# merge-args = ["--cmd", "packadd codediff.nvim", "$output", "-c", "CodeDiff merge"]
+#
+# # Tells jj to provide conflict markers for codediff to parse
+# merge-tool-edits-conflict-markers = true
+# Use delta for all paginated output (log, diff, show)
+pager = "delta"
+
+# Use the internal TUI for interactive squashing/splitting
+# Delta is a viewer, not an editor, so we keep the builtin here.
+diff-editor = ":builtin"
+
+[settings]
+# Ensures Delta gets the color codes it needs to look good
+diff.format = "color-words"
+
+[colors]
+# Standardize colors to ensure Delta highlights correctly
+"diff.removed" = "red"
+"diff.added" = "green"
+
+[user]
+name = "Felix Brousseau-Tremblay"
+email = "felix.brousseau-tremblay@kivra.com"
+
+[signing]
+backend = "ssh"
+behavior = "own"
+key = "~/.ssh/id_ed25519.pub"
+
+[aliases]
+fetch = ["git", "fetch"]
+push = ["git", "push"]
+# Re-graft the branch of current commits on trunk to the latest upstream commit
+lift = ["rebase", "--source", "roots(trunk()..@)", "--destination", "trunk()"]
+tug = ["bookmark", "move", "--from", "heads(::@- & bookmarks())", "--to", "@-"]
