@@ -20,6 +20,7 @@
 source ~/.zoxide.nu
 source ~/.cache/carapace/init.nu
 source ~/.local/share/atuin/init.nu
+use ~/.config/nushell/completions-jj.nu *
 
 $env.STARSHIP_CONFIG = $"($env.HOME)/.config/starship/.starship.toml"
 $env.config.edit_mode = 'vi'
