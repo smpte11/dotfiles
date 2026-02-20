@@ -1,40 +1,12 @@
 #:schema https://jj-vcs.github.io/jj/latest/config-schema.json
-
 [ui]
-# paginate = "never"
-# # Use codediff for interactive diffing (squash -i, split, etc.)
-# diff-editor = "codediff"
-# # Use codediff's specialized 3-way merge UI for conflict resolution
-# merge-editor = "codediff-merge"
-#
-# [merge-tools.codediff]
-# program = "nvim"
-# # --cmd "packadd codediff.nvim": Forces the plugin to load immediately
-# # -c "CodeDiff": Runs the diff engine after the files are loaded
-# edit-args = ["--cmd", "packadd codediff.nvim", "$left", "$right", "-c", "CodeDiff"]
-#
-# [merge-tools.codediff-merge]
-# program = "nvim"
-# # Forces the plugin to load, opens the output file, and starts merge mode
-# merge-args = ["--cmd", "packadd codediff.nvim", "$output", "-c", "CodeDiff merge"]
-#
-# # Tells jj to provide conflict markers for codediff to parse
-# merge-tool-edits-conflict-markers = true
-# Use delta for all paginated output (log, diff, show)
-pager = "delta"
-
-# Use the internal TUI for interactive squashing/splitting
-# Delta is a viewer, not an editor, so we keep the builtin here.
-diff-editor = ":builtin"
+# SCENARIO: `jj log`, `jj diff`, `jj show`
+# Used for quick, read-only viewing in the terminal.
+paginate = "never"
+default-command = "log"
 
 [settings]
-# Ensures Delta gets the color codes it needs to look good
 diff.format = "color-words"
-
-[colors]
-# Standardize colors to ensure Delta highlights correctly
-"diff.removed" = "red"
-"diff.added" = "green"
 
 [user]
 name = "Felix Brousseau-Tremblay"
@@ -45,9 +17,52 @@ backend = "ssh"
 behavior = "own"
 key = "~/.ssh/id_ed25519.pub"
 
+[revsets]
+log = '''
+    present(parents(trunk()..@)::@)
+    | ancestors(immutable_heads().., 2) & recent
+    | heads(immutable_heads()) & recent
+'''
+
+[revset-aliases]
+recent = "committer_date(after:'2 weeks ago')"
+
 [aliases]
 fetch = ["git", "fetch"]
 push = ["git", "push"]
 # Re-graft the branch of current commits on trunk to the latest upstream commit
 lift = ["rebase", "--source", "roots(trunk()..@)", "--destination", "trunk()"]
 tug = ["bookmark", "move", "--from", "heads(::@- & bookmarks())", "--to", "@-"]
+
+[colors]
+# The Change ID (e.g., 'qzvxy...', the part you type)
+"change_id" = "#42f7ff" # base0D (Functions/Bright Cyan) - High visibility
+
+# The Commit ID (the long hash)
+"commit_id" = "#8691a7" # base03 (Comments) - De-emphasized
+
+# Branch names (like 'main')
+"branch" = "#ffc4ff"    # base0E (Keywords/Pink)
+
+# Working copy marker (@)
+"working_copy" = { fg = "#9ff895", bold = true } # base0B (Strings/Green)
+
+# Tag names
+"tag" = "#ca6ecf"       # base0C (Support/Purple)
+
+# Git head marker
+"git_head" = "#cc7e46"  # base09 (Integers/Orange)
+
+# The "rest" of the log lines/markers (the dots and lines)
+"elided" = "#606b81"    # base02 (Selection)
+
+# Descriptions/Commit Messages
+"description" = "#e2e98f" # base05 (Foreground)
+
+# Diff coloring (Integrated with your palette)
+"diff.added" = "#46a436"   # base0A (Classes/Dark Green)
+"diff.removed" = "#ffcfa0" # base08 (Variables/Peach-Red)
+"diff.changed" = "#42f7ff" # base0D (Cyan)
+
+# Conflicts (High Alert!)
+"conflict" = { fg = "#00a5c5", bold = true, underline = true } # base0F
