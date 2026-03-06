@@ -3,3 +3,20 @@
 [user]
 name = "Felix Brousseau-Tremblay"
 email = "felix@brouss.eu"
+
+[revsets]
+log = '''overview'''
+
+[revset-aliases]
+hidden = "none()"
+# "mutable_commits(max)" = "ancestors(immutable_heads().., max)"
+recent = "committer_date(after:'1 weeks ago')"
+# "Show me the last week of the world, connected to the trunk"
+overview = '(trunk()..(bookmarks() | mine()) & recent) | ancestors(trunk(), 5)'
+# "Everything recent that isn't bot-noise, plus my current spot"
+daily_work = '(trunk()..((bookmarks() | mine()) & recent) | trunk()..@) & ~author("renovate")'
+# "Just my stuff and the branch I'm standing on"
+active = 'trunk()..((mine() & recent) | @ | (@ & bookmarks()))'
+
+[aliases]
+tug = ["bookmark", "move", "--from", "heads(::@- & bookmarks())", "--to", "@-"]
