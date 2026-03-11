@@ -26,6 +26,9 @@ oh-my-posh init nu --config ~/.config/ohmyposh/.minischeme.omp.toml
 mkdir ($nu.data-dir | path join "vendor/autoload")
 tv init nu | save -f ($nu.data-dir | path join "vendor/autoload/tv.nu")
 
+mkdir ($nu.data-dir | path join "vendor/autoload")
+^mise activate nu | save -f ($nu.data-dir | path join "vendor/autoload/mise.nu")
+
 # custom command
 # Helper to fetch external commands for completion
 def "nu-complete commands" [] {
