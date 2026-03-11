@@ -373,6 +373,9 @@ later(function()
   miniclue.setup({
     -- Define which clues to show. By default shows only clues for custom mappings
     -- (uses `desc` field from the mapping; takes precedence over custom clue).
+    window = {
+      delay = 50
+    },
     clues = {
       -- This is defined in 'plugin/20_keymaps.lua' with Leader group descriptions
       Config.leader_group_clues,

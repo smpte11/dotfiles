@@ -129,7 +129,6 @@ later(function()
     -- Make sure that necessary CLI tool is available
     formatters_by_ft = { 
       lua = { 'stylua' },
-
     },
   })
 end)
@@ -155,10 +154,10 @@ later(function() add('rafamadriz/friendly-snippets') end)
 -- If you need them to work elsewhere, consider using other package managers.
 --
 -- You can use it like so:
--- now_if_args(function()
---   add('mason-org/mason.nvim')
---   require('mason').setup()
--- end)
+now_if_args(function()
+  add('mason-org/mason.nvim')
+  require('mason').setup()
+end)
 
 -- Beautiful, usable, well maintained color schemes outside of 'mini.nvim' and
 -- have full support of its highlight groups. Use if you don't like 'miniwinter'
