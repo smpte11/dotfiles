@@ -1,6 +1,18 @@
 keybinds clear-defaults=true {
     locked {
         bind "Ctrl g" { SwitchToMode "normal"; }
+
+        // Navigation using Alt + hjkl
+        bind "Alt h" { MoveFocus "Left"; }
+        bind "Alt j" { MoveFocus "Down"; }
+        bind "Alt k" { MoveFocus "Up"; }
+        bind "Alt l" { MoveFocus "Right"; }
+
+        // Navigation using Alt + Arrows
+        bind "Alt Left" { MoveFocus "Left"; }
+        bind "Alt Down" { MoveFocus "Down"; }
+        bind "Alt Up" { MoveFocus "Up"; }
+        bind "Alt Right" { MoveFocus "Right"; }
     }
     pane {
         bind "left" { MoveFocus "left"; }
@@ -183,6 +195,15 @@ keybinds clear-defaults=true {
     shared_except "normal" "locked" "entersearch" "renametab" "renamepane" {
         bind "esc" { SwitchToMode "normal"; }
     }
+    shared_except "locked" {
+      bind "Ctrl y" {
+          LaunchOrFocusPlugin "file:~/.config/zellij/plugins/room.wasm" {
+              floating true
+              ignore_case true
+              quick_jump true
+          }
+      }
+    }
     shared_among "pane" "tmux" {
         bind "x" { CloseFocus; SwitchToMode "normal"; }
     }
@@ -277,7 +298,7 @@ web_client {
 //   - true
 //   - false (Default)
 // 
-// simplified_ui true
+simplified_ui true
  
 // Choose the theme that is specified in the themes section.
 // Default: default
@@ -287,12 +308,12 @@ theme "minischeme"
 // Choose the base input mode of zellij.
 // Default: normal
 // 
-// default_mode "locked"
+default_mode "locked"
  
 // Choose the path to the default shell that zellij will use for opening new panes
 // Default: $SHELL
 // 
- default_shell "nu"
+default_shell "nu"
  
 // Choose the path to override cwd that zellij will use for opening new panes
 // 
@@ -320,7 +341,7 @@ theme "minischeme"
 //   - true (default)
 //   - false
 // 
-// mouse_mode false
+mouse_mode true
  
 // Toggle having pane frames around the panes
 // Options:
