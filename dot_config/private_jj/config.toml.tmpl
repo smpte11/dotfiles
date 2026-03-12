@@ -11,9 +11,23 @@ graph.style = "curved"
 [settings]
 diff.format = "color-words"
 
+
+{{- if eq .chezmoi.os "darwin" }}
+[user]
+name = "Felix Brousseau-Tremblay"
+email = "felix.brousseau-tremblay@kivra.com"
+{{- else }}
 [user]
 name = "Felix Brousseau-Tremblay"
 email = "felix@brouss.eu"
+{{- end }}
+
+{{- if eq .chezmoi.hostname "Felixs-MacBook-Pro.local" }}
+[signing]
+behavior = "own"
+backend = "ssh"
+key = "~/.ssh/SSH Key Kivra.pub"
+{{- end }}
 
 [revsets]
 log = '''overview'''
