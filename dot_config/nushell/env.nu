@@ -22,11 +22,19 @@ $env.VISUAL = 'nvim'
 
 use std/util "path add"
 
+# linux
 path add '/home/linuxbrew/.linuxbrew/bin'
 path add '/home/linuxbrew/.linuxbrew/sbin'
 
+# macos
 path add '/opt/homebrew/bin'
 path add '/opt/homebrew/sbin'
+
+# kuberntes
+path add $"($env.HOME)/.krew/bin"
+
+# common
+path add '/usr/local/bin'
 
 ## ${UserConfigDir}/nushell/env.nu
 $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
