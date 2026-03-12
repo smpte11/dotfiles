@@ -129,7 +129,13 @@ later(function()
     -- Make sure that necessary CLI tool is available
     formatters_by_ft = { 
       lua = { 'stylua' },
+      erlang = { 'erlfmt' }
     },
+    formatters = {
+      erlfmt = {
+        command = 'rebar3 fmt'
+      }
+    }
   })
 end)
 
