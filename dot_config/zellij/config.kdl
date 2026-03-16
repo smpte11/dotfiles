@@ -1,4 +1,10 @@
 keybinds clear-defaults=true {
+    normal {
+        bind "Alt f" {
+            ToggleFloatingPanes;
+            SwitchToMode "Normal";
+        }
+    }
     locked {
         bind "Ctrl g" { SwitchToMode "normal"; }
 
@@ -8,11 +14,10 @@ keybinds clear-defaults=true {
         bind "Alt k" { MoveFocus "Up"; }
         bind "Alt l" { MoveFocus "Right"; }
 
-        // Navigation using Alt + Arrows
-        bind "Alt Left" { MoveFocus "Left"; }
-        bind "Alt Down" { MoveFocus "Down"; }
-        bind "Alt Up" { MoveFocus "Up"; }
-        bind "Alt Right" { MoveFocus "Right"; }
+        bind "Alt f" {
+            ToggleFloatingPanes;
+            SwitchToMode "Locked";
+        }
     }
     pane {
         bind "left" { MoveFocus "left"; }
