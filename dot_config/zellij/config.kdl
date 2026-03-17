@@ -8,11 +8,16 @@ keybinds clear-defaults=true {
     locked {
         bind "Ctrl g" { SwitchToMode "normal"; }
 
-        // Navigation using Alt + hjkl
-        bind "Alt h" { MoveFocus "Left"; }
-        bind "Alt j" { MoveFocus "Down"; }
-        bind "Alt k" { MoveFocus "Up"; }
-        bind "Alt l" { MoveFocus "Right"; }
+        // // Navigation using Alt + hjkl
+        // bind "Alt H" { MoveFocus "Left"; }
+        // bind "Alt J" { MoveFocus "Down"; }
+        // bind "Alt K" { MoveFocus "Up"; }
+        // bind "Alt L" { MoveFocus "Right"; }
+
+        bind "Alt Left" { MoveFocus "Left"; }
+        bind "Alt Down" { MoveFocus "Down"; }
+        bind "Alt Up" { MoveFocus "Up"; }
+        bind "Alt Right" { MoveFocus "Right"; }
 
         bind "Alt f" {
             ToggleFloatingPanes;
