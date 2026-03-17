@@ -59,7 +59,7 @@ now_if_args(function()
 		"markdown",
 		"nu",
 		"erlang",
-    "yaml"
+		"yaml",
 		-- Add here more languages with which you want to use tree-sitter
 		-- To see available languages:
 		-- - Execute `:=require('nvim-treesitter').get_available()`
@@ -230,5 +230,54 @@ later(function()
 		},
 		checkout = "v19.3.0",
 	})
-	require("codecompanion").setup({})
+	require("codecompanion").setup({
+		interactions = {
+			chat = {
+				adapter = {
+					name = "claude_code",
+					model = "opus",
+				},
+			},
+		},
+		adapters = {
+			acp = {
+				claude_code = function()
+					return require("codecompanion.adapters").extend("claude_code", {
+						defaults = {
+							---@param self CodeCompanion.ACPAdapter
+							---@return string
+							model = function(self)
+								return "opus"
+							end,
+						},
+						env = {
+							CLAUDE_CODE_OAUTH_TOKEN = "cmd:op read 'op://Shared Kivra/Claude token/credential'",
+						},
+					})
+				end,
+			},
+		},
+	})
+	vim.keymap.set({ "n", "v" }, "<Leader>aa", "<Cmd>CodeCompanionActions<CR>", { desc = "CodeCompanion Actions" })
+	vim.keymap.set({ "n", "v" }, "<Leader>ac", "<Cmd>CodeCompanionChat<CR>", { desc = "CodeCompanion Chat" })
+	vim.keymap.set({ "n", "v" }, "<Leader>at", "<Cmd>CodeCompanionChat Toggle<CR>", { desc = "CodeCompanion Toggle" })
+	vim.keymap.set({ "n", "v" }, "<Leader>ai", "<Cmd>CodeCompanion<CR>", { desc = "CodeCompanion Inline" })
+	vim.keymap.set("v", "<Leader>ap", "<Cmd>CodeCompanionChat Add<CR>", { desc = "CodeCompanion Add to chat" })
+end)
+
+later(function()
+	add("zk-org/zk-nvim")
+	require("zk").setup({
+		picker = "minipick",
+	})
+end)
+
+later(function()
+	add("OXY2DEV/markview.nvim")
+	require("markview").setup({
+		preview = {
+			filetypes = { "markdown", "codecompanion" },
+			ignore_buftypes = {},
+		},
+	})
 end)

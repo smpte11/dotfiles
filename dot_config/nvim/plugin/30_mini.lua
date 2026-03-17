@@ -401,6 +401,17 @@ later(function()
     clues = {
       -- This is defined in 'plugin/20_keymaps.lua' with Leader group descriptions
       Config.leader_group_clues,
+      -- Notes group only active inside a zk notebook
+      function()
+        local ok, util = pcall(require, "zk.util")
+        if ok and util.notebook_root(vim.fn.expand("%:p")) ~= nil then
+          return {
+            { mode = "n", keys = "<Leader>n", desc = "+Notes" },
+            { mode = "v", keys = "<Leader>n", desc = "+Notes" },
+          }
+        end
+        return {}
+      end,
       miniclue.gen_clues.builtin_completion(),
       miniclue.gen_clues.g(),
       miniclue.gen_clues.marks(),

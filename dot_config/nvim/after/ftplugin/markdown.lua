@@ -21,6 +21,31 @@ vim.cmd('setlocal spell wrap')
 -- Fold with tree-sitter
 vim.cmd('setlocal foldmethod=expr foldexpr=v:lua.vim.treesitter.foldexpr()')
 
+-- zk keymaps: only active inside a zk notebook
+if pcall(require, "zk") and require("zk.util").notebook_root(vim.fn.expand("%:p")) ~= nil then
+  local map = function(mode, lhs, rhs, desc)
+    vim.keymap.set(mode, lhs, rhs, { buffer = 0, desc = desc })
+  end
+  map("n", "<CR>",         "<Cmd>lua vim.lsp.buf.definition()<CR>",                                                     "Follow link")
+  map("n", "K",            "<Cmd>lua vim.lsp.buf.hover()<CR>",                                                          "Preview link")
+  map("n", "<Leader>nn", function()
+    local prefix = vim.fn.input('Prefix (empty for none): ')
+    local title = vim.fn.input('Title: ')
+    local opts = { dir = vim.fn.expand('%:p:h'), title = title }
+    if prefix ~= '' then opts.extra = { prefix = prefix } end
+    require("zk").new(opts)
+  end, "New note")
+  map("n", "<Leader>nf",   "<Cmd>ZkNotes { sort = { 'modified' } }<CR>",                                               "Find notes")
+  map("n", "<Leader>nt",   "<Cmd>ZkTags<CR>",                                                                          "Tags")
+  map("n", "<Leader>nb",   "<Cmd>ZkBacklinks<CR>",                                                                     "Backlinks")
+  map("n", "<Leader>nl",   "<Cmd>ZkLinks<CR>",                                                                         "Links")
+  map("n", "<Leader>ni",   "<Cmd>ZkInsertLink<CR>",                                                                    "Insert link")
+  map("v", "<Leader>nnt",  ":'<,'>ZkNewFromTitleSelection { dir = vim.fn.expand('%:p:h') }<CR>",                        "New from title")
+  map("v", "<Leader>nnc",  ":'<,'>ZkNewFromContentSelection { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>", "New from content")
+  map("v", "<Leader>nf",   ":'<,'>ZkMatch<CR>",                                                                        "Find matching")
+  map("v", "<Leader>ni",   ":'<,'>ZkInsertLinkAtSelection<CR>",                                                        "Insert link")
+end
+
 -- Disable built-in `gO` mapping in favor of 'mini.basics'
 vim.keymap.del('n', 'gO', { buffer = 0 })
 
