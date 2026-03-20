@@ -181,6 +181,19 @@ now_if_args(function()
 	local process_items = function(items, base)
 		return MiniCompletion.default_process_items(items, base, process_items_opts)
 	end
+	-- Use file path completion when text before cursor looks like a path,
+	-- otherwise fall back to default buffer completion.
+	local fallback_action = function()
+		local col = vim.fn.col(".")
+		local line = vim.fn.getline("."):sub(1, col - 1)
+		if line:match("[%.~/][%w_%.~/%-]*$") then
+			local keys = vim.api.nvim_replace_termcodes("<C-g><C-g><C-x><C-f>", true, false, true)
+			vim.api.nvim_feedkeys(keys, "n", false)
+		else
+			vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-n>", true, false, true), "n", false)
+		end
+	end
+
 	require("mini.completion").setup({
 		lsp_completion = {
 			-- Without this config autocompletion is set up through `:h 'completefunc'`.
@@ -190,6 +203,7 @@ now_if_args(function()
 			auto_setup = false,
 			process_items = process_items,
 		},
+		fallback_action = fallback_action,
 	})
 
 	-- Set 'omnifunc' for LSP completion only when needed.

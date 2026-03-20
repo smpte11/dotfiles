@@ -142,6 +142,7 @@ later(function()
 		formatters_by_ft = {
 			lua = { "stylua" },
 			erlang = { "erlfmt" },
+			json = { "prettierd", "prettier" },
 		},
 		formatters = {
 			erlfmt = {
@@ -269,6 +270,16 @@ later(function()
 	add("zk-org/zk-nvim")
 	require("zk").setup({
 		picker = "minipick",
+		lsp = {
+			config = {
+				name = "zk",
+				cmd = { "zk", "lsp" },
+				filetypes = { "markdown" },
+			},
+			auto_attach = {
+				enabled = true,
+			},
+		},
 	})
 end)
 

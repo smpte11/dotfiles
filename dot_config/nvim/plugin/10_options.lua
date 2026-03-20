@@ -91,9 +91,6 @@ vim.o.complete    = '.,w,b,kspell'                  -- Use less sources
 vim.o.completeopt = 'menuone,noselect,fuzzy,nosort' -- Use custom behavior
 
 -- Autocommands ===============================================================
-Config.new_autocmd("FileType", "codecompanion", function()
-	vim.b.minicompletion_config = { fallback_action = "<C-x><C-o>" }
-end, "Disable minicompletion for codecompanion filetype")
 
 -- Don't auto-wrap comments and don't insert comment leader after hitting 'o'.
 -- Do on `FileType` to always override these changes from filetype plugins.
