@@ -22,6 +22,8 @@ $env.VISUAL = 'nvim'
 
 $env.KUBECONFIG = $"($env.HOME)/.kube/kivra-app-01-vbg.yaml"
 
+$env.RIPGREP_CONFIG_PATH = $"($env.HOME)/.config/ripgrep/.ripgreprc"
+
 use std/util "path add"
 
 # linux
