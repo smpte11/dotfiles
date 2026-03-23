@@ -36,6 +36,8 @@ local now_if_args = Config.now_if_args
 -- - 'plugin/40_plugins.lua' honorable mentions - other good color schemes
 now(function()
 	vim.cmd("colorscheme minischeme")
+	vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
+	vim.api.nvim_set_hl(0, "NormalNC", { bg = "NONE" })
 end)
 
 -- You can try these other 'mini.hues'-based color schemes (uncomment with `gcc`):

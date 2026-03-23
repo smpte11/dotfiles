@@ -1,0 +1,26 @@
+[metadata]
+name = "zellij-sessions"
+description = "List and attach to zellij sessions"
+requirements = ["zellij"]
+
+[source]
+command = "zellij list-sessions 2>/dev/null | sed $'s/\\x1b\\[[0-9;]*[mGKHF]//g' | awk '{print $1}'"
+display = "{}"
+output = "{}"
+
+[preview]
+command = "zellij list-sessions 2>/dev/null | sed $'s/\\x1b\\[[0-9;]*[mGKHF]//g' | grep '^{}'"
+
+[keybindings]
+enter = "actions:attach"
+ctrl-d = "actions:kill"
+
+[actions.attach]
+description = "Attach to the selected session"
+command = "zellij attach '{}'"
+mode = "execute"
+
+[actions.kill]
+description = "Kill the selected session"
+command = "zellij kill-session '{}'"
+mode = "fork"

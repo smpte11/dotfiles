@@ -37,7 +37,9 @@ hidden = "none()"
 # "mutable_commits(max)" = "ancestors(immutable_heads().., max)"
 recent = "committer_date(after:'1 weeks ago')"
 # "Show me the last week of the world, connected to the trunk"
-overview = '(trunk()..(bookmarks() | mine()) & recent) | ancestors(trunk(), 5)'
+overview = '''present(parents(trunk()..@)::@)
+    | ancestors(immutable_heads().., 2) & recent
+    | heads(immutable_heads()) & recent'''
 # "Everything recent that isn't bot-noise, plus my current spot"
 daily_work = '(trunk()..((bookmarks() | mine()) & recent) | trunk()..@) & ~author("renovate")'
 # "Just my stuff and the branch I'm standing on"
@@ -54,6 +56,16 @@ now = ["log", "-r", "active"]
 
 [remotes.origin]
 auto-track-bookmarks = "*"
+
+[colors]
+"working_copy change_id" = {fg = "magenta", bold = true, underline = true }
+bookmarks = { fg = "magenta", reverse = false, italic = true }
+
+[template-aliases]
+# Make IDs (jj and Git) shorter
+'format_short_id(id)' = 'id.shortest()'
+# Relative timestamps
+'format_timestamp(timestamp)' = 'timestamp.ago()'
 
 [templates]
 log = '''

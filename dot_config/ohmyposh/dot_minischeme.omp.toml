@@ -11,8 +11,8 @@ console_title_template = "{{if .Root}}(Admin){{end}} {{.PWD}}"
 
 [transient_prompt]
   template = "❯ "
-  foreground = "#ffc4ff" # Magenta
-  foreground_templates = ["{{ if gt .Code 0 }}#ff5f5f{{ end }}"] # High-contrast Red
+  foreground = "lightMagenta"
+  foreground_templates = ["{{ if gt .Code 0 }}lightRed{{ end }}"]
 
 [[blocks]]
   type = "prompt"
@@ -20,13 +20,13 @@ console_title_template = "{{if .Root}}(Admin){{end}} {{.PWD}}"
 
   [[blocks.segments]]
     template = "{{ .UserName }} "
-    foreground = "#ff5f5f" # High-contrast Red
+    foreground = "lightRed"
     type = "session"
     style = "plain"
 
   [[blocks.segments]]
     template = "{{ .Path }} "
-    foreground = "#42f7ff" # Electric Blue
+    foreground = "cyan"
     type = "path"
     style = "plain"
 
@@ -40,7 +40,7 @@ console_title_template = "{{if .Root}}(Admin){{end}} {{.PWD}}"
   [[blocks.segments]]
     type = "jujutsu"
     style = 'plain'
-    foreground = "#e2e98f"
+    foreground = "lightYellow"
 
     [blocks.segments.options]
       fetch_status = true
@@ -54,7 +54,7 @@ console_title_template = "{{if .Root}}(Admin){{end}} {{.PWD}}"
 
   [[blocks.segments]]
     template = " {{ .FormattedMs }} "
-    foreground = "#9ff895" # Mint Green
+    foreground = "lightGreen"
     type = "executiontime"
     style = "plain"
 
@@ -68,10 +68,10 @@ console_title_template = "{{if .Root}}(Admin){{end}} {{.PWD}}"
 
   [[blocks.segments]]
     template = "❯ "
-    foreground = "#ffc4ff" # Magenta
+    foreground = "lightMagenta"
     type = "status"
     style = "plain"
-    foreground_templates = ["{{ if gt .Code 0 }}#ff5f5f{{ end }}"] # High-contrast Red
+    foreground_templates = ["{{ if gt .Code 0 }}lightRed{{ end }}"]
 
     [blocks.segments.options]
       always_enabled = true

@@ -1,0 +1,36 @@
+[theme]
+  background = "#142838"
+  foreground = "#8ff586"
+  cursor = "#c4206f"
+  selection_bg = "#084fb0"
+  selection_fg = "#142838"
+
+# ANSI 0-15 palette (mapped by hue from minischeme)
+[theme.palette]
+  black = "#000000"
+  red = "#cc7e46"
+  green = "#46a436"
+  yellow = "#d5dc81"
+  blue = "#00a5c5"
+  magenta = "#ca6ecf"
+  cyan = "#42f7ff"
+  silver = "#8691a7"
+  bright_black = "#3a475e"
+  bright_red = "#ffcfa0"
+  bright_green = "#9ff895"
+  bright_yellow = "#eff69c"
+  bright_blue = "#42f7ff"
+  bright_magenta = "#ffc4ff"
+  bright_cyan = "#42f7ff"
+  white = "#ffffff"
+
+# Minischeme base16 shades (for UI chrome that needs more granularity)
+[theme.base]
+  b00 = "#112641"
+  b01 = "#3a475e"
+  b02 = "#606b81"
+  b03 = "#8691a7"
+  b04 = "#d5dc81"
+  b05 = "#e2e98f"
+  b06 = "#eff69c"
+  b07 = "#fcffaa"
