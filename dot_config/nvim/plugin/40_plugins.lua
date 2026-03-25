@@ -284,6 +284,33 @@ later(function()
 end)
 
 later(function()
+	add({
+		source = "pwntester/octo.nvim",
+		depends = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons" },
+	})
+	require("octo").setup({
+		picker = "default",
+		default_merge_method = "squash",
+	})
+	vim.keymap.set("n", "<Leader>gi", "<Cmd>Octo issue list<CR>", { desc = "Issues (Octo)" })
+	vim.keymap.set("n", "<Leader>gI", "<Cmd>Octo issue create<CR>", { desc = "Issue create (Octo)" })
+	vim.keymap.set("n", "<Leader>gp", "<Cmd>Octo pr list<CR>", { desc = "PRs (Octo)" })
+	vim.keymap.set("n", "<Leader>gP", "<Cmd>Octo pr create<CR>", { desc = "PR create (Octo)" })
+	vim.keymap.set("n", "<Leader>gr", "<Cmd>Octo review start<CR>", { desc = "Review start (Octo)" })
+	vim.keymap.set("n", "<Leader>gn", "<Cmd>Octo notification list<CR>", { desc = "Notifications (Octo)" })
+	vim.keymap.set("n", "<Leader>gx", "<Cmd>Octo search<CR>", { desc = "Search GitHub (Octo)" })
+end)
+
+later(function()
+	add({
+		source = "topaxi/pipeline.nvim",
+		depends = { "MunifTanjim/nui.nvim" },
+		hooks = { post_checkout = function() vim.fn.system("make") end },
+	})
+	require("pipeline").setup()
+end)
+
+later(function()
 	add("OXY2DEV/markview.nvim")
 	require("markview").setup({
 		preview = {
@@ -291,4 +318,13 @@ later(function()
 			ignore_buftypes = {},
 		},
 	})
+end)
+
+later(function()
+	add("MagicDuck/grug-far.nvim")
+	require("grug-far").setup({})
+	vim.keymap.set("n", "<Leader>er", function()
+		require("grug-far").open()
+	end, { desc = "Search and replace (grug-far)" })
+	vim.keymap.set("v", "<Leader>er", ":<C-u>GrugFar<CR>", { desc = "Search and replace selection (grug-far)" })
 end)

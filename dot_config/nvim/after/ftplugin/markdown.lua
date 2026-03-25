@@ -49,6 +49,9 @@ end
 -- Disable built-in `gO` mapping in favor of 'mini.basics'
 vim.keymap.del('n', 'gO', { buffer = 0 })
 
+-- Re-create mini.clue triggers so they remain the latest buffer-local mappings
+MiniClue.ensure_buf_triggers()
+
 -- Set markdown-specific surrounding in 'mini.surround'
 vim.b.minisurround_config = {
   custom_surroundings = {

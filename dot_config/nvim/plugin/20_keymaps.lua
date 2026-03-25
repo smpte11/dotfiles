@@ -194,6 +194,7 @@ nmap_leader('gs', '<Cmd>lua MiniGit.show_at_cursor()<CR>', 'Show at cursor')
 
 xmap_leader('gs', '<Cmd>lua MiniGit.show_at_cursor()<CR>', 'Show at selection')
 
+
 -- l is for 'Language'. Common usage:
 -- - `<Leader>ld` - show more diagnostic details in a floating window
 -- - `<Leader>lr` - perform rename via LSP

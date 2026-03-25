@@ -444,7 +444,8 @@ later(function()
     },
     -- Explicitly opt-in for set of common keys to trigger clue window
     triggers = {
-      { mode = { 'n', 'x' }, keys = '<Leader>' }, -- Leader triggers
+      { mode = { 'n', 'x' }, keys = '<Leader>' },      -- Leader triggers
+      { mode = { 'n', 'x' }, keys = '<LocalLeader>' }, -- LocalLeader triggers
       { mode =   'n',        keys = '\\' },       -- mini.basics
       { mode = { 'n', 'x' }, keys = '[' },        -- mini.bracketed
       { mode = { 'n', 'x' }, keys = ']' },
