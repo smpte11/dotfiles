@@ -1,0 +1,42 @@
+{{- $t := index .themes .active_theme -}}
+# 0: Black
+palette = 0={{ $t.palette.black }}
+# 1: Red
+palette = 1={{ $t.palette.red }}
+# 2: Green
+palette = 2={{ $t.palette.green }}
+# 3: Yellow
+palette = 3={{ $t.palette.yellow }}
+# 4: Blue
+palette = 4={{ $t.palette.blue }}
+# 5: Magenta
+palette = 5={{ $t.palette.magenta }}
+# 6: Cyan
+palette = 6={{ $t.palette.cyan }}
+# 7: Silver
+palette = 7={{ $t.palette.silver }}
+# 8: Bright Black
+palette = 8={{ $t.palette.bright_black }}
+# 9: Bright Red
+palette = 9={{ $t.palette.bright_red }}
+# 10: Bright Green
+palette = 10={{ $t.palette.bright_green }}
+# 11: Bright Yellow
+palette = 11={{ $t.palette.bright_yellow }}
+# 12: Bright Blue
+palette = 12={{ $t.palette.bright_blue }}
+# 13: Bright Magenta
+palette = 13={{ $t.palette.bright_magenta }}
+# 14: Bright Cyan
+palette = 14={{ $t.palette.bright_cyan }}
+# 15: White
+palette = 15={{ $t.palette.white }}
+background = {{ $t.background }}
+foreground = {{ $t.foreground }}
+cursor-color = {{ $t.cursor }}
+selection-background = {{ $t.selection_bg }}
+selection-foreground = {{ $t.selection_fg }}
+
+palette-generate = true
+
+minimum-contrast = 1.9

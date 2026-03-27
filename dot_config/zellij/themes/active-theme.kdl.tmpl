@@ -1,0 +1,16 @@
+{{- $t := index .themes .active_theme -}}
+themes {
+    active-theme {
+        fg "{{ $t.palette.bright_yellow }}"
+        bg "{{ $t.background }}"
+        black "{{ $t.background }}"
+        white "{{ $t.palette.white }}"
+        red "{{ $t.palette.red }}"
+        orange "{{ $t.palette.bright_red }}"
+        yellow "{{ $t.palette.yellow }}"
+        green "{{ $t.palette.bright_green }}"
+        blue "{{ $t.palette.blue }}"
+        cyan "{{ $t.palette.cyan }}"
+        magenta "{{ $t.palette.bright_magenta }}"
+    }
+}

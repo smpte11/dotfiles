@@ -35,7 +35,10 @@ local now_if_args = Config.now_if_args
 -- - `:h MiniHues-examples` - how to define highlighting with 'mini.hues'
 -- - 'plugin/40_plugins.lua' honorable mentions - other good color schemes
 now(function()
-	vim.cmd("colorscheme minischeme")
+{{- if eq .active_theme "eldritch" }}
+	MiniDeps.add("eldritch-theme/eldritch.nvim")
+{{- end }}
+	vim.cmd("colorscheme {{ .active_theme }}")
 	vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
 	vim.api.nvim_set_hl(0, "NormalNC", { bg = "NONE" })
 end)
@@ -848,7 +851,7 @@ end)
 -- - `srb[`  - *s*urround *r*eplace *b*racket (any of [], (), {}) with padded `[`
 -- - `sf*`   - *s*urround *f*ind right part of `*` pair (like bold in markdown)
 -- - `shf`   - *s*urround *h*ighlight current *f*unction call
--- - `srn{{` - *s*urround *r*eplace *n*ext curly bracket `{` with padded `{`
+-- - `srn{{ "{{" }}` - *s*urround *r*eplace *n*ext curly bracket `{` with padded `{`
 -- - `sdl'`  - *s*urround *d*elete *l*ast quote pair (`'`)
 -- - `vaWsa<Space>` - *v*isually select *a*round *W*ORD and *s*urround *a*dd
 --                    spaces (`<Space>`)
