@@ -1,5 +1,37 @@
 active_theme = "eldritch"
 
+[packages]
+  # brews installed on all platforms via homebrew
+  common_brews = [
+    "carapace",
+    "chezmoi",
+    "cmake",
+    "fd",
+    "fzf",
+    "gh",
+    "go",
+    "jj",
+    "mise",
+    "neovim",
+    "nushell",
+    "oh-my-posh",
+    "opencode",
+    "television",
+    "tree-sitter-cli",
+    "zellij",
+    "zk",
+    "zoxide",
+    "node",
+  ]
+
+[packages.darwin]
+  brews = []
+  casks = []
+  taps = []
+
+[packages.linux]
+  brews = []
+
 [themes.minischeme]
   background = "#142838"
   foreground = "#8ff586"

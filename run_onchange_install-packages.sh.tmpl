@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# common_brews: {{ range .packages.common_brews }}{{ . | quote }}, {{ end }}
+{{ if eq .chezmoi.os "darwin" -}}
+# darwin.brews: {{ range .packages.darwin.brews }}{{ . | quote }}, {{ end }}
+# darwin.casks: {{ range .packages.darwin.casks }}{{ . | quote }}, {{ end }}
+# darwin.taps: {{ range .packages.darwin.taps }}{{ . | quote }}, {{ end }}
+{{ end -}}
+{{ if eq .chezmoi.os "linux" -}}
+# linux.brews: {{ range .packages.linux.brews }}{{ . | quote }}, {{ end }}
+{{ end -}}
+
+brew bundle --file=/dev/stdin <<EOF
+{{ if eq .chezmoi.os "darwin" -}}
+{{ range .packages.darwin.taps -}}
+tap {{ . | quote }}
+{{ end -}}
+{{ end -}}
+{{ range .packages.common_brews -}}
+brew {{ . | quote }}
+{{ end -}}
+{{ if eq .chezmoi.os "darwin" -}}
+{{ range .packages.darwin.brews -}}
+brew {{ . | quote }}
+{{ end -}}
+{{ range .packages.darwin.casks -}}
+cask {{ . | quote }}
+{{ end -}}
+{{ end -}}
+{{ if eq .chezmoi.os "linux" -}}
+{{ range .packages.linux.brews -}}
+brew {{ . | quote }}
+{{ end -}}
+{{ end -}}
+EOF

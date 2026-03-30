@@ -60,6 +60,10 @@ now_if_args(function()
 		"nu",
 		"erlang",
 		"yaml",
+		"go",
+		"gomod",
+		"gosum",
+		"gotmpl",
 		-- Add here more languages with which you want to use tree-sitter
 		-- To see available languages:
 		-- - Execute `:=require('nvim-treesitter').get_available()`
@@ -114,6 +118,7 @@ now_if_args(function()
 		"lua_ls",
 		"elp",
 		"nushell",
+		"gopls",
 	})
 end)
 
@@ -143,11 +148,49 @@ later(function()
 			lua = { "stylua" },
 			erlang = { "erlfmt" },
 			json = { "prettierd", "prettier" },
+			go = { "goimports", "gofumpt" },
 		},
 		formatters = {
 			erlfmt = {
 				command = "rebar3 fmt",
 			},
+		},
+	})
+end)
+
+-- Go =========================================================================
+
+-- 'ray-x/go.nvim' provides Go-specific tools: code generation, test running,
+-- struct tag management, debugging, and Go template syntax support.
+-- LSP (gopls) is managed separately via vim.lsp.enable above.
+later(function()
+	add({
+		source = "ray-x/go.nvim",
+		depends = {
+			"ray-x/guihua.lua",
+			"nvim-treesitter/nvim-treesitter",
+			"neovim/nvim-lspconfig",
+		},
+	})
+	require("go").setup({
+		-- LSP is handled by vim.lsp.enable + after/lsp/gopls.lua
+		lsp_cfg = false,
+		-- Formatting is handled by conform.nvim
+		lsp_gofumpt = false,
+		-- Enable gotmpl filetype detection for .tmpl files in Go projects
+		lsp_on_client_start = nil,
+	})
+
+	-- Filetype detection for Go template files
+	vim.filetype.add({
+		extension = {
+			tmpl = function(path, _)
+				-- Detect as gotmpl if the file is inside a Go module (has go.mod ancestor)
+				local dir = vim.fs.dirname(path)
+				if vim.fs.find("go.mod", { path = dir, upward = true })[1] then
+					return "gotmpl"
+				end
+			end,
 		},
 	})
 end)
