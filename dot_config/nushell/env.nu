@@ -24,6 +24,8 @@ $env.KUBECONFIG = $"($env.HOME)/.kube/kivra-app-01-vbg.yaml"
 
 $env.RIPGREP_CONFIG_PATH = $"($env.HOME)/.config/ripgrep/.ripgreprc"
 
+$env.SSH_AUTH_SOCK = $"($env.HOME)/.ssh/proton-pass-agent.sock"
+
 use std/util "path add"
 
 # linux
