@@ -1,3 +1,4 @@
 ~/.config/nvim/.git/
 ~/.config/nvim/.git/**
 install.sh
+cmd/

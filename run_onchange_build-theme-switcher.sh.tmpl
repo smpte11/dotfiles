@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# theme-switcher source hash: {{ joinPath .chezmoi.sourceDir "cmd/theme-switcher/main.go" | include | sha256sum }}-{{ joinPath .chezmoi.sourceDir "cmd/theme-switcher/theme.go" | include | sha256sum }}-{{ joinPath .chezmoi.sourceDir "cmd/theme-switcher/tui.go" | include | sha256sum }}-{{ joinPath .chezmoi.sourceDir "cmd/theme-switcher/reload.go" | include | sha256sum }}-{{ joinPath .chezmoi.sourceDir "cmd/theme-switcher/go.mod" | include | sha256sum }}
+
+set -euo pipefail
+
+echo "Building theme-switcher..."
+cd "{{ .chezmoi.sourceDir }}/cmd/theme-switcher"
+mkdir -p ~/.local/bin
+go build -o ~/.local/bin/theme-switcher .
+echo "Installed theme-switcher to ~/.local/bin/theme-switcher"

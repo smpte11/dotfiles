@@ -28,6 +28,9 @@ $env.SSH_AUTH_SOCK = $"($env.HOME)/.ssh/proton-pass-agent.sock"
 
 use std/util "path add"
 
+# common
+path add $'($env.HOME)/.local/bin'
+
 # linux
 path add '/home/linuxbrew/.linuxbrew/bin'
 path add '/home/linuxbrew/.linuxbrew/sbin'
