@@ -38,8 +38,9 @@ hidden = "none()"
 recent = "committer_date(after:'1 weeks ago')"
 # "Show me the last week of the world, connected to the trunk"
 overview = '''present(parents(trunk()..@)::@)
-    | ancestors(immutable_heads().., 2) & recent
-    | heads(immutable_heads()) & recent'''
+    | ancestors(immutable_heads().., 3) & recent
+    | heads(immutable_heads()) & recent
+    & ~hidden'''
 # "Everything recent that isn't bot-noise, plus my current spot"
 daily_work = '(trunk()..((bookmarks() | mine()) & recent) | trunk()..@) & ~author("renovate")'
 # "Just my stuff and the branch I'm standing on"
@@ -77,6 +78,19 @@ label(if(current_working_copy, "working_copy"),
     bookmarks,
     "\n",
     description.first_line(),
+  )
+)
+'''
+log_node = '''
+label("node",
+  coalesce(
+    if(!self, label("elided", "┊")),
+    if(current_working_copy, label("working_copy", "@")),
+    if(empty, label("working_copy empty", "⋅")),
+    if(conflict, label("conflict", "×")),
+    if(bookmarks.any(|b| b.name() == "main" || b.name() == "master"), label("trunk_node", "◉")),
+    if(immutable, label("immutable", "●")),
+    label("normal", "○")
   )
 )
 '''
