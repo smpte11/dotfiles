@@ -21,6 +21,8 @@ $env.config.show_banner = false
 
 $env.config.buffer_editor = "nvim"
 
+$env.config.edit_mode = "vi"
+
 oh-my-posh init nu --config ~/.config/ohmyposh/.minischeme.omp.toml
 
 mkdir ($nu.data-dir | path join "vendor/autoload")
@@ -28,6 +30,9 @@ tv init nu | save -f ($nu.data-dir | path join "vendor/autoload/tv.nu")
 
 mkdir ($nu.data-dir | path join "vendor/autoload")
 ^mise activate nu | save -f ($nu.data-dir | path join "vendor/autoload/mise.nu")
+
+# custom aliases
+alias ll = ls -l
 
 # custom command
 # Helper to fetch external commands for completion
