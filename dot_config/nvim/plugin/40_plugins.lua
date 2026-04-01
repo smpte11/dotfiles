@@ -60,6 +60,8 @@ now_if_args(function()
 		"nu",
 		"erlang",
 		"yaml",
+		"elixir",
+		"heex",
 		"go",
 		"gomod",
 		"gosum",
@@ -119,6 +121,7 @@ now_if_args(function()
 		"elp",
 		"nushell",
 		"gopls",
+		"expert",
 	})
 end)
 
@@ -148,13 +151,38 @@ later(function()
 			lua = { "stylua" },
 			erlang = { "erlfmt" },
 			json = { "prettierd", "prettier" },
+			elixir = { "mix" },
+			heex = { "mix" },
 			go = { "goimports", "gofumpt" },
 		},
 		formatters = {
 			erlfmt = {
 				command = "rebar3 fmt",
 			},
+			mix = {
+				-- Avoid recursive config loading (e.g. dev.exs import_config loops)
+				env = { MIX_ENV = "test" },
+			},
 		},
+	})
+end)
+
+-- Linting =====================================================================
+
+-- The 'mfussenegger/nvim-lint' plugin triggers external linters on file events
+-- and populates the diagnostics list.
+later(function()
+	add("mfussenegger/nvim-lint")
+
+	require("lint").linters_by_ft = {
+		elixir = { "credo" },
+	}
+
+	vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
+		group = vim.api.nvim_create_augroup("nvim-lint", {}),
+		callback = function()
+			require("lint").try_lint()
+		end,
 	})
 end)
 

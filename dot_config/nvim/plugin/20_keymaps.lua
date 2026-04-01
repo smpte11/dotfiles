@@ -67,6 +67,7 @@ Config.leader_group_clues = {
   { mode = 'n', keys = '<Leader>t', desc = '+Terminal' },
   { mode = 'n', keys = '<Leader>v', desc = '+Visits' },
   { mode = 'n', keys = '<Leader>q', desc = '+Quit' },
+  { mode = 'n', keys = '<Leader>w', desc = '+Window' },
   { mode = 'x', keys = '<Leader>g', desc = '+Git' },
   { mode = 'x', keys = '<Leader>l', desc = '+Language' },
 }
@@ -229,6 +230,9 @@ nmap_leader('mt', '<Cmd>lua MiniMap.toggle()<CR>', 'Toggle')
 nmap_leader('or', '<Cmd>lua MiniMisc.resize_window()<CR>', 'Resize to default width')
 nmap_leader('ot', '<Cmd>lua MiniTrailspace.trim()<CR>', 'Trim trailspace')
 nmap_leader('oz', '<Cmd>lua MiniMisc.zoom()<CR>', 'Zoom toggle')
+
+-- w is for 'Window'. Aliases <C-w> so window commands appear under <Leader>w in mini.clue.
+nmap_leader('w', '<C-w>', '+Window')
 
 -- s is for 'Session'. Common usage:
 -- - `<Leader>sn` - start new session
