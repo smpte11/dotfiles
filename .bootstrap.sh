@@ -20,7 +20,7 @@ fi
 # Authenticate with GitHub (browser-based OAuth, no SSH needed)
 if ! gh auth status >/dev/null 2>&1; then
     echo "Authenticating with GitHub..."
-    gh auth login --web --git-protocol ssh
+    gh auth login
 fi
 
 # Generate and upload SSH key if needed
