@@ -77,8 +77,9 @@ Config.leader_group_clues = {
 -- an attempt to be more concise yet descriptive. See `:h <Cmd>`.
 -- This approach also doesn't require the underlying commands/functions to exist
 -- during mapping creation: a "lazy loading" approach to improve startup time.
-local nmap_leader = function(suffix, rhs, desc)
-  vim.keymap.set('n', '<Leader>' .. suffix, rhs, { desc = desc })
+local nmap_leader = function(suffix, rhs, desc, opts)
+  opts = vim.tbl_extend('force', { desc = desc }, opts or {})
+  vim.keymap.set('n', '<Leader>' .. suffix, rhs, opts)
 end
 local xmap_leader = function(suffix, rhs, desc)
   vim.keymap.set('x', '<Leader>' .. suffix, rhs, { desc = desc })
@@ -231,8 +232,8 @@ nmap_leader('or', '<Cmd>lua MiniMisc.resize_window()<CR>', 'Resize to default wi
 nmap_leader('ot', '<Cmd>lua MiniTrailspace.trim()<CR>', 'Trim trailspace')
 nmap_leader('oz', '<Cmd>lua MiniMisc.zoom()<CR>', 'Zoom toggle')
 
--- w is for 'Window'. Aliases <C-w> so window commands appear under <Leader>w in mini.clue.
-nmap_leader('w', '<C-w>', '+Window')
+-- w is for 'Window'. Remap so <C-w> triggers mini.clue.
+nmap_leader('w', '<C-w>', '+Window', { remap = true })
 
 -- s is for 'Session'. Common usage:
 -- - `<Leader>sn` - start new session
