@@ -386,3 +386,23 @@ later(function()
 	end, { desc = "Search and replace (grug-far)" })
 	vim.keymap.set("v", "<Leader>er", ":<C-u>GrugFar<CR>", { desc = "Search and replace selection (grug-far)" })
 end)
+
+-- Hunk =========================================================================
+
+-- 'julienvincent/hunk.nvim' is a diff editor for use with jujutsu (jj).
+-- Configure jj to use it by adding to your jj config:
+--   [ui]
+--   diff-editor = ["nvim", "-c", "DiffEditor $left $right $output"]
+--   diff-instructions = false
+now_if_args(function()
+	add({
+		source = "julienvincent/hunk.nvim",
+		depends = { "MunifTanjim/nui.nvim" },
+	})
+	require("hunk").setup({
+		ui = {
+			layout = "vertical",
+			tree = { width = 35 },
+		},
+	})
+end)
