@@ -43,7 +43,9 @@ vim.o.cursorline     = true       -- Enable current line highlighting
 vim.o.linebreak      = true       -- Wrap lines at 'breakat' (if 'wrap' is set)
 vim.o.list           = true       -- Show helpful text indicators
 vim.o.number         = true       -- Show line numbers
+vim.o.pumborder      = 'single'   -- Use border in popup menu
 vim.o.pumheight      = 10         -- Make popup menu smaller
+vim.o.pummaxwidth    = 100        -- Make popup menu not too wide
 vim.o.ruler          = false      -- Don't show cursor coordinates
 vim.o.shortmess      = 'CFOSWaco' -- Disable some built-in completion messages
 vim.o.showmode       = false      -- Don't show mode in command line
@@ -89,7 +91,8 @@ vim.o.formatlistpat = [[^\s*[0-9\-\+\*]\+[\.\)]*\s\+]]
 
 -- Built-in completion
 vim.o.complete    = '.,w,b,kspell'                  -- Use less sources
-vim.o.completeopt = 'menuone,noselect,fuzzy,nosort' -- Use custom behavior
+vim.o.completeopt     = 'menuone,noselect,fuzzy,nosort' -- Use custom behavior
+vim.o.completetimeout = 100                             -- Limit sources delay
 
 -- Autocommands ===============================================================
 
@@ -124,5 +127,5 @@ local diagnostic_opts = {
 }
 
 -- Use `later()` to avoid sourcing `vim.diagnostic` on startup
-MiniDeps.later(function() vim.diagnostic.config(diagnostic_opts) end)
+Config.later(function() vim.diagnostic.config(diagnostic_opts) end)
 -- stylua: ignore end
