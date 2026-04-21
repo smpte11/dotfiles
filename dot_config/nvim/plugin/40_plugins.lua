@@ -156,7 +156,9 @@ later(function()
 		},
 		formatters = {
 			erlfmt = {
-				command = "rebar3 fmt",
+				command = "rebar3",
+				args = { "fmt", "-" },
+				stdin = true,
 			},
 			mix = {
 				-- Avoid recursive config loading (e.g. dev.exs import_config loops)
