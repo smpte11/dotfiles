@@ -39,12 +39,14 @@ local now_if_args, later = Config.now_if_args, Config.later
 --   (see MiniMax README section for software requirements).
 now_if_args(function()
 	-- Define hook to update tree-sitter parsers after plugin is updated
-	local ts_update = function() vim.cmd('TSUpdate') end
-	Config.on_packchanged('nvim-treesitter', { 'update' }, ts_update, ':TSUpdate')
+	local ts_update = function()
+		vim.cmd("TSUpdate")
+	end
+	Config.on_packchanged("nvim-treesitter", { "update" }, ts_update, ":TSUpdate")
 
 	add({
-		'https://github.com/nvim-treesitter/nvim-treesitter',
-		'https://github.com/nvim-treesitter/nvim-treesitter-textobjects',
+		"https://github.com/nvim-treesitter/nvim-treesitter",
+		"https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
 	})
 
 	-- Define languages which will have parsers installed and auto enabled
@@ -107,7 +109,7 @@ end)
 --
 -- Add it now if file (and not 'mini.starter') is shown after startup.
 now_if_args(function()
-	add({ 'https://github.com/neovim/nvim-lspconfig' })
+	add({ "https://github.com/neovim/nvim-lspconfig" })
 
 	-- Use `:h vim.lsp.enable()` to automatically enable language server based on
 	-- the rules provided by 'nvim-lspconfig'.
@@ -132,7 +134,7 @@ end)
 -- The 'stevearc/conform.nvim' plugin is a good and maintained solution for easier
 -- formatting setup.
 later(function()
-	add({ 'https://github.com/stevearc/conform.nvim' })
+	add({ "https://github.com/stevearc/conform.nvim" })
 
 	-- See also:
 	-- - `:h Conform`
@@ -157,8 +159,8 @@ later(function()
 		formatters = {
 			erlfmt = {
 				command = "rebar3",
-				args = { "fmt", "-" },
-				stdin = true,
+				args = { "fmt", "$FILENAME" },
+				stdin = false,
 			},
 			mix = {
 				-- Avoid recursive config loading (e.g. dev.exs import_config loops)
@@ -173,7 +175,7 @@ end)
 -- The 'mfussenegger/nvim-lint' plugin triggers external linters on file events
 -- and populates the diagnostics list.
 later(function()
-	add({ 'https://github.com/mfussenegger/nvim-lint' })
+	add({ "https://github.com/mfussenegger/nvim-lint" })
 
 	require("lint").linters_by_ft = {
 		elixir = { "credo" },
@@ -194,8 +196,8 @@ end)
 -- LSP (gopls) is managed separately via vim.lsp.enable above.
 later(function()
 	add({
-		'https://github.com/ray-x/go.nvim',
-		'https://github.com/ray-x/guihua.lua',
+		"https://github.com/ray-x/go.nvim",
+		"https://github.com/ray-x/guihua.lua",
 	})
 	require("go").setup({
 		-- LSP is handled by vim.lsp.enable + after/lsp/gopls.lua
@@ -230,7 +232,7 @@ end)
 -- 'mini.snippets' is designed to work with it as seamlessly as possible.
 -- See `:h MiniSnippets.gen_loader.from_lang()`.
 later(function()
-	add({ 'https://github.com/rafamadriz/friendly-snippets' })
+	add({ "https://github.com/rafamadriz/friendly-snippets" })
 end)
 
 -- Honorable mentions =========================================================
@@ -244,12 +246,12 @@ end)
 --
 -- You can use it like so:
 now_if_args(function()
-	add({ 'https://github.com/mason-org/mason.nvim' })
+	add({ "https://github.com/mason-org/mason.nvim" })
 	require("mason").setup()
 end)
 
 later(function()
-	add({ 'https://github.com/zbirenbaum/copilot.lua' })
+	add({ "https://github.com/zbirenbaum/copilot.lua" })
 	require("copilot").setup({
 		suggestion = {
 			enabled = true,
@@ -274,13 +276,14 @@ later(function()
 			gitrebase = false,
 			["."] = false,
 		},
+		-- copilot_model = "claude-sonnet-4.6"
 	})
 end)
 
 later(function()
 	add({
-		'https://github.com/nvim-lua/plenary.nvim',
-		{ src = 'https://github.com/olimorris/codecompanion.nvim', version = 'v19.3.0' },
+		"https://github.com/nvim-lua/plenary.nvim",
+		{ src = "https://github.com/olimorris/codecompanion.nvim", version = "v19.3.0" },
 	})
 	require("codecompanion").setup({
 		interactions = {
@@ -318,7 +321,7 @@ later(function()
 end)
 
 later(function()
-	add({ 'https://github.com/zk-org/zk-nvim' })
+	add({ "https://github.com/zk-org/zk-nvim" })
 	require("zk").setup({
 		picker = "minipick",
 		lsp = {
@@ -336,9 +339,9 @@ end)
 
 later(function()
 	add({
-		'https://github.com/pwntester/octo.nvim',
-		'https://github.com/nvim-lua/plenary.nvim',
-		'https://github.com/nvim-tree/nvim-web-devicons',
+		"https://github.com/pwntester/octo.nvim",
+		"https://github.com/nvim-lua/plenary.nvim",
+		"https://github.com/nvim-tree/nvim-web-devicons",
 	})
 	require("octo").setup({
 		picker = "default",
@@ -354,17 +357,19 @@ later(function()
 end)
 
 later(function()
-	Config.on_packchanged('pipeline.nvim', { 'install', 'update' }, function() vim.fn.system('make') end, 'Build pipeline.nvim')
+	Config.on_packchanged("pipeline.nvim", { "install", "update" }, function()
+		vim.fn.system("make")
+	end, "Build pipeline.nvim")
 
 	add({
-		'https://github.com/topaxi/pipeline.nvim',
-		'https://github.com/MunifTanjim/nui.nvim',
+		"https://github.com/topaxi/pipeline.nvim",
+		"https://github.com/MunifTanjim/nui.nvim",
 	})
 	require("pipeline").setup()
 end)
 
 later(function()
-	add({ 'https://github.com/OXY2DEV/markview.nvim' })
+	add({ "https://github.com/OXY2DEV/markview.nvim" })
 	require("markview").setup({
 		preview = {
 			filetypes = { "markdown", "codecompanion" },
@@ -374,7 +379,7 @@ later(function()
 end)
 
 later(function()
-	add({ 'https://github.com/MagicDuck/grug-far.nvim' })
+	add({ "https://github.com/MagicDuck/grug-far.nvim" })
 	require("grug-far").setup({})
 	vim.keymap.set("n", "<Leader>er", function()
 		require("grug-far").open()
@@ -391,8 +396,8 @@ end)
 --   diff-instructions = false
 Config.now(function()
 	add({
-		'https://github.com/julienvincent/hunk.nvim',
-		'https://github.com/MunifTanjim/nui.nvim',
+		"https://github.com/julienvincent/hunk.nvim",
+		"https://github.com/MunifTanjim/nui.nvim",
 	})
 	require("hunk").setup({
 		ui = {
@@ -404,7 +409,7 @@ end)
 
 -- jj merge conflict resolution.
 Config.now(function()
-	add({ 'https://github.com/larpios/jj-conflict.nvim' })
+	add({ "https://github.com/larpios/jj-conflict.nvim" })
 	require("jj-conflict").setup({
 		mappings = {
 			ours = "<LocalLeader>o",
