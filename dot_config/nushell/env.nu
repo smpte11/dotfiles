@@ -39,7 +39,7 @@ path add '/home/linuxbrew/.linuxbrew/sbin'
 path add '/opt/homebrew/bin'
 path add '/opt/homebrew/sbin'
 
-# kuberntes
+# kubernetes
 path add $"($env.HOME)/.krew/bin"
 
 # common
