@@ -335,6 +335,16 @@ later(function()
 			},
 		},
 	})
+
+	-- mini.clue groups for the Notes prefix. Picked up by 'plugin/30_mini.lua'.
+	-- The <Leader>n* keymaps are buffer-local to notebook markdown buffers
+	-- (see after/ftplugin/markdown.lua); these labels render only when those
+	-- mappings are active.
+	Config.zk_clues = {
+		{ mode = "n", keys = "<Leader>n", desc = "+Notes" },
+		{ mode = "n", keys = "<Leader>nj", desc = "+Journal" },
+		{ mode = "v", keys = "<Leader>n", desc = "+Notes" },
+	}
 end)
 
 later(function()
