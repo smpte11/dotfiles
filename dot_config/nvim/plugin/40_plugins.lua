@@ -343,7 +343,8 @@ later(function()
 	Config.zk_clues = {
 		{ mode = "n", keys = "<Leader>n", desc = "+Notes" },
 		{ mode = "n", keys = "<Leader>nj", desc = "+Journal" },
-		{ mode = "v", keys = "<Leader>n", desc = "+Notes" },
+		{ mode = "x", keys = "<Leader>n", desc = "+Notes" },
+		{ mode = "x", keys = "<Leader>nn", desc = "+New" },
 	}
 end)
 

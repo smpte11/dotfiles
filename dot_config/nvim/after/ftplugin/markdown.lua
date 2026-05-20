@@ -31,12 +31,21 @@ if nb_root ~= nil then
   local journal = function(kind)
     return function() require("zk").new({ dir = nb_root .. "/journal/" .. kind }) end
   end
+  local new_from_selection = function(cmd_name, prompt_title)
+    return function()
+      local prefix = vim.fn.input('Prefix (empty for none): ')
+      local opts = { dir = nb_root }
+      if prompt_title then opts.title = vim.fn.input('Title: ') end
+      if prefix ~= '' then opts.extra = { prefix = prefix } end
+      vim.cmd("'<,'>" .. cmd_name .. " " .. vim.inspect(opts, { newline = '', indent = '' }))
+    end
+  end
   map("n", "<CR>",         "<Cmd>lua vim.lsp.buf.definition()<CR>",                                                     "Follow link")
   map("n", "K",            "<Cmd>lua vim.lsp.buf.hover()<CR>",                                                          "Preview link")
   map("n", "<Leader>nn", function()
     local prefix = vim.fn.input('Prefix (empty for none): ')
     local title = vim.fn.input('Title: ')
-    local opts = { dir = vim.fn.expand('%:p:h'), title = title }
+    local opts = { dir = nb_root, title = title }
     if prefix ~= '' then opts.extra = { prefix = prefix } end
     require("zk").new(opts)
   end, "New note")
@@ -47,8 +56,8 @@ if nb_root ~= nil then
   map("n", "<Leader>ni",   "<Cmd>ZkInsertLink<CR>",                                                                    "Insert link")
   map("n", "<Leader>njp",  journal("personal"),                                                                        "Journal (personal)")
   map("n", "<Leader>njw",  journal("work"),                                                                            "Journal (work)")
-  map("v", "<Leader>nnt",  ":'<,'>ZkNewFromTitleSelection { dir = vim.fn.expand('%:p:h') }<CR>",                        "New from title")
-  map("v", "<Leader>nnc",  ":'<,'>ZkNewFromContentSelection { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>", "New from content")
+  map("v", "<Leader>nnt",  new_from_selection("ZkNewFromTitleSelection", false),                                       "New from title")
+  map("v", "<Leader>nnc",  new_from_selection("ZkNewFromContentSelection", true),                                      "New from content")
   map("v", "<Leader>nf",   ":'<,'>ZkMatch<CR>",                                                                        "Find matching")
   map("v", "<Leader>ni",   ":'<,'>ZkInsertLinkAtSelection<CR>",                                                        "Insert link")
 end

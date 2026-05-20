@@ -68,6 +68,7 @@ Config.leader_group_clues = {
   { mode = 'n', keys = '<Leader>v', desc = '+Visits' },
   { mode = 'n', keys = '<Leader>q', desc = '+Quit' },
   { mode = 'n', keys = '<Leader>w', desc = '+Window' },
+  { mode = 'x', keys = '<Leader>e', desc = '+Explore/Edit' },
   { mode = 'x', keys = '<Leader>g', desc = '+Git' },
   { mode = 'x', keys = '<Leader>l', desc = '+Language' },
 }
