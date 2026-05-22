@@ -385,6 +385,9 @@ later(function()
 		preview = {
 			filetypes = { "markdown", "codecompanion" },
 			ignore_buftypes = {},
+			modes = { "n", "i", "no", "c" },
+			hybrid_modes = { "n", "i" },
+			linewise_hybrid_mode = true,
 		},
 	})
 end)
