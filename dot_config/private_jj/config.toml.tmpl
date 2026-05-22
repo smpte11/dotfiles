@@ -23,11 +23,15 @@ name = "Felix Brousseau-Tremblay"
 email = "felix@brouss.eu"
 {{- end }}
 
-{{- if eq .chezmoi.hostname "Felixs-MacBook-Pro.local" }}
 [signing]
 behavior = "own"
 backend = "ssh"
+{{- if eq .chezmoi.os "darwin" }}
 key = "~/.ssh/SSH Key Kivra.pub"
+{{- else if eq .chezmoi.os "linux" }}
+key = "~/.ssh/id_ed25519.pub"
+{{- else }}
+key = "~/.ssh/SSH Key Perso.pub"
 {{- end }}
 
 [revsets]

@@ -24,7 +24,11 @@ $env.KUBECONFIG = $"($env.HOME)/.kube/kivra-app-01-vbg.yaml"
 
 $env.RIPGREP_CONFIG_PATH = $"($env.HOME)/.config/ripgrep/.ripgreprc"
 
-$env.SSH_AUTH_SOCK = $"($env.HOME)/.ssh/proton-pass-agent.sock"
+$env.SSH_AUTH_SOCK = if $nu.os-info.name == "macos" {
+    $"($env.HOME)/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+} else {
+    $"($env.HOME)/.ssh/proton-pass-agent.sock"
+}
 
 use std/util "path add"
 
