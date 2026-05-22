@@ -2,3 +2,4 @@
 ~/.config/nvim/.git/**
 install.sh
 cmd/
+mise.toml
