@@ -7,7 +7,7 @@ dir = "~/notebook"
 [note]
 language = "en"
 default-title = "Untitled"
-filename = "{{format-date now 'timestamp'}}{{if extra.prefix}}-{{extra.prefix}}{{end}}-{{slug title}}"
+filename = "{{format-date now 'timestamp'}}{{#if extra.prefix}}-{{extra.prefix}}{{/if}}-{{slug title}}"
 extension = "md"
 template = "[[ .chezmoi.homeDir ]]/.config/zk/templates/default.md"
 
