@@ -21,6 +21,11 @@ if ! type chezmoi >/dev/null 2>&1; then
     brew install chezmoi
 fi
 
+if ! type go >/dev/null 2>&1; then
+    echo "Installing go..."
+    brew intall go
+fi
+
 if is_container; then
     # In containers: no SSH key, clone over HTTPS
     chezmoi init --apply "https://github.com/${GITHUB_USER}/${REPO}.git"
