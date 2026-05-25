@@ -5,6 +5,7 @@ active_theme = "eldritch"
   common_brews = [
     "carapace",
     "chezmoi",
+    "devcontainer",
     "fd",
     "fzf",
     "gh",
