@@ -5,7 +5,7 @@ GITHUB_USER="smpte11"
 REPO="dotfiles"
 
 is_container() {
-    [ -n "${CODESPACES:-}" ] || [ -n "${REMOTE_CONTAINERS:-}" ] || [ -f /.dockerenv ]
+    [ -n "${CODESPACES:-}" ] || [ -n "${REMOTE_CONTAINERS:-}" ] || [ -n "${container:-}" ] || [ -f /.dockerenv ] || [ -f /run/.containerenv ]
 }
 
 # Install Homebrew if needed
