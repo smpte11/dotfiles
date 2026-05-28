@@ -1,38 +1,27 @@
 active_theme = "eldritch"
 
 [packages]
-  # brews installed on all platforms via homebrew
-  common_brews = [
+  # tools installed globally via mise on all platforms
+  mise_tools = [
     "carapace",
     "chezmoi",
-    "devcontainer",
+    "github:fgrehm/crib",
+    "devcontainer-cli",
     "fd",
     "fzf",
     "gh",
     "go",
     "jj",
-    "mise",
     "neovim",
-    "nushell",
+    "aqua:nushell/nushell",
     "oh-my-posh",
-    "opencode",
     "television",
-    "tree-sitter-cli",
+    "tree-sitter",
     "zellij",
-    "zk",
+    "aqua:zk-org/zk",
     "zoxide",
     "node",
   ]
-
-[packages.darwin]
-  brews = [
-    "cmake",
-  ]
-  casks = []
-  taps = []
-
-[packages.linux]
-  brews = []
 
 [themes.minischeme]
   background = "#142838"

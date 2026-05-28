@@ -49,6 +49,9 @@ path add $"($env.HOME)/.krew/bin"
 # common
 path add '/usr/local/bin'
 
+# mise shims (highest priority; must be added before any tool invocations below)
+path add $"($env.HOME)/.local/share/mise/shims"
+
 ## ${UserConfigDir}/nushell/env.nu
 $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
 mkdir $"($nu.cache-dir)"

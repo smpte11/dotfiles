@@ -1,0 +1,7 @@
+[tools]
+usage = "latest"
+{{ range .packages.mise_tools -}}
+{{ . | quote }} = "latest"
+{{ end }}
+[settings]
+experimental = true

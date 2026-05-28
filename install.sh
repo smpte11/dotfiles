@@ -8,38 +8,20 @@ is_container() {
     [ -n "${CODESPACES:-}" ] || [ -n "${REMOTE_CONTAINERS:-}" ] || [ -n "${container:-}" ] || [ -f /.dockerenv ] || [ -f /run/.containerenv ]
 }
 
-# Install Homebrew if needed
-if ! type brew >/dev/null 2>&1; then
-    echo "Installing Homebrew..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /home/linuxbrew/.linuxbrew/bin/brew shellenv 2>/dev/null)"
+# Install mise if needed
+if ! type mise >/dev/null 2>&1; then
+    echo "Installing mise..."
+    curl https://mise.run | sh
 fi
 
-# Install chezmoi if needed
-if ! type chezmoi >/dev/null 2>&1; then
-    echo "Installing chezmoi..."
-    brew install chezmoi
-fi
+# Ensure mise binary and shims are on PATH for this script and chezmoi apply
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
 
-if ! type go >/dev/null 2>&1; then
-    echo "Installing go..."
-    brew intall go
-fi
-
+# Borrow chezmoi via mise to run the initial apply; the apply writes the global
+# mise config (which lists chezmoi in mise_tools) and the after-install hook
+# makes it permanent.
 if is_container; then
-    # In containers: no SSH key, clone over HTTPS
-    chezmoi init --apply "https://github.com/${GITHUB_USER}/${REPO}.git"
+    mise exec chezmoi@latest -- chezmoi init --apply "https://github.com/${GITHUB_USER}/${REPO}.git"
 else
-    # On bare metal: authenticate with GitHub and set up SSH
-    if ! type gh >/dev/null 2>&1; then
-        echo "Installing GitHub CLI..."
-        brew install gh
-    fi
-
-    if ! gh auth status >/dev/null 2>&1; then
-        echo "Authenticating with GitHub..."
-        gh auth login -w -p ssh
-    fi
-
-    chezmoi init --apply "git@github.com:${GITHUB_USER}/${REPO}.git"
+    mise exec chezmoi@latest -- chezmoi init --apply "git@github.com:${GITHUB_USER}/${REPO}.git"
 fi

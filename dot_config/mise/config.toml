@@ -1,6 +1,0 @@
-[tools]
-usage = "latest"
-"github:fgrehm/crib" = "latest"
-
-[settings]
-experimental = true

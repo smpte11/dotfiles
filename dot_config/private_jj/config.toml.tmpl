@@ -28,6 +28,7 @@ behavior = "own"
 backend = "ssh"
 {{- if eq .chezmoi.os "darwin" }}
 key = "~/.ssh/SSH Key Kivra.pub"
+backends.ssh.program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
 {{- else if eq .chezmoi.os "linux" }}
 key = "~/.ssh/id_ed25519.pub"
 {{- else }}

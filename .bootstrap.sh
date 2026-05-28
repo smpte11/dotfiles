@@ -4,18 +4,18 @@ set -e
 GITHUB_USER="smpte11"
 REPO="dotfiles"
 
-# Install Homebrew if needed
-if ! type brew >/dev/null 2>&1; then
-    echo "Installing Homebrew..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /home/linuxbrew/.linuxbrew/bin/brew shellenv 2>/dev/null)"
+# Install mise if needed
+if ! type mise >/dev/null 2>&1; then
+    echo "Installing mise..."
+    curl https://mise.run | sh
 fi
 
-# Install GitHub CLI if needed
-if ! type gh >/dev/null 2>&1; then
-    echo "Installing GitHub CLI..."
-    brew install gh
-fi
+# Ensure mise binary and shims are on PATH for this script and chezmoi apply
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
+
+# Borrow gh via mise just for this bootstrap; chezmoi apply will install it
+# permanently via mise_tools.
+gh() { mise exec gh@latest -- gh "$@"; }
 
 # Authenticate with GitHub (browser-based OAuth, no SSH needed)
 if ! gh auth status >/dev/null 2>&1; then
@@ -33,11 +33,8 @@ if [ ! -f "$SSH_KEY" ]; then
     gh ssh-key add "$SSH_KEY.pub" --title "$(hostname) $(date +%Y-%m-%d)"
 fi
 
-# Initialize chezmoi
-if ! type chezmoi >/dev/null 2>&1; then
-    echo "Installing chezmoi..."
-    brew install chezmoi
-fi
-
+# Borrow chezmoi via mise to run the initial apply; the apply itself will write
+# the global mise config (which lists chezmoi in mise_tools) and the
+# after-install hook will make it permanent.
 echo "Initializing chezmoi..."
-chezmoi init --apply "git@github.com:${GITHUB_USER}/${REPO}.git"
+mise exec chezmoi@latest -- chezmoi init --apply "git@github.com:${GITHUB_USER}/${REPO}.git"
