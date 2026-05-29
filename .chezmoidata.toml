@@ -21,6 +21,7 @@ active_theme = "eldritch"
     "aqua:zk-org/zk",
     "zoxide",
     "node",
+    "yq"
   ]
 
 [themes.minischeme]
