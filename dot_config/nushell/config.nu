@@ -98,6 +98,8 @@ def --wrapped repeat [
     do $print_block "green" $"✓ Successfully completed all ($count) runs" false
 }
 
+use goose-completions.nu 
+
 # ${UserConfigDir}/nushell/config.nu
 source $"($nu.cache-dir)/carapace.nu"
 source ~/.zoxide.nu
