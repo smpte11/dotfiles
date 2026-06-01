@@ -98,7 +98,78 @@ def --wrapped repeat [
     do $print_block "green" $"✓ Successfully completed all ($count) runs" false
 }
 
-use goose-completions.nu 
+# Switch the chezmoi theme via an fzf picker that renders color swatches inline.
+def switch-theme [] {
+    let data_path = (chezmoi source-path | str trim | path join ".chezmoidata.toml")
+    let data = (open $data_path)
+    let active = $data.active_theme
+    let names = ($data.themes | columns | sort)
+
+    let swatch_for = {|hex|
+        if ($hex | is-empty) {
+            ""
+        } else {
+            let h = ($hex | str replace -r '^#' '')
+            let r = ($h | str substring 0..<2 | into int --radix 16)
+            let g = ($h | str substring 2..<4 | into int --radix 16)
+            let b = ($h | str substring 4..<6 | into int --radix 16)
+            let code = $"48;2;($r);($g);($b)m"
+            $"(ansi -e $code)  (ansi reset)"
+        }
+    }
+
+    let name_width = (($names | each {|n| $n | str length } | math max) + 2)
+
+    let items = ($names | each {|name|
+        let theme = ($data.themes | get $name)
+        let marker = if $name == $active { "● " } else { "  " }
+        let padded = ($name | fill -a left -c ' ' -w $name_width)
+        let colors = [
+            $theme.background
+            $theme.foreground
+            $theme.cursor
+            $theme.palette.red
+            $theme.palette.green
+            $theme.palette.yellow
+            $theme.palette.blue
+            $theme.palette.magenta
+            $theme.palette.cyan
+        ]
+        let swatches = ($colors | where {|c| $c | is-not-empty } | each {|c| do $swatch_for $c } | str join '')
+        $"($marker)($padded) ($swatches)"
+    })
+
+    let selected = ($items
+        | str join "\n"
+        | ^fzf --ansi --no-sort --reverse --header "Theme Switcher" --height $"(($names | length) + 4)" --prompt "› "
+        | str trim)
+
+    if ($selected | is-empty) { return }
+
+    let theme_name = ($selected | ansi strip | str trim | str replace -r '^●\s+' '' | split row ' ' | first)
+
+    if $theme_name == $active {
+        print $"'($theme_name)' is already the active theme"
+        return
+    }
+
+    let content = (open $data_path --raw)
+    let updated = ($content | str replace -r 'active_theme\s*=\s*"[^"]*"' $'active_theme = "($theme_name)"')
+    $updated | save -f $data_path
+
+    print $"Applying '($theme_name)'..."
+    chezmoi apply
+
+    print $"Switched to '($theme_name)'!"
+    print ""
+    print "Reload notes:"
+    print "  Ghostty: auto-reloads on config change"
+    print "  Zellij:  open a new tab/session to pick up the new theme"
+    print "  Neovim:  restart to pick up the new theme"
+}
+
+const goose_completions = ($nu.config-path | path dirname | path join "goose-completions.nu")
+use $goose_completions
 
 # ${UserConfigDir}/nushell/config.nu
 source $"($nu.cache-dir)/carapace.nu"

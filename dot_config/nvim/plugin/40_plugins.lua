@@ -383,7 +383,8 @@ later(function()
 	add({ "https://github.com/OXY2DEV/markview.nvim" })
 	require("markview").setup({
 		preview = {
-			filetypes = { "markdown", "codecompanion" },
+      icon_provider = "mini",
+			filetypes = { "markdown" },
 			ignore_buftypes = {},
 			modes = { "n", "i", "no", "c" },
 			hybrid_modes = { "n", "i" },
