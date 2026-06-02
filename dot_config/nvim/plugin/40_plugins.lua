@@ -122,6 +122,7 @@ now_if_args(function()
 		"nushell",
 		"gopls",
 		"expert",
+    "yamlls",
 	})
 end)
 
