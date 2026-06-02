@@ -1,45 +1,78 @@
 # config.nu
 #
-# Installed by:
-# version = "0.110.0"
-#
-# This file is used to override default Nushell settings, define
-# (or import) custom commands, or run any other startup tasks.
+# Nushell configuration. Previously split between `env.nu` and `config.nu`;
+# `env.nu` is deprecated upstream so everything now lives here.
 # See https://www.nushell.sh/book/configuration.html
-#
-# Nushell sets "sensible defaults" for most configuration settings, 
-# so your `config.nu` only needs to override these defaults if desired.
-#
-# You can open this file in your default editor using:
-#     config nu
-#
-# You can also pretty-print and page through the documentation for configuration
-# options using:
-#     config nu --doc | nu-highlight | less -R
+
+# ─── environment variables ───────────────────────────────────────────
+
+$env.EDITOR = 'nvim'
+$env.VISUAL = 'nvim'
+
+$env.KUBECONFIG = $"($env.HOME)/.kube/kivra-app-01-vbg.yaml"
+
+$env.RIPGREP_CONFIG_PATH = $"($env.HOME)/.config/ripgrep/.ripgreprc"
+
+$env.SSH_AUTH_SOCK = if $nu.os-info.name == "macos" {
+    $"($env.HOME)/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+} else {
+    $"($env.HOME)/.ssh/proton-pass-agent.sock"
+}
+
+# ─── PATH ────────────────────────────────────────────────────────────
+
+use std/util "path add"
+
+path add $'($env.HOME)/.local/bin'
+path add '/usr/local/bin'
+
+if $nu.os-info.name == "macos" {
+    path add '/opt/homebrew/bin'
+    path add '/opt/homebrew/sbin'
+} else if $nu.os-info.name == "linux" {
+    path add '/home/linuxbrew/.linuxbrew/bin'
+    path add '/home/linuxbrew/.linuxbrew/sbin'
+}
+
+path add $"($env.HOME)/.krew/bin"
+
+# mise shims — placed last so they take precedence over system tools.
+# Required so mise-managed tools are available immediately in this shell;
+# the autoload-written mise.nu (below) only takes effect on the next launch.
+path add $"($env.HOME)/.local/share/mise/shims"
+
+# ─── nushell display ─────────────────────────────────────────────────
 
 $env.config.show_banner = false
-
 $env.config.buffer_editor = "nvim"
-
 $env.config.edit_mode = "vi"
 
-oh-my-posh init nu --config ~/.config/ohmyposh/.minischeme.omp.toml
+# ─── vendor integrations ─────────────────────────────────────────────
+
+$env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
+
+mkdir $"($nu.cache-dir)"
+carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
+
+zoxide init nushell --cmd cd | save -f ~/.zoxide.nu
 
 mkdir ($nu.data-dir | path join "vendor/autoload")
 tv init nu | save -f ($nu.data-dir | path join "vendor/autoload/tv.nu")
-
-mkdir ($nu.data-dir | path join "vendor/autoload")
 ^mise activate nu | save -f ($nu.data-dir | path join "vendor/autoload/mise.nu")
 
-# custom aliases
+oh-my-posh init nu --config ~/.config/ohmyposh/.minischeme.omp.toml
+
+# ─── aliases ─────────────────────────────────────────────────────────
+
 alias ll = ls -l
 
-# custom command
+# ─── custom commands ─────────────────────────────────────────────────
+
 # Helper to fetch external commands for completion
 def "nu-complete commands" [] {
-    $env.PATH 
-    | split row (char esep) 
-    | each { |dir| 
+    $env.PATH
+    | split row (char esep)
+    | each { |dir|
         if ($dir | path exists) {
             ls $dir | get name | path basename
         }
@@ -171,6 +204,7 @@ def switch-theme [] {
 const goose_completions = ($nu.config-path | path dirname | path join "goose-completions.nu")
 use $goose_completions
 
-# ${UserConfigDir}/nushell/config.nu
+# ─── sources ─────────────────────────────────────────────────────────
+
 source $"($nu.cache-dir)/carapace.nu"
 source ~/.zoxide.nu
