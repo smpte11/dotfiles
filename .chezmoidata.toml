@@ -1,29 +1,5 @@
 active_theme = "eldritch"
 
-[packages]
-  # tools installed globally via mise on all platforms
-  mise_tools = [
-    "carapace",
-    "chezmoi",
-    "github:fgrehm/crib",
-    "devcontainer-cli",
-    "fd",
-    "fzf",
-    "gh",
-    "go",
-    "jj",
-    "neovim",
-    "aqua:nushell/nushell",
-    "oh-my-posh",
-    "television",
-    "tree-sitter",
-    "zellij",
-    "aqua:zk-org/zk",
-    "zoxide",
-    "node",
-    "yq"
-  ]
-
 [themes.minischeme]
   background = "#142838"
   foreground = "#8ff586"

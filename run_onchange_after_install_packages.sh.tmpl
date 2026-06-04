@@ -1,4 +1,4 @@
 #!/bin/bash
 # template hash: {{ include "dot_config/mise/config.toml.tmpl" | sha256sum }}
-# tools hash: {{ .packages.mise_tools | toJson | sha256sum }}
 mise trust $HOME/.config/mise/config.toml && mise install
+
