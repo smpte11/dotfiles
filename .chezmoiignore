@@ -3,3 +3,6 @@
 install.sh
 cmd/
 mise.toml
+{{- if ne .chezmoi.hostname "Felixs-MacBook-Pro" }}
+.config/k9s/skins/active-theme.yaml
+{{- end }}

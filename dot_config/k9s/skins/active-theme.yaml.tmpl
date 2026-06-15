@@ -1,0 +1,86 @@
+{{- $t := index .themes .active_theme -}}
+# k9s skin generated from chezmoi active_theme ({{ .active_theme }})
+k9s:
+  body:
+    fgColor: "{{ $t.foreground }}"
+    bgColor: "{{ $t.background }}"
+    logoColor: "{{ $t.cursor }}"
+  prompt:
+    fgColor: "{{ $t.palette.cyan }}"
+    bgColor: "{{ $t.background }}"
+    suggestColor: "{{ $t.palette.silver }}"
+  info:
+    fgColor: "{{ $t.palette.bright_yellow }}"
+    sectionColor: "{{ $t.foreground }}"
+  dialog:
+    fgColor: "{{ $t.foreground }}"
+    bgColor: "{{ $t.base.b01 }}"
+    buttonFgColor: "{{ $t.background }}"
+    buttonBgColor: "{{ $t.palette.bright_green }}"
+    buttonFocusFgColor: "{{ $t.background }}"
+    buttonFocusBgColor: "{{ $t.palette.magenta }}"
+    labelFgColor: "{{ $t.palette.magenta }}"
+    fieldFgColor: "{{ $t.palette.cyan }}"
+  frame:
+    border:
+      fgColor: "{{ $t.base.b02 }}"
+      focusColor: "{{ $t.cursor }}"
+    menu:
+      fgColor: "{{ $t.foreground }}"
+      keyColor: "{{ $t.palette.cyan }}"
+      numKeyColor: "{{ $t.palette.magenta }}"
+    crumbs:
+      fgColor: "{{ $t.background }}"
+      bgColor: "{{ $t.palette.silver }}"
+      activeColor: "{{ $t.palette.yellow }}"
+    status:
+      newColor: "{{ $t.palette.cyan }}"
+      modifyColor: "{{ $t.palette.yellow }}"
+      addColor: "{{ $t.palette.green }}"
+      errorColor: "{{ $t.palette.red }}"
+      pendingColor: "{{ $t.palette.bright_red }}"
+      highlightColor: "{{ $t.palette.magenta }}"
+      killColor: "{{ $t.palette.blue }}"
+      completedColor: "{{ $t.base.b02 }}"
+    title:
+      fgColor: "{{ $t.cursor }}"
+      highlightColor: "{{ $t.palette.magenta }}"
+      counterColor: "{{ $t.palette.yellow }}"
+      filterColor: "{{ $t.palette.cyan }}"
+  views:
+    charts:
+      bgColor: "{{ $t.background }}"
+      defaultDialColors:
+        - "{{ $t.palette.green }}"
+        - "{{ $t.palette.red }}"
+      defaultChartColors:
+        - "{{ $t.palette.green }}"
+        - "{{ $t.palette.red }}"
+    table:
+      fgColor: "{{ $t.foreground }}"
+      bgColor: "{{ $t.background }}"
+      cursorFgColor: "{{ $t.background }}"
+      cursorBgColor: "{{ $t.cursor }}"
+      markColor: "{{ $t.palette.yellow }}"
+      header:
+        fgColor: "{{ $t.cursor }}"
+        bgColor: "{{ $t.background }}"
+        sorterColor: "{{ $t.palette.bright_yellow }}"
+    xray:
+      fgColor: "{{ $t.foreground }}"
+      bgColor: "{{ $t.background }}"
+      cursorColor: "{{ $t.cursor }}"
+      graphicColor: "{{ $t.palette.yellow }}"
+      showIcons: false
+    yaml:
+      keyColor: "{{ $t.palette.blue }}"
+      colonColor: "{{ $t.palette.silver }}"
+      valueColor: "{{ $t.palette.cyan }}"
+    logs:
+      fgColor: "{{ $t.foreground }}"
+      bgColor: "{{ $t.background }}"
+      indicator:
+        fgColor: "{{ $t.cursor }}"
+        bgColor: "{{ $t.background }}"
+        toggleOnColor: "{{ $t.palette.bright_green }}"
+        toggleOffColor: "{{ $t.palette.silver }}"
