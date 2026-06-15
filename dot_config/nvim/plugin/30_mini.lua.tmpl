@@ -591,7 +591,9 @@ end)
 -- See also:
 -- - `:h MiniJump2d.gen_spotter` - list of available spotters
 later(function()
-	require("mini.jump2d").setup()
+	require("mini.jump2d").setup({
+		mappings = { start_jumping = '<Leader>j' },
+	})
 end)
 
 -- Special key mappings. Provides helpers to map:
