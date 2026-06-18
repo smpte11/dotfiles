@@ -1,0 +1,50 @@
+{{- $t := index .themes .active_theme -}}
+panel_bg = "{{ $t.base.b00 }}"
+bg_highlight = "{{ $t.base.b01 }}"
+fg_primary = "{{ $t.foreground }}"
+fg_secondary = "{{ $t.base.b03 }}"
+fg_dim = "{{ $t.base.b02 }}"
+
+diff_add = "{{ $t.palette.green }}"
+diff_add_bg = "{{ $t.base.b01 }}"
+diff_del = "{{ $t.palette.red }}"
+diff_del_bg = "{{ $t.base.b01 }}"
+diff_context = "{{ $t.base.b02 }}"
+diff_hunk_header = "{{ $t.palette.cyan }}"
+expanded_context_fg = "{{ $t.base.b03 }}"
+syntax_add_bg = "{{ $t.base.b01 }}"
+syntax_del_bg = "{{ $t.base.b01 }}"
+
+file_added = "{{ $t.palette.green }}"
+file_modified = "{{ $t.palette.yellow }}"
+file_deleted = "{{ $t.palette.red }}"
+file_renamed = "{{ $t.palette.blue }}"
+
+reviewed = "{{ $t.palette.bright_green }}"
+pending = "{{ $t.palette.yellow }}"
+
+comment_note = "{{ $t.palette.cyan }}"
+comment_suggestion = "{{ $t.palette.blue }}"
+comment_issue = "{{ $t.palette.red }}"
+comment_praise = "{{ $t.palette.bright_magenta }}"
+
+border_focused = "{{ $t.cursor }}"
+border_unfocused = "{{ $t.base.b02 }}"
+status_bar_bg = "{{ $t.base.b01 }}"
+cursor_color = "{{ $t.cursor }}"
+cursor_line_bg = "{{ $t.base.b01 }}"
+branch_name = "{{ $t.palette.magenta }}"
+help_indicator = "{{ $t.palette.silver }}"
+
+message_info_fg = "{{ $t.background }}"
+message_info_bg = "{{ $t.palette.cyan }}"
+message_warning_fg = "{{ $t.background }}"
+message_warning_bg = "{{ $t.palette.yellow }}"
+message_error_fg = "{{ $t.background }}"
+message_error_bg = "{{ $t.palette.red }}"
+
+update_badge_fg = "{{ $t.background }}"
+update_badge_bg = "{{ $t.palette.bright_magenta }}"
+
+mode_fg = "{{ $t.background }}"
+mode_bg = "{{ $t.palette.bright_green }}"

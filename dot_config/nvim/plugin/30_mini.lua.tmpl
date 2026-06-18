@@ -364,8 +364,23 @@ end)
 -- It is not enabled by default because its effects are a matter of taste.
 -- Also scroll and resize have some unwanted side effects (see `:h mini.animate`).
 -- Uncomment next line (use `gcc`) to enable.
-later(function()
-	require("mini.animate").setup()
+now(function()
+	local animate = require("mini.animate")
+	animate.setup({
+		cursor = {
+			enable = true,
+			timing = animate.gen_timing.exponential({ duration = 120, unit = "total", easing = "out" }),
+			path = animate.gen_path.line({
+				predicate = function(destination) return destination[1] ~= 0 or destination[2] ~= 0 end,
+				max_output_steps = 1000,
+			}),
+		},
+		scroll = { enable = false },
+		resize = { enable = false },
+		open = { enable = false },
+		close = { enable = false },
+	})
+	vim.api.nvim_set_hl(0, "MiniAnimateCursor", { reverse = true, nocombine = true, blend = 60 })
 end)
 
 -- Go forward/backward with square brackets. Implements consistent sets of mappings
