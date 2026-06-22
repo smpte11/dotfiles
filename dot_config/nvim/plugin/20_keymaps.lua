@@ -127,6 +127,7 @@ nmap_leader('ck', edit_plugin_file('20_keymaps.lua'), 'Keymaps config')
 nmap_leader('cm', edit_plugin_file('30_mini.lua'), 'MINI config')
 nmap_leader('co', edit_plugin_file('10_options.lua'), 'Options config')
 nmap_leader('cp', edit_plugin_file('40_plugins.lua'), 'Plugins config')
+nmap_leader('cu', function () vim.pack.update() end, 'Plugins update')
 
 -- e is for 'Explore' and 'Edit'. Common usage:
 -- - `<Leader>ed` - open explorer at current working directory
@@ -271,6 +272,8 @@ nmap_leader('vv', '<Cmd>lua MiniVisits.add_label("core")<CR>', 'Add "core" label
 nmap_leader('vV', '<Cmd>lua MiniVisits.remove_label("core")<CR>', 'Remove "core" label')
 nmap_leader('vl', '<Cmd>lua MiniVisits.add_label()<CR>', 'Add label')
 nmap_leader('vL', '<Cmd>lua MiniVisits.remove_label()<CR>', 'Remove label')
+
+
 
 -- tmux-navigator
 nmap('c-h', '<Cmd>TmuxNavigateLeft<CR>', 'Navigate Left')

@@ -252,7 +252,7 @@ end)
 -- - `:h MiniFiles-examples` - examples of common setups
 now_if_args(function()
 	-- Enable directory/file preview
-	require("mini.files").setup({ windows = { preview = true } })
+	require("mini.files").setup({ windows = { preview = true, width_preview = 80 } })
 
 	-- Add common bookmarks for every explorer. Example usage inside explorer:
 	-- - `'c` to navigate into your config directory
@@ -624,14 +624,27 @@ end)
 -- - `:h MiniKeymap.map_combo()` - map combo
 later(function()
 	require("mini.keymap").setup()
-	-- Navigate 'mini.completion' menu with `<Tab>` /  `<S-Tab>`
-	MiniKeymap.map_multistep("i", "<Tab>", { "pmenu_next" })
-	MiniKeymap.map_multistep("i", "<S-Tab>", { "pmenu_prev" })
+	-- "Super Tab": one key advances through every contextual action in Insert mode.
+	-- Order matters — first matching condition wins. NOTE: a literal tab is
+	-- effectively unreachable with this stack; use `<C-v><Tab>` when you need one.
+	MiniKeymap.map_multistep("i", "<Tab>", {
+		"minisnippets_next",
+		"minisnippets_expand",
+		"pmenu_next",
+		"jump_after_tsnode",
+		"jump_after_close",
+	})
+	MiniKeymap.map_multistep("i", "<S-Tab>", {
+		"minisnippets_prev",
+		"pmenu_prev",
+		"jump_before_tsnode",
+		"jump_before_open",
+	})
 	-- On `<CR>` try to accept current completion item, fall back to accounting
 	-- for pairs from 'mini.pairs'
 	MiniKeymap.map_multistep("i", "<CR>", { "pmenu_accept", "minipairs_cr" })
-	-- On `<BS>` just try to account for pairs from 'mini.pairs'
-	MiniKeymap.map_multistep("i", "<BS>", { "minipairs_bs" })
+	-- On `<BS>` account for pairs from 'mini.pairs', then collapse runs of whitespace
+	MiniKeymap.map_multistep("i", "<BS>", { "minipairs_bs", "hungry_bs" })
 
 	MiniKeymap.map_combo({ "n", "x" }, "ll", "g$")
 	MiniKeymap.map_combo({ "n", "x" }, "hh", "g^")
