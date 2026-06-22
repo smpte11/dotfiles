@@ -1,16 +1,134 @@
 {{- $t := index .themes .active_theme -}}
+{{- $bg := $t.background -}}
+{{- $fg := $t.foreground -}}
+{{- $sel_bg := $t.selection_bg -}}
+{{- $sel_fg := $t.selection_fg -}}
+{{- $p := $t.palette -}}
 themes {
     active-theme {
-        fg "{{ $t.palette.bright_yellow }}"
-        bg "{{ $t.background }}"
-        black "{{ $t.background }}"
-        white "{{ $t.palette.white }}"
-        red "{{ $t.palette.red }}"
-        orange "{{ $t.palette.bright_red }}"
-        yellow "{{ $t.palette.yellow }}"
-        green "{{ $t.palette.bright_green }}"
-        blue "{{ $t.palette.blue }}"
-        cyan "{{ $t.palette.cyan }}"
-        magenta "{{ $t.palette.bright_magenta }}"
+        text_unselected {
+            base "{{ $fg }}"
+            background "{{ $bg }}"
+            emphasis_0 "{{ $p.bright_green }}"
+            emphasis_1 "{{ $p.magenta }}"
+            emphasis_2 "{{ $p.cyan }}"
+            emphasis_3 "{{ $p.bright_yellow }}"
+        }
+        text_selected {
+            base "{{ $sel_fg }}"
+            background "{{ $sel_bg }}"
+            emphasis_0 "{{ $p.bright_yellow }}"
+            emphasis_1 "{{ $p.bright_green }}"
+            emphasis_2 "{{ $p.cyan }}"
+            emphasis_3 "{{ $p.white }}"
+        }
+        ribbon_unselected {
+            base "{{ $bg }}"
+            background "{{ $p.bright_yellow }}"
+            emphasis_0 "{{ $p.red }}"
+            emphasis_1 "{{ $p.blue }}"
+            emphasis_2 "{{ $p.magenta }}"
+            emphasis_3 "{{ $p.cyan }}"
+        }
+        ribbon_selected {
+            base "{{ $bg }}"
+            background "{{ $p.bright_green }}"
+            emphasis_0 "{{ $p.red }}"
+            emphasis_1 "{{ $p.magenta }}"
+            emphasis_2 "{{ $p.blue }}"
+            emphasis_3 "{{ $p.cyan }}"
+        }
+        table_title {
+            base "{{ $p.bright_green }}"
+            background "{{ $bg }}"
+            emphasis_0 "{{ $p.bright_yellow }}"
+            emphasis_1 "{{ $p.magenta }}"
+            emphasis_2 "{{ $p.cyan }}"
+            emphasis_3 "{{ $p.blue }}"
+        }
+        table_cell_unselected {
+            base "{{ $fg }}"
+            background "{{ $bg }}"
+            emphasis_0 "{{ $p.bright_green }}"
+            emphasis_1 "{{ $p.magenta }}"
+            emphasis_2 "{{ $p.cyan }}"
+            emphasis_3 "{{ $p.bright_yellow }}"
+        }
+        table_cell_selected {
+            base "{{ $sel_fg }}"
+            background "{{ $sel_bg }}"
+            emphasis_0 "{{ $p.bright_yellow }}"
+            emphasis_1 "{{ $p.bright_green }}"
+            emphasis_2 "{{ $p.cyan }}"
+            emphasis_3 "{{ $p.white }}"
+        }
+        list_unselected {
+            base "{{ $fg }}"
+            background "{{ $bg }}"
+            emphasis_0 "{{ $p.bright_green }}"
+            emphasis_1 "{{ $p.magenta }}"
+            emphasis_2 "{{ $p.cyan }}"
+            emphasis_3 "{{ $p.bright_yellow }}"
+        }
+        list_selected {
+            base "{{ $sel_fg }}"
+            background "{{ $sel_bg }}"
+            emphasis_0 "{{ $p.bright_yellow }}"
+            emphasis_1 "{{ $p.bright_green }}"
+            emphasis_2 "{{ $p.cyan }}"
+            emphasis_3 "{{ $p.white }}"
+        }
+        frame_unselected {
+            base "{{ $p.bright_black }}"
+            background "{{ $bg }}"
+            emphasis_0 "{{ $p.bright_yellow }}"
+            emphasis_1 "{{ $p.magenta }}"
+            emphasis_2 "{{ $p.cyan }}"
+            emphasis_3 "{{ $p.bright_green }}"
+        }
+        frame_selected {
+            base "{{ $p.bright_green }}"
+            background "{{ $bg }}"
+            emphasis_0 "{{ $p.bright_yellow }}"
+            emphasis_1 "{{ $p.magenta }}"
+            emphasis_2 "{{ $p.cyan }}"
+            emphasis_3 "{{ $p.blue }}"
+        }
+        frame_highlight {
+            base "{{ $p.bright_yellow }}"
+            background "{{ $bg }}"
+            emphasis_0 "{{ $p.bright_yellow }}"
+            emphasis_1 "{{ $p.bright_yellow }}"
+            emphasis_2 "{{ $p.bright_yellow }}"
+            emphasis_3 "{{ $p.bright_yellow }}"
+        }
+        exit_code_success {
+            base "{{ $p.bright_green }}"
+            background "{{ $bg }}"
+            emphasis_0 "{{ $p.cyan }}"
+            emphasis_1 "{{ $p.bright_yellow }}"
+            emphasis_2 "{{ $p.magenta }}"
+            emphasis_3 "{{ $p.blue }}"
+        }
+        exit_code_error {
+            base "{{ $p.red }}"
+            background "{{ $bg }}"
+            emphasis_0 "{{ $p.bright_yellow }}"
+            emphasis_1 "{{ $p.magenta }}"
+            emphasis_2 "{{ $p.cyan }}"
+            emphasis_3 "{{ $p.bright_green }}"
+        }
+        multiplayer_user_colors {
+            player_1 "{{ $p.magenta }}"
+            player_2 "{{ $p.blue }}"
+            player_3 "{{ $p.cyan }}"
+            player_4 "{{ $p.bright_yellow }}"
+            player_5 "{{ $p.bright_green }}"
+            player_6 "{{ $p.bright_red }}"
+            player_7 "{{ $p.red }}"
+            player_8 "{{ $p.bright_magenta }}"
+            player_9 "{{ $p.bright_blue }}"
+            player_10 "{{ $p.bright_cyan }}"
+        }
     }
 }
