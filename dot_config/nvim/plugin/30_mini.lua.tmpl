@@ -264,6 +264,12 @@ now_if_args(function()
 		MiniFiles.set_bookmark("w", vim.fn.getcwd, { desc = "Working directory" })
 	end
 	Config.new_autocmd("User", "MiniFilesExplorerOpen", add_marks, "Add bookmarks")
+
+	-- Disable mini.keymap combos (jj, kk, ll, hh, etc.) inside the file explorer
+	local disable_combos = function(args)
+		vim.b[args.data.buf_id].minikeymap_disable = true
+	end
+	Config.new_autocmd("User", "MiniFilesBufferCreate", disable_combos, "Disable combos")
 end)
 
 -- Miscellaneous small but useful functions. Example usage:
