@@ -66,6 +66,8 @@ now_if_args(function()
 		"gomod",
 		"gosum",
 		"gotmpl",
+		"ocaml",
+		"ocaml_interface",
 		-- Add here more languages with which you want to use tree-sitter
 		-- To see available languages:
 		-- - Execute `:=require('nvim-treesitter').get_available()`
@@ -123,6 +125,7 @@ now_if_args(function()
 		"gopls",
 		"expert",
     "yamlls",
+		"ocamllsp",
 	})
 end)
 
@@ -155,6 +158,7 @@ later(function()
 			elixir = { "mix" },
 			heex = { "mix" },
 			go = { "goimports", "gofumpt" },
+			ocaml = { "ocamlformat" },
 			cucumber = { "reformat-gherkin" },
 		},
 		formatters = {

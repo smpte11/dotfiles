@@ -1,0 +1,15 @@
+[tools]
+"aqua:ocaml/opam" = "latest"
+
+[env]
+# Prefer the project-local opam switch on PATH.
+_.path = ["./_opam/bin"]
+
+[tasks.bootstrap]
+description = "Create local opam switch + install dev tools"
+run = """
+set -euo pipefail
+opam switch create . --no-install -y
+eval $(opam env)
+opam install -y dune ocaml-lsp-server ocamlformat utop
+"""
