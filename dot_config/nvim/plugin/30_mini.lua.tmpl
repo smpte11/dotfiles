@@ -653,6 +653,24 @@ later(function()
 
 	MiniKeymap.map_combo(mode, "jk", "<BS><BS><Esc>")
 	MiniKeymap.map_combo(mode, "kj", "<BS><BS><Esc>")
+
+	-- Paragraph jumps to match `ll` / `hh` for line ends
+	MiniKeymap.map_combo({ "n", "x" }, "jj", "}")
+	MiniKeymap.map_combo({ "n", "x" }, "kk", "{")
+
+	-- Nudge away from mashing hjkl — fires after 5 in a row
+	local notify_many_keys = function(key)
+		MiniKeymap.map_combo({ "n", "x" }, string.rep(key, 5), function()
+			vim.notify("Too many " .. key)
+		end)
+	end
+	notify_many_keys("h")
+	notify_many_keys("j")
+	notify_many_keys("k")
+	notify_many_keys("l")
+
+	-- Fix the previous spelling mistake without leaving Insert
+	MiniKeymap.map_combo("i", "kk", "<BS><BS><Esc>[s1z=gi<Right>")
 end)
 
 -- Window with text overview. It is displayed on the right hand side. Can be used
