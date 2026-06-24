@@ -1,0 +1,5 @@
+# Selects the Pure-inspired flavor for both dark and light terminals.
+# The flavor uses ANSI color names, so it follows the active terminal palette.
+[flavor]
+dark  = "pure"
+light = "pure"

@@ -1,0 +1,115 @@
+[mgr]
+cwd = { fg = "blue" }
+
+find_keyword  = { fg = "yellow", italic = true }
+find_position = { fg = "magenta", bg = "reset", italic = true }
+
+symlink_target = { fg = "darkgray" }
+
+marker_copied   = { fg = "lightmagenta" }
+marker_cut      = { fg = "red" }
+marker_marked   = { fg = "magenta" }
+marker_selected = { fg = "magenta" }
+count_copied   = { fg = "lightmagenta", bold = true }
+count_cut      = { fg = "red", bold = true }
+count_selected = { fg = "magenta", bold = true }
+
+border_symbol = "│ "
+border_style  = { fg = "darkgray" }
+
+[tabs]
+active   = { fg = "magenta", bold = true }
+inactive = { fg = "darkgray" }
+sep_inner = { open = "", close = "" }
+sep_outer = { open = "", close = "" }
+
+[mode]
+normal_main = { fg = "magenta", bold = true }
+normal_alt  = { fg = "darkgray" }
+select_main = { fg = "yellow", bold = true }
+select_alt  = { fg = "darkgray" }
+unset_main  = { fg = "lightmagenta", bold = true }
+unset_alt   = { fg = "darkgray" }
+
+[indicator]
+parent  = { fg = "magenta", bold = true }
+current = { fg = "magenta", bold = true }
+preview = { underline = true }
+padding = { open = "❯ ", close = " " }
+
+[status]
+overall   = { fg = "reset", bg = "reset" }
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+perm_sep   = { fg = "darkgray" }
+perm_type  = { fg = "blue" }
+perm_read  = { fg = "darkgray" }
+perm_write = { fg = "darkgray" }
+perm_exec  = { fg = "darkgray" }
+progress_label  = { fg = "reset", bold = true }
+progress_normal = { fg = "magenta" }
+progress_error  = { fg = "red" }
+
+[which]
+cols = 3
+mask = { bg = "reset" }
+cand = { fg = "magenta" }
+rest = { fg = "darkgray" }
+desc = { fg = "reset" }
+separator       = "  "
+separator_style = { fg = "darkgray" }
+
+[confirm]
+border  = { fg = "darkgray" }
+title   = { fg = "magenta" }
+body    = { fg = "reset" }
+list    = { fg = "reset" }
+btn_yes = { fg = "magenta", bold = true }
+btn_no  = { fg = "reset" }
+
+[spot]
+border = { fg = "darkgray" }
+title  = { fg = "magenta" }
+tbl_col  = { fg = "magenta" }
+tbl_cell = { reversed = true }
+
+[notify]
+title_info  = { fg = "magenta" }
+title_warn  = { fg = "yellow" }
+title_error = { fg = "red" }
+
+[pick]
+border   = { fg = "darkgray" }
+active   = { fg = "magenta", bold = true }
+inactive = { fg = "reset" }
+
+[input]
+border   = { fg = "darkgray" }
+title    = { fg = "magenta" }
+value    = { fg = "reset" }
+selected = { reversed = true }
+
+[cmp]
+border   = { fg = "darkgray" }
+active   = { fg = "magenta", bold = true }
+inactive = { fg = "reset" }
+
+[tasks]
+border  = { fg = "darkgray" }
+title   = { fg = "magenta" }
+hovered = { fg = "magenta", underline = true }
+
+[help]
+on      = { fg = "magenta" }
+run     = { fg = "blue" }
+desc    = { fg = "reset" }
+hovered = { reversed = true }
+footer  = { fg = "darkgray" }
+
+[filetype]
+rules = [
+  { url = "*", is = "orphan", fg = "red" },
+  { url = "*", is = "link",   fg = "darkgray" },
+  { url = "*", is = "exec",   fg = "magenta" },
+  { url = "*/", fg = "blue" },
+]
