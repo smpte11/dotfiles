@@ -205,6 +205,9 @@ def switch-theme [] {
 const goose_completions = ($nu.config-path | path dirname | path join "goose-completions.nu")
 use $goose_completions
 
+const ocaml_module = ($nu.config-path | path dirname | path join "ocaml.nu")
+use $ocaml_module *
+
 # ─── sources ─────────────────────────────────────────────────────────
 
 source $"($nu.cache-dir)/carapace.nu"
