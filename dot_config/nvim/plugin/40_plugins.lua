@@ -314,25 +314,6 @@ later(function()
 end)
 
 later(function()
-	add({
-		"https://github.com/pwntester/octo.nvim",
-		"https://github.com/nvim-lua/plenary.nvim",
-		"https://github.com/nvim-tree/nvim-web-devicons",
-	})
-	require("octo").setup({
-		picker = "default",
-		default_merge_method = "squash",
-	})
-	vim.keymap.set("n", "<Leader>gi", "<Cmd>Octo issue list<CR>", { desc = "Issues (Octo)" })
-	vim.keymap.set("n", "<Leader>gI", "<Cmd>Octo issue create<CR>", { desc = "Issue create (Octo)" })
-	vim.keymap.set("n", "<Leader>gp", "<Cmd>Octo pr list<CR>", { desc = "PRs (Octo)" })
-	vim.keymap.set("n", "<Leader>gP", "<Cmd>Octo pr create<CR>", { desc = "PR create (Octo)" })
-	vim.keymap.set("n", "<Leader>gr", "<Cmd>Octo review start<CR>", { desc = "Review start (Octo)" })
-	vim.keymap.set("n", "<Leader>gn", "<Cmd>Octo notification list<CR>", { desc = "Notifications (Octo)" })
-	vim.keymap.set("n", "<Leader>gx", "<Cmd>Octo search<CR>", { desc = "Search GitHub (Octo)" })
-end)
-
-later(function()
 	Config.on_packchanged("pipeline.nvim", { "install", "update" }, function()
 		vim.fn.system("make")
 	end, "Build pipeline.nvim")
@@ -340,6 +321,7 @@ later(function()
 	add({
 		"https://github.com/topaxi/pipeline.nvim",
 		"https://github.com/MunifTanjim/nui.nvim",
+		"https://github.com/nvim-lua/plenary.nvim",
 	})
 	require("pipeline").setup()
 end)

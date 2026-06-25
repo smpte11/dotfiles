@@ -798,6 +798,9 @@ end)
 --   one of `<Leader>f` mappings defined in 'plugin/20_keymaps.lua'
 later(function()
 	require("mini.pick").setup()
+	-- Route `vim.ui.select` through 'mini.pick' (not auto-installed by setup).
+	-- Used by plugins like octo.nvim's default picker.
+	vim.ui.select = MiniPick.ui_select
 end)
 
 -- Manage and expand snippets (templates for a frequently used text).
