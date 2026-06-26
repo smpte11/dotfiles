@@ -15,8 +15,10 @@
 -- This is also a good place to set buffer-local 'mini.nvim' variables.
 -- See `:h mini.nvim-buffer-local-config` and `:h mini.nvim-disabling-recipes`.
 
--- Enable spelling and wrap for window
-vim.cmd('setlocal spell wrap')
+-- Enable spelling for window. Keep 'nowrap': markview.nvim only partially
+-- renders tables when 'wrap' is on (see markview.nvim-markdown.txt), so wrap
+-- is disabled to get full table rendering.
+vim.cmd('setlocal spell nowrap')
 
 -- Fold with tree-sitter
 vim.cmd('setlocal foldmethod=expr foldexpr=v:lua.vim.treesitter.foldexpr()')

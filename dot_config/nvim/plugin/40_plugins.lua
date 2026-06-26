@@ -155,6 +155,12 @@ later(function()
 			lua = { "stylua" },
 			erlang = { "erlfmt" },
 			json = { "prettierd", "prettier" },
+			-- Convert in-table wiki links to markdown links first, then align with
+			-- prettier. A wiki-link alias pipe `[[id|Label]]` collides with the GFM
+			-- table column separator: unescaped breaks the table, escaped (`\|`)
+			-- breaks zk link resolution. Markdown links `[Label](id.md)` satisfy
+			-- both, so rewrite the in-table ones (only) before formatting.
+			markdown = { "wikilink_table_to_md", "prettierd", "prettier" },
 			elixir = { "mix" },
 			heex = { "mix" },
 			go = { "goimports", "gofumpt" },
@@ -171,6 +177,19 @@ later(function()
 				-- Avoid recursive config loading (e.g. dev.exs import_config loops)
 				env = { MIX_ENV = "test" },
 			},
+			-- On table-row lines only, rewrite aliased wiki links to markdown
+			-- links: `[[href|Label]]` -> `[Label](href.md)`. Skips bare wiki links
+			-- (no pipe) and anything outside tables, so prose `[[ ]]` links are
+			-- untouched. Adds `.md` unless href is a URL or already has an
+			-- extension. Idempotent.
+			wikilink_table_to_md = {
+				command = "perl",
+				args = {
+					"-pe",
+					[==[if (/^\s*\|/) { s{\[\[(.*?)\]\]}{ my $i=$1; if ($i=~/\|/) { my($h,$l)=split(/\|/,$i,2); $h=~s/^\s+|\s+$//g; $l=~s/^\s+|\s+$//g; $h.=".md" unless ($h=~m{://}||$h=~/\.[A-Za-z0-9]+$/); "[$l]($h)" } else { "[[$i]]" } }ge; }]==],
+				},
+				stdin = true,
+			},
 		},
 	})
 end)
@@ -184,6 +203,7 @@ later(function()
 
 	require("lint").linters_by_ft = {
 		elixir = { "credo" },
+		markdown = { "markdownlint-cli2" },
 	}
 
 	vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
