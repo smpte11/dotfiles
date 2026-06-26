@@ -630,21 +630,16 @@ end)
 -- - `:h MiniKeymap.map_combo()` - map combo
 later(function()
 	require("mini.keymap").setup()
-	-- "Super Tab": one key advances through every contextual action in Insert mode.
-	-- Order matters — first matching condition wins. NOTE: a literal tab is
-	-- effectively unreachable with this stack; use `<C-v><Tab>` when you need one.
+	-- "Super Tab": one key advances through contextual actions in Insert mode.
+	-- Order matters — first matching condition wins. Falls through to a literal
+	-- tab/indent when no snippet session is active and no completion menu is open.
 	MiniKeymap.map_multistep("i", "<Tab>", {
 		"minisnippets_next",
-		"minisnippets_expand",
 		"pmenu_next",
-		"jump_after_tsnode",
-		"jump_after_close",
 	})
 	MiniKeymap.map_multistep("i", "<S-Tab>", {
 		"minisnippets_prev",
 		"pmenu_prev",
-		"jump_before_tsnode",
-		"jump_before_open",
 	})
 	-- On `<CR>` try to accept current completion item, fall back to accounting
 	-- for pairs from 'mini.pairs'
@@ -796,11 +791,17 @@ end)
 -- - `:h MiniPick.builtin` and `:h MiniExtra.pickers` - available pickers;
 --   Execute one either with Lua function, `:Pick <picker-name>` command, or
 --   one of `<Leader>f` mappings defined in 'plugin/20_keymaps.lua'
+-- Route `vim.ui.select` through 'mini.pick' in `now()`: 'mini.files'
+-- save/restores it across open/close, so a deferred assignment can be reverted
+-- to Neovim's default `inputlist`. Wrapping early survives that race.
+now(function()
+	vim.ui.select = function(...)
+		require("mini.pick")
+		return MiniPick.ui_select(...)
+	end
+end)
 later(function()
 	require("mini.pick").setup()
-	-- Route `vim.ui.select` through 'mini.pick' (not auto-installed by setup).
-	-- Used by plugins like octo.nvim's default picker.
-	vim.ui.select = MiniPick.ui_select
 end)
 
 -- Manage and expand snippets (templates for a frequently used text).
@@ -866,10 +867,10 @@ later(function()
 		},
 	})
 
-	-- By default snippets available at cursor are not shown as candidates in
-	-- 'mini.completion' menu. This requires a dedicated in-process LSP server
-	-- that will provide them. To have that, uncomment next line (use `gcc`).
-	-- MiniSnippets.start_lsp_server()
+	-- Surface snippets as candidates in the 'mini.completion' menu via a
+	-- dedicated in-process LSP server. Snippets expand only on completion
+	-- accept (<CR>), never on a bare <Tab>; <Tab> then jumps session tabstops.
+	MiniSnippets.start_lsp_server()
 end)
 
 -- Split and join arguments (regions inside brackets between allowed separators).
