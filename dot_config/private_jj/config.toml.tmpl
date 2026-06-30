@@ -53,6 +53,7 @@ daily_work = '(trunk()..((bookmarks() | mine()) & recent) | trunk()..@) & ~autho
 active = 'trunk()..((mine() & recent) | @ | (@ & bookmarks()))'
 
 [aliases]
+tidy = ["abandon", "-r", "(empty() ~ @) ~ ::trunk()"]
 fetch = ["git", "fetch"]
 push = ["git", "push"]
 # Re-graft the branch of current commits on trunk to the latest upstream commit
