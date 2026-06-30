@@ -4,9 +4,15 @@ The followings are the instructions for using Felix's agents. Please read them c
 
 ## General Instructions and Guidelines
 
+## General
+- Avoid writing `.md` files and other unnecessary artifacts.
+- Do not leave unnecessary artifacts in the repository.
+If an artifact is required, for example as an output of a task or an E2E test, yet not necessary, cleanup afterwards.
+
 ### Writing
 - Never use em dashes "—" in your responses. Use hyphens "-" instead.
-- Avoid writing `.md` files and other unnecessary artifacts.
+- Avoid emojis in your responses.
+- Favour terseness over unnecessary verbosity. Avoid long-winded explanations and unnecessary details.
 
 ### Version Control System (VCS)
 - Use Jujutsu for version control. You may have to use Git for some tasks, but Jujutsu is preferred.
@@ -15,6 +21,7 @@ The followings are the instructions for using Felix's agents. Please read them c
 - When writing commit messages, never add yourself as a co-author.
 
 ### Engineering
+- Avoid comments in code. If you find a comment to be necessary, it is likely that the code is not clear enough and should be refactored.
 - Do not give too much weight to development cost when making technical decisions.
 Focus on the long-term maintainability, scalability, quality, simplicity and robustness of the codebase.
 - When investigating or debugging an issue, always start with reproducing the bug in an E2E test that is as closely align with how the end user would use the feature as possible.
