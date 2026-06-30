@@ -801,7 +801,13 @@ now(function()
 	end
 end)
 later(function()
-	require("mini.pick").setup()
+	require("mini.pick").setup({
+		window = {
+			config = function()
+				return { width = math.floor(0.9 * vim.o.columns) }
+			end,
+		},
+	})
 end)
 
 -- Manage and expand snippets (templates for a frequently used text).
@@ -871,6 +877,18 @@ later(function()
 	-- dedicated in-process LSP server. Snippets expand only on completion
 	-- accept (<CR>), never on a bare <Tab>; <Tab> then jumps session tabstops.
 	MiniSnippets.start_lsp_server()
+
+	-- Stop the session as soon as it reaches the final tabstop. Without this
+	-- mini.snippets keeps the session (and its tabstop extmarks) alive, so a
+	-- later <Tab> elsewhere in the buffer jumps back to the stale final marker.
+	vim.api.nvim_create_autocmd("User", {
+		pattern = "MiniSnippetsSessionJump",
+		callback = function(args)
+			if args.data.tabstop_to == "0" then
+				MiniSnippets.session.stop()
+			end
+		end,
+	})
 end)
 
 -- Split and join arguments (regions inside brackets between allowed separators).
