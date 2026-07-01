@@ -6,24 +6,12 @@ category: personal
 keywords: [journal, daily, personal]
 ---
 
-# {{format-date now "long"}} — Personal
+# {{format-date now "long"}} - Personal
 
-## Intent
-<!-- What do I want to make of today? One sentence. -->
+## Plan
+<!-- What matters today. -->
 
-## Highlights
-<!-- What stood out. Wins, moments worth keeping. -->
-
-## Learnings
-<!-- New ideas from reading, conversations, life. Link out with [[wiki-links]]. -->
-
-## To research
-<!-- Curiosities and open questions to chase later. Tag with #research. -->
-
-## To improve
-<!-- Habits, reactions, choices I'd revisit. Tag with #improve. -->
-
-## Tomorrow
-<!-- One thing to set up or look forward to. -->
+## Thoughts & learnings
+<!-- Reflections, ideas, things learned. Link out with [[wiki-links]], tag with #topic. -->
 
 {{content}}

@@ -123,7 +123,78 @@ end)
 -- - `:h MiniStarter-example-config` - non-default config examples
 -- - `:h MiniStarter-lifecycle` - how to work with Starter buffer
 now(function()
-	require("mini.starter").setup()
+	local starter = require("mini.starter")
+
+	-- Journal shortcuts. Points to zk daily journals under
+	-- `$ZK_NOTEBOOK_DIR/journal/{work,personal}/%Y-%m-%d.md`. Today's entry is
+	-- created via the established `zk.new` group method when missing; the previous
+	-- entry is the most recent dated note before today (covers skipped days and
+	-- weekends).
+	local notebook = vim.env.ZK_NOTEBOOK_DIR or vim.fn.expand("~/notebook")
+	local uv = vim.uv or vim.loop
+
+	local journal_dir = function(kind)
+		return string.format("%s/journal/%s", notebook, kind)
+	end
+
+	local today_path = function(kind)
+		return string.format("%s/%s.md", journal_dir(kind), os.date("%Y-%m-%d"))
+	end
+
+	local previous_path = function(kind)
+		local today = os.date("%Y-%m-%d")
+		local best
+		for name, kind_type in vim.fs.dir(journal_dir(kind)) do
+			local date = kind_type == "file" and name:match("^(%d%d%d%d%-%d%d%-%d%d)%.md$")
+			if date and date < today and (best == nil or date > best) then
+				best = date
+			end
+		end
+		return best and string.format("%s/%s.md", journal_dir(kind), best) or nil
+	end
+
+	local open_today = function(kind)
+		return function()
+			local path = today_path(kind)
+			if uv.fs_stat(path) then
+				vim.cmd.edit(vim.fn.fnameescape(path))
+			else
+				require("zk").new({ group = "daily-" .. kind })
+			end
+		end
+	end
+
+	local open_previous = function(kind)
+		return function()
+			local path = previous_path(kind)
+			if path then
+				vim.cmd.edit(vim.fn.fnameescape(path))
+			else
+				vim.notify("No previous " .. kind .. " journal", vim.log.levels.WARN)
+			end
+		end
+	end
+
+	local journal_section = {
+		{ section = "Journal", name = "Today · work", action = open_today("work") },
+		{ section = "Journal", name = "Today · personal", action = open_today("personal") },
+		{ section = "Journal", name = "Previous · work", action = open_previous("work") },
+		{ section = "Journal", name = "Previous · personal", action = open_previous("personal") },
+	}
+
+	starter.setup({
+		items = {
+			journal_section,
+			function()
+				if _G.MiniSessions == nil then
+					return {}
+				end
+				return starter.sections.sessions(5, true)()
+			end,
+			starter.sections.recent_files(5, false, false),
+			starter.sections.builtin_actions(),
+		},
+	})
 end)
 
 -- Statusline. Sets `:h 'statusline'` to show more info in a line below window.
