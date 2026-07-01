@@ -701,16 +701,15 @@ end)
 -- - `:h MiniKeymap.map_combo()` - map combo
 later(function()
 	require("mini.keymap").setup()
-	-- "Super Tab": one key advances through contextual actions in Insert mode.
-	-- Order matters — first matching condition wins. Falls through to a literal
-	-- tab/indent when no snippet session is active and no completion menu is open.
+	-- "Super Tab": first matching step wins. Menu open scrolls choices before
+	-- snippet tabstop jumps.
 	MiniKeymap.map_multistep("i", "<Tab>", {
-		"minisnippets_next",
 		"pmenu_next",
+		"minisnippets_next",
 	})
 	MiniKeymap.map_multistep("i", "<S-Tab>", {
-		"minisnippets_prev",
 		"pmenu_prev",
+		"minisnippets_prev",
 	})
 	-- On `<CR>` try to accept current completion item, fall back to accounting
 	-- for pairs from 'mini.pairs'

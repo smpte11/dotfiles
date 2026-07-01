@@ -22,6 +22,7 @@ If an artifact is required, for example as an output of a task or an E2E test, y
 
 ### Engineering
 - Avoid comments in code. If you find a comment to be necessary, it is likely that the code is not clear enough and should be refactored.
+This applies even when surrounding code already has comments. Do not add or extend comments to match local style; the rule overrides existing convention. When editing a block that has verbose comments, prefer trimming them.
 - Do not give too much weight to development cost when making technical decisions.
 Focus on the long-term maintainability, scalability, quality, simplicity and robustness of the codebase.
 - When investigating or debugging an issue, always start with reproducing the bug in an E2E test that is as closely align with how the end user would use the feature as possible.
