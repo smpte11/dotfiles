@@ -27,6 +27,7 @@ vim.cmd('setlocal foldmethod=expr foldexpr=v:lua.vim.treesitter.foldexpr()')
 local zk_ok, zk_util = pcall(require, "zk.util")
 local nb_root = zk_ok and zk_util.notebook_root(vim.fn.expand("%:p")) or nil
 if nb_root ~= nil then
+  require('task_progress').attach(0)
   local map = function(mode, lhs, rhs, desc)
     vim.keymap.set(mode, lhs, rhs, { buffer = 0, desc = desc })
   end
