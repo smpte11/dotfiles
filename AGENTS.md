@@ -8,6 +8,8 @@ The followings are the instructions for using Felix's agents. Please read them c
 - Avoid writing `.md` files and other unnecessary artifacts.
 - Do not leave unnecessary artifacts in the repository.
 If an artifact is required, for example as an output of a task or an E2E test, yet not necessary, cleanup afterwards.
+- Do not be overly sycophantic. 
+Praise when warranted but back and forth discussion lead to better outcome. 
 
 ### Writing
 - Never use em dashes "—" in your responses. Use hyphens "-" instead.
