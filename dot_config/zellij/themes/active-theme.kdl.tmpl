@@ -1,6 +1,9 @@
 {{- $t := index .themes .active_theme -}}
 {{- $bg := $t.background -}}
 {{- $fg := $t.foreground -}}
+{{- $rib_bg := $t.ribbon_bg -}}
+{{- $rib_sel_bg := $t.ribbon_sel_bg -}}
+{{- $rib_fg := $t.ribbon_fg -}}
 {{- $sel_bg := $t.selection_bg -}}
 {{- $sel_fg := $t.selection_fg -}}
 {{- $p := $t.palette -}}
@@ -23,20 +26,20 @@ themes {
             emphasis_3 "{{ $p.white }}"
         }
         ribbon_unselected {
-            base "{{ $bg }}"
-            background "{{ $p.bright_yellow }}"
-            emphasis_0 "{{ $p.red }}"
-            emphasis_1 "{{ $p.blue }}"
-            emphasis_2 "{{ $p.magenta }}"
-            emphasis_3 "{{ $p.cyan }}"
+            base "{{ $rib_fg }}"
+            background "{{ $rib_bg }}"
+            emphasis_0 "{{ $rib_fg }}"
+            emphasis_1 "{{ $rib_fg }}"
+            emphasis_2 "{{ $rib_fg }}"
+            emphasis_3 "{{ $rib_fg }}"
         }
         ribbon_selected {
-            base "{{ $bg }}"
-            background "{{ $p.bright_green }}"
-            emphasis_0 "{{ $p.red }}"
-            emphasis_1 "{{ $p.magenta }}"
-            emphasis_2 "{{ $p.blue }}"
-            emphasis_3 "{{ $p.cyan }}"
+            base "{{ $rib_fg }}"
+            background "{{ $rib_sel_bg }}"
+            emphasis_0 "{{ $rib_fg }}"
+            emphasis_1 "{{ $rib_fg }}"
+            emphasis_2 "{{ $rib_fg }}"
+            emphasis_3 "{{ $rib_fg }}"
         }
         table_title {
             base "{{ $p.bright_green }}"

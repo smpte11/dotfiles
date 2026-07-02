@@ -1,8 +1,11 @@
-active_theme = "eldritch"
+active_theme = "tokyonight-day"
 
 [themes.minischeme]
   background = "#142838"
   foreground = "#8ff586"
+  ribbon_bg = "#eff69c"
+  ribbon_sel_bg = "#9ff895"
+  ribbon_fg = "#142838"
   cursor = "#c4206f"
   selection_bg = "#084fb0"
   selection_fg = "#142838"
@@ -35,9 +38,16 @@ active_theme = "eldritch"
   b06 = "#eff69c"
   b07 = "#fcffaa"
 
+[themes.minischeme.nvim]
+  colorscheme = "minischeme"
+  background = "dark"
+
 [themes.eldritch]
   background = "#212337"
   foreground = "#ebfafa"
+  ribbon_bg = "#f1fc79"
+  ribbon_sel_bg = "#69F8B3"
+  ribbon_fg = "#212337"
   cursor = "#37f499"
   selection_bg = "#bf4f8e"
   selection_fg = "#ebfafa"
@@ -69,3 +79,358 @@ active_theme = "eldritch"
   b05 = "#ebfafa"
   b06 = "#f1fc79"
   b07 = "#ffffff"
+
+[themes.eldritch.nvim]
+  plugin = "https://github.com/eldritch-theme/eldritch.nvim"
+  colorscheme = "eldritch"
+  background = "dark"
+
+[themes.tokyonight]
+  background = "#1a1b26"
+  foreground = "#c0caf5"
+  ribbon_bg = "#e0af68"
+  ribbon_sel_bg = "#9ece6a"
+  ribbon_fg = "#1a1b26"
+  cursor = "#7aa2f7"
+  selection_bg = "#283457"
+  selection_fg = "#c0caf5"
+
+[themes.tokyonight.palette]
+  black = "#15161e"
+  red = "#f7768e"
+  green = "#9ece6a"
+  yellow = "#e0af68"
+  blue = "#7aa2f7"
+  magenta = "#bb9af7"
+  cyan = "#7dcfff"
+  silver = "#a9b1d6"
+  bright_black = "#414868"
+  bright_red = "#ff899d"
+  bright_green = "#9fe044"
+  bright_yellow = "#faba4a"
+  bright_blue = "#8db0ff"
+  bright_magenta = "#c7a9ff"
+  bright_cyan = "#a4daff"
+  white = "#c0caf5"
+
+[themes.tokyonight.base]
+  b00 = "#1a1b26"
+  b01 = "#292e42"
+  b02 = "#414868"
+  b03 = "#565f89"
+  b04 = "#787c99"
+  b05 = "#a9b1d6"
+  b06 = "#c0caf5"
+  b07 = "#cbccd1"
+
+[themes.tokyonight.nvim]
+  plugin = "https://github.com/folke/tokyonight.nvim"
+  colorscheme = "tokyonight-night"
+  background = "dark"
+
+[themes.everforest]
+  background = "#2d353b"
+  foreground = "#d3c6aa"
+  ribbon_bg = "#dbbc7f"
+  ribbon_sel_bg = "#a7c080"
+  ribbon_fg = "#2d353b"
+  cursor = "#a7c080"
+  selection_bg = "#475258"
+  selection_fg = "#d3c6aa"
+
+[themes.everforest.palette]
+  black = "#343f44"
+  red = "#e67e80"
+  green = "#a7c080"
+  yellow = "#dbbc7f"
+  blue = "#7fbbb3"
+  magenta = "#d699b6"
+  cyan = "#83c092"
+  silver = "#859289"
+  bright_black = "#868d80"
+  bright_red = "#e67e80"
+  bright_green = "#a7c080"
+  bright_yellow = "#dbbc7f"
+  bright_blue = "#7fbbb3"
+  bright_magenta = "#d699b6"
+  bright_cyan = "#83c092"
+  white = "#d3c6aa"
+
+[themes.everforest.base]
+  b00 = "#2d353b"
+  b01 = "#343f44"
+  b02 = "#475258"
+  b03 = "#859289"
+  b04 = "#9da9a0"
+  b05 = "#d3c6aa"
+  b06 = "#e6e2cc"
+  b07 = "#f2efdf"
+
+[themes.everforest.nvim]
+  plugin = "https://github.com/sainnhe/everforest"
+  colorscheme = "everforest"
+  background = "dark"
+
+[themes.catppuccin-latte]
+  background = "#eff1f5"
+  foreground = "#4c4f69"
+  ribbon_bg = "#1e66f5"
+  ribbon_sel_bg = "#179299"
+  ribbon_fg = "#eff1f5"
+  cursor = "#dc8a78"
+  selection_bg = "#acb0be"
+  selection_fg = "#4c4f69"
+
+[themes.catppuccin-latte.palette]
+  black = "#5c5f77"
+  red = "#d20f39"
+  green = "#40a02b"
+  yellow = "#df8e1d"
+  blue = "#1e66f5"
+  magenta = "#ea76cb"
+  cyan = "#179299"
+  silver = "#acb0be"
+  bright_black = "#6c6f85"
+  bright_red = "#d20f39"
+  bright_green = "#40a02b"
+  bright_yellow = "#df8e1d"
+  bright_blue = "#1e66f5"
+  bright_magenta = "#ea76cb"
+  bright_cyan = "#179299"
+  white = "#bcc0cc"
+
+[themes.catppuccin-latte.base]
+  b00 = "#eff1f5"
+  b01 = "#e6e9ef"
+  b02 = "#ccd0da"
+  b03 = "#8c8fa1"
+  b04 = "#6c6f85"
+  b05 = "#5c5f77"
+  b06 = "#4c4f69"
+  b07 = "#4c4f69"
+
+[themes.catppuccin-latte.nvim]
+  plugin = "https://github.com/catppuccin/nvim"
+  colorscheme = "catppuccin-latte"
+  background = "light"
+
+[themes.everforest-light-hard]
+  background = "#fffbef"
+  foreground = "#5c6a72"
+  ribbon_bg = "#dfa000"
+  ribbon_sel_bg = "#8da101"
+  ribbon_fg = "#2d353b"
+  cursor = "#8da101"
+  selection_bg = "#edeada"
+  selection_fg = "#5c6a72"
+
+[themes.everforest-light-hard.palette]
+  black = "#5c6a72"
+  red = "#f85552"
+  green = "#8da101"
+  yellow = "#dfa000"
+  blue = "#3a94c5"
+  magenta = "#df69ba"
+  cyan = "#35a77c"
+  silver = "#939f91"
+  bright_black = "#829181"
+  bright_red = "#f85552"
+  bright_green = "#8da101"
+  bright_yellow = "#dfa000"
+  bright_blue = "#3a94c5"
+  bright_magenta = "#df69ba"
+  bright_cyan = "#35a77c"
+  white = "#e0dcc7"
+
+[themes.everforest-light-hard.base]
+  b00 = "#fffbef"
+  b01 = "#f8f5e4"
+  b02 = "#edeada"
+  b03 = "#a6b0a0"
+  b04 = "#939f91"
+  b05 = "#5c6a72"
+  b06 = "#5c6a72"
+  b07 = "#4f585e"
+
+[themes.everforest-light-hard.nvim]
+  plugin = "https://github.com/sainnhe/everforest"
+  colorscheme = "everforest"
+  background = "light"
+
+[themes.everforest-light-hard.nvim.settings]
+  everforest_background = "hard"
+
+[themes.rose-pine]
+  background = "#191724"
+  foreground = "#e0def4"
+  ribbon_bg = "#f6c177"
+  ribbon_sel_bg = "#9ccfd8"
+  ribbon_fg = "#191724"
+  cursor = "#c4a7e7"
+  selection_bg = "#403d52"
+  selection_fg = "#e0def4"
+
+[themes.rose-pine.palette]
+  black = "#26233a"
+  red = "#eb6f92"
+  green = "#31748f"
+  yellow = "#f6c177"
+  blue = "#9ccfd8"
+  magenta = "#c4a7e7"
+  cyan = "#ebbcba"
+  silver = "#908caa"
+  bright_black = "#6e6a86"
+  bright_red = "#eb6f92"
+  bright_green = "#31748f"
+  bright_yellow = "#f6c177"
+  bright_blue = "#9ccfd8"
+  bright_magenta = "#c4a7e7"
+  bright_cyan = "#ebbcba"
+  white = "#e0def4"
+
+[themes.rose-pine.base]
+  b00 = "#191724"
+  b01 = "#1f1d2e"
+  b02 = "#26233a"
+  b03 = "#6e6a86"
+  b04 = "#908caa"
+  b05 = "#e0def4"
+  b06 = "#e0def4"
+  b07 = "#f0eff7"
+
+[themes.rose-pine.nvim]
+  plugin = "https://github.com/rose-pine/neovim"
+  colorscheme = "rose-pine-main"
+  background = "dark"
+
+[themes.rose-pine-dawn]
+  background = "#faf4ed"
+  foreground = "#575279"
+  ribbon_bg = "#b4637a"
+  ribbon_sel_bg = "#286983"
+  ribbon_fg = "#faf4ed"
+  cursor = "#907aa9"
+  selection_bg = "#dfdad9"
+  selection_fg = "#575279"
+
+[themes.rose-pine-dawn.palette]
+  black = "#575279"
+  red = "#b4637a"
+  green = "#286983"
+  yellow = "#ea9d34"
+  blue = "#56949f"
+  magenta = "#907aa9"
+  cyan = "#d7827e"
+  silver = "#9893a5"
+  bright_black = "#797593"
+  bright_red = "#b4637a"
+  bright_green = "#286983"
+  bright_yellow = "#ea9d34"
+  bright_blue = "#56949f"
+  bright_magenta = "#907aa9"
+  bright_cyan = "#d7827e"
+  white = "#cecacd"
+
+[themes.rose-pine-dawn.base]
+  b00 = "#faf4ed"
+  b01 = "#f2e9e1"
+  b02 = "#dfdad9"
+  b03 = "#9893a5"
+  b04 = "#797593"
+  b05 = "#575279"
+  b06 = "#575279"
+  b07 = "#575279"
+
+[themes.rose-pine-dawn.nvim]
+  plugin = "https://github.com/rose-pine/neovim"
+  colorscheme = "rose-pine-dawn"
+  background = "light"
+
+[themes.gruvbox-light-hard]
+  background = "#f9f5d7"
+  foreground = "#3c3836"
+  ribbon_bg = "#af3a03"
+  ribbon_sel_bg = "#427b58"
+  ribbon_fg = "#f9f5d7"
+  cursor = "#af3a03"
+  selection_bg = "#ebdbb2"
+  selection_fg = "#3c3836"
+
+[themes.gruvbox-light-hard.palette]
+  black = "#3c3836"
+  red = "#cc241d"
+  green = "#98971a"
+  yellow = "#d79921"
+  blue = "#458588"
+  magenta = "#b16286"
+  cyan = "#689d6a"
+  silver = "#7c6f64"
+  bright_black = "#928374"
+  bright_red = "#9d0006"
+  bright_green = "#79740e"
+  bright_yellow = "#b57614"
+  bright_blue = "#076678"
+  bright_magenta = "#8f3f71"
+  bright_cyan = "#427b58"
+  white = "#3c3836"
+
+[themes.gruvbox-light-hard.base]
+  b00 = "#f9f5d7"
+  b01 = "#f2e5bc"
+  b02 = "#d5c4a1"
+  b03 = "#928374"
+  b04 = "#665c54"
+  b05 = "#3c3836"
+  b06 = "#3c3836"
+  b07 = "#282828"
+
+[themes.gruvbox-light-hard.nvim]
+  plugin = "https://github.com/morhetz/gruvbox"
+  colorscheme = "gruvbox"
+  background = "light"
+
+[themes.gruvbox-light-hard.nvim.settings]
+  gruvbox_contrast_light = "hard"
+
+[themes.tokyonight-day]
+  background = "#e1e2e7"
+  foreground = "#3760bf"
+  ribbon_bg = "#2e7de9"
+  ribbon_sel_bg = "#587539"
+  ribbon_fg = "#e1e2e7"
+  cursor = "#2e7de9"
+  selection_bg = "#b7c1e3"
+  selection_fg = "#3760bf"
+
+[themes.tokyonight-day.palette]
+  black = "#b4b5b9"
+  red = "#f52a65"
+  green = "#587539"
+  yellow = "#8c6c3e"
+  blue = "#2e7de9"
+  magenta = "#9854f1"
+  cyan = "#007197"
+  silver = "#6172b0"
+  bright_black = "#a1a6c5"
+  bright_red = "#f52a65"
+  bright_green = "#587539"
+  bright_yellow = "#8c6c3e"
+  bright_blue = "#2e7de9"
+  bright_magenta = "#9854f1"
+  bright_cyan = "#007197"
+  white = "#3760bf"
+
+[themes.tokyonight-day.base]
+  b00 = "#e1e2e7"
+  b01 = "#d6d8df"
+  b02 = "#b7c1e3"
+  b03 = "#848cb5"
+  b04 = "#6172b0"
+  b05 = "#3760bf"
+  b06 = "#3760bf"
+  b07 = "#3760bf"
+
+[themes.tokyonight-day.nvim]
+  plugin = "https://github.com/folke/tokyonight.nvim"
+  colorscheme = "tokyonight-day"
+  background = "light"
