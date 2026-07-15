@@ -1,0 +1,37 @@
+# Herdr configuration
+# Place this file at ~/.config/herdr/config.toml
+
+[keys]
+# Change prefix from ctrl+b to ctrl+a
+prefix = "ctrl+a"
+
+# Keep other default bindings but with new prefix
+help = "prefix+?"
+settings = "prefix+s"
+detach = "prefix+q"
+reload_config = "prefix+shift+r"
+workspace_picker = "prefix+w"
+goto = "prefix+g"
+new_workspace = "prefix+shift+n"
+rename_workspace = "prefix+shift+w"
+close_workspace = "prefix+shift+d"
+new_tab = "prefix+c"
+rename_tab = "prefix+shift+t"
+previous_tab = "prefix+p"
+next_tab = "prefix+n"
+switch_tab = "prefix+1..9"
+close_tab = "prefix+shift+x"
+split_vertical = "prefix+v"
+split_horizontal = "prefix+minus"
+close_pane = "prefix+x"
+zoom = "prefix+z"
+focus_pane_left = "prefix+h"
+focus_pane_down = "prefix+j"
+focus_pane_up = "prefix+k"
+focus_pane_right = "prefix+l"
+cycle_pane_next = "prefix+tab"
+cycle_pane_previous = "prefix+shift+tab"
+edit_scrollback = "prefix+e"
+rename_pane = "prefix+shift+p"
+resize_mode = "prefix+r"
+toggle_sidebar = "prefix+b"
