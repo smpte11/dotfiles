@@ -69,6 +69,8 @@ oh-my-posh init nu --config ~/.config/ohmyposh/.minischeme.omp.toml
 
 alias ll = ls -l
 
+alias jj = jj --color=always
+alias jjui = env -u NO_COLOR TERM=xterm-256color jjui
 # ─── custom commands ─────────────────────────────────────────────────
 
 # Helper to fetch external commands for completion
