@@ -1,0 +1,8 @@
+[terminal]
+default_shell = "nu"
+
+[theme]
+name = "terminal"
+
+[keys]
+prefix = "ctrl+a"
