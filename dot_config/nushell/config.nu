@@ -9,7 +9,7 @@
 $env.EDITOR = 'nvim'
 $env.VISUAL = 'nvim'
 
-$env.KUBECONFIG = $"($env.HOME)/.kube/kivra-app-01-vbg.yaml"
+$env.KUBECONFIG = $"($env.HOME)/.kube/kivra-app-01-vbg.yaml:($env.HOME)/.kube/kivra-app-sandbox.yaml"
 $env.K9S_CONFIG_DIR = $"($env.HOME)/.config/k9s"
 
 $env.RIPGREP_CONFIG_PATH = $"($env.HOME)/.config/ripgrep/.ripgreprc"
@@ -36,6 +36,8 @@ if $nu.os-info.name == "macos" {
 }
 
 path add $"($env.HOME)/.krew/bin"
+path add $"($env.HOME)/.nix-profile/bin"
+path add '/nix/var/nix/profiles/default/bin'
 
 # mise shims — placed last so they take precedence over system tools.
 # Required so mise-managed tools are available immediately in this shell;
@@ -201,9 +203,6 @@ def switch-theme [] {
     print "  Zellij:  open a new tab/session to pick up the new theme"
     print "  Neovim:  restart to pick up the new theme"
 }
-
-const goose_completions = ($nu.config-path | path dirname | path join "goose-completions.nu")
-use $goose_completions
 
 const ocaml_module = ($nu.config-path | path dirname | path join "ocaml.nu")
 use $ocaml_module *
