@@ -360,6 +360,69 @@ later(function()
 	})
 end)
 
+Config.now(function()
+	add({ "https://github.com/esmuellert/codediff.nvim" })
+	require("codediff").setup({
+		keymaps = {
+			view = {
+				toggle_explorer = "<Tab>",
+				focus_explorer = "<S-Tab>",
+			},
+			conflict = {
+				accept_incoming = "<LocalLeader>t",
+				accept_current = "<LocalLeader>o",
+				accept_both = "<LocalLeader>b",
+				discard = "<LocalLeader>0",
+				accept_all_incoming = "<LocalLeader>T",
+				accept_all_current = "<LocalLeader>O",
+				accept_all_both = "<LocalLeader>B",
+				discard_all = "<LocalLeader>X",
+				next_conflict = "<LocalLeader>n",
+				prev_conflict = "<LocalLeader>p",
+			},
+		},
+	})
+	Config.new_autocmd("BufEnter", "*", function()
+		if MiniClue then MiniClue.ensure_buf_triggers() end
+		local buf = vim.api.nvim_get_current_buf()
+		vim.defer_fn(function()
+			if not vim.api.nvim_buf_is_valid(buf) then return end
+			local is_codediff = false
+			for _, m in ipairs(vim.api.nvim_buf_get_keymap(buf, "n")) do
+				if m.lhs == "]c" and m.desc == "Next hunk" then
+					is_codediff = true
+					break
+				end
+			end
+			if not is_codediff then return end
+			local map = function(lhs, rhs, desc)
+				vim.keymap.set("n", lhs, rhs, { buffer = buf, remap = true, silent = true, desc = desc })
+			end
+			map("<LocalLeader>t", "do", "Accept theirs (get from other)")
+			map("<LocalLeader>o", "dp", "Push ours (put to other)")
+			map("<LocalLeader>n", "]c", "Next hunk")
+			map("<LocalLeader>p", "[c", "Prev hunk")
+			map("<LocalLeader>q", "q", "Close diff")
+			map("<LocalLeader>?", "g?", "Help")
+			local ours, theirs = vim.env.CODEDIFF_OURS, vim.env.CODEDIFF_THEIRS
+			if ours and theirs then
+				local canon = function(p) return vim.fn.resolve(vim.fn.fnamemodify(p, ":p")) end
+				local bufpath = canon(vim.api.nvim_buf_get_name(buf))
+				if bufpath == canon(ours) then
+					for _, w in ipairs(vim.fn.win_findbuf(buf)) do
+						vim.wo[w].winbar = "%#DiffAdd# OURS (editable — do lands here) %*"
+					end
+				elseif bufpath == canon(theirs) then
+					vim.bo[buf].modifiable = false
+					for _, w in ipairs(vim.fn.win_findbuf(buf)) do
+						vim.wo[w].winbar = "%#DiffChange# THEIRS (read-only reference) %*"
+					end
+				end
+			end
+		end, 100)
+	end, "codediff: enable clue triggers + LocalLeader wrappers")
+end)
+
 later(function()
 	add({ "https://github.com/MagicDuck/grug-far.nvim" })
 	require("grug-far").setup({})
@@ -369,27 +432,6 @@ later(function()
 	vim.keymap.set("v", "<Leader>er", ":<C-u>GrugFar<CR>", { desc = "Search and replace selection (grug-far)" })
 end)
 
--- Hunk =========================================================================
-
--- 'julienvincent/hunk.nvim' is a diff editor for use with jujutsu (jj).
--- Configure jj to use it by adding to your jj config:
---   [ui]
---   diff-editor = ["nvim", "-c", "DiffEditor $left $right $output"]
---   diff-instructions = false
-Config.now(function()
-	add({
-		"https://github.com/julienvincent/hunk.nvim",
-		"https://github.com/MunifTanjim/nui.nvim",
-	})
-	require("hunk").setup({
-		ui = {
-			layout = "vertical",
-			tree = { width = 35 },
-		},
-	})
-end)
-
--- jj merge conflict resolution.
 Config.now(function()
 	add({ "https://github.com/larpios/jj-conflict.nvim" })
 	require("jj-conflict").setup({

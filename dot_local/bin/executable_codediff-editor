@@ -1,0 +1,22 @@
+#!/bin/sh
+# chezmoi merge tool. Args: $1=destination (ours), $2=source (theirs), $3=target (ignored)
+# After merge: destination is edited in-place, then propagated to source so
+# chezmoi apply sees no diff.
+
+mtime() { stat -f %m "$1" 2>/dev/null || stat -c %Y "$1"; }
+before=$(mtime "$1")
+
+CODEDIFF_OURS="$1" CODEDIFF_THEIRS="$2" nvim +"CodeDiff file $1 $2"
+
+after=$(mtime "$1")
+[ "$before" = "$after" ] && exit 0  # user aborted, no changes
+
+case "$2" in
+  *.tmpl)
+    printf 'warning: source is a template; not syncing to %s\n' "$2" >&2
+    printf '        edit the template manually to match destination.\n' >&2
+    ;;
+  *)
+    cp "$1" "$2"
+    ;;
+esac
