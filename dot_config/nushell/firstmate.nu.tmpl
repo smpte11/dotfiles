@@ -1,0 +1,27 @@
+# firstmate launcher - herdr backend.
+
+export def --env _fm-launch [harness: string] {
+    let fm_src = $"($env.HOME)/.local/share/firstmate"
+    let fm_state = $"($env.HOME)/.local/state/firstmate"
+
+    cd $fm_src
+    with-env {
+        FM_HOME: $fm_state
+        FM_BACKEND: herdr
+    } {
+        match $harness {
+            "claude" => { ^claude }
+            "pi" => { ^pi }
+            "grok" => { ^grok --trust }
+            _ => { error make { msg: $"unknown harness: ($harness)" } }
+        }
+    }
+}
+
+export def --env fm [] {
+    _fm-launch {{ if hasSuffix "@kivra.com" .email -}}"claude"{{- else -}}"pi"{{- end }}
+}
+
+export def --env fm-claude [] { _fm-launch "claude" }
+export def --env fm-pi [] { _fm-launch "pi" }
+export def --env fm-grok [] { _fm-launch "grok" }

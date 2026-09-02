@@ -207,6 +207,9 @@ def switch-theme [] {
 const ocaml_module = ($nu.config-path | path dirname | path join "ocaml.nu")
 use $ocaml_module *
 
+const firstmate_module = ($nu.config-path | path dirname | path join "firstmate.nu")
+use $firstmate_module *
+
 # ─── sources ─────────────────────────────────────────────────────────
 
 source $"($nu.cache-dir)/carapace.nu"

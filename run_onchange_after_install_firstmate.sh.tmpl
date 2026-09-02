@@ -1,0 +1,15 @@
+#!/bin/bash
+# template hash: firstmate-v1
+set -euo pipefail
+
+FM_SRC="$HOME/.local/share/firstmate"
+FM_STATE="$HOME/.local/state/firstmate"
+
+if [ ! -d "$FM_SRC/.git" ]; then
+  git clone https://github.com/kunchenguid/firstmate "$FM_SRC"
+else
+  git -C "$FM_SRC" pull --ff-only
+fi
+
+mkdir -p "$FM_STATE/config"
+echo herdr > "$FM_STATE/config/backend"
