@@ -28,6 +28,11 @@ zoxide = "latest"
 "github:fgrehm/crib" = "latest"
 "github:agavra/tuicr" = "latest"
 "aqua:zk-org/zk" = "latest"
+"npm:gh-axi" = "latest"
+"npm:chrome-devtools-axi" = "latest"
+"npm:lavish-axi" = "latest"
+"npm:tasks-axi" = "latest"
+"npm:quota-axi" = "latest"
 
 [settings]
 experimental = true

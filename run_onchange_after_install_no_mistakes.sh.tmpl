@@ -1,0 +1,12 @@
+#!/bin/bash
+# template hash: no-mistakes-v1
+set -euo pipefail
+
+if command -v no-mistakes >/dev/null 2>&1; then
+  exit 0
+fi
+
+INSTALLER="$(mktemp)"
+trap 'rm -f "$INSTALLER"' EXIT
+curl -fsSL https://raw.githubusercontent.com/kunchenguid/no-mistakes/main/docs/install.sh -o "$INSTALLER"
+sh "$INSTALLER"

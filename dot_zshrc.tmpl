@@ -1,0 +1,191 @@
+# .zshrc
+#
+# Interactive-shell setup: vendor integrations, completions, aliases,
+# custom commands. Env vars and PATH live in .zshenv instead.
+# Mirrors dot_config/nushell/config.nu.
+
+bindkey -v
+
+# ─── vendor integrations ───────────────────────────────────────────────
+
+autoload -Uz compinit && compinit
+
+if [ -f "$HOME/Downloads/google-cloud-sdk/completion.zsh.inc" ]; then
+  source "$HOME/Downloads/google-cloud-sdk/completion.zsh.inc"
+fi
+
+eval "$(mise activate zsh)"
+eval "$(zoxide init zsh --cmd cd)"
+eval "$(tv init zsh)"
+eval "$(oh-my-posh init zsh --config ~/.config/ohmyposh/.minischeme.omp.toml)"
+
+source <(carapace _carapace zsh)
+
+# ─── aliases ────────────────────────────────────────────────────────────
+
+alias ll='ls -l'
+
+# ─── custom commands ────────────────────────────────────────────────────
+
+disable -r repeat 2>/dev/null
+
+repeat() {
+  if [ "$#" -lt 2 ]; then
+    echo "Usage: repeat COUNT [-q] COMMAND [ARGS...]" >&2
+    return 1
+  fi
+
+  local count="$1"
+  shift
+
+  local quiet=0
+  local -a rest
+  for a in "$@"; do
+    if [ "$a" = "-q" ] || [ "$a" = "--quiet" ]; then
+      quiet=1
+    else
+      rest+=("$a")
+    fi
+  done
+  set -- "${rest[@]}"
+
+  if [ "$count" -le 0 ]; then
+    echo "COUNT must be a positive integer" >&2
+    return 1
+  fi
+
+  local pretty="$*"
+
+  _repeat_banner() {
+    [ "$quiet" -eq 1 ] && return
+    local color="$1" message="$2" to_stderr="$3"
+    local width sep out
+    width=$(tput cols)
+    sep=$(printf '%*s' "$width" '' | tr ' ' '━')
+    out=$'\n'"$sep"$'\n'" $message"$'\n'"$sep"
+    if [ "$to_stderr" = 1 ]; then
+      print -P "%F{$color}%B$out%b%f" >&2
+    else
+      print -P "%F{$color}%B$out%b%f"
+    fi
+  }
+
+  local i rc
+  for ((i = 1; i <= count; i++)); do
+    _repeat_banner blue "▶ Run $i/$count: $pretty" 0
+    "$@"
+    rc=$?
+    if [ "$rc" -ne 0 ]; then
+      _repeat_banner red "✖ Failed with code $rc on run $i/$count" 1
+      return "$rc"
+    fi
+  done
+
+  _repeat_banner green "✓ Successfully completed all $count runs" 0
+}
+
+# Switch the chezmoi theme via an fzf picker that renders color swatches inline.
+switch-theme() {
+  local data_path
+  data_path="$(chezmoi source-path)/.chezmoidata.toml"
+
+  local data_json
+  data_json=$(yq -p toml -o json '.' "$data_path")
+
+  local active
+  active=$(jq -r '.active_theme' <<< "$data_json")
+
+  local -a names
+  names=("${(@f)$(jq -r '.themes | keys[]' <<< "$data_json" | sort)}")
+
+  local name_width=0 n
+  for n in "${names[@]}"; do
+    (( ${#n} > name_width )) && name_width=${#n}
+  done
+  (( name_width += 2 ))
+
+  _swatch_for() {
+    local hex="$1"
+    [ -z "$hex" ] || [ "$hex" = "null" ] && return
+    hex="${hex#\#}"
+    printf '\e[48;2;%d;%d;%dm  \e[0m' "$((16#${hex:0:2}))" "$((16#${hex:2:2}))" "$((16#${hex:4:2}))"
+  }
+
+  local -a items
+  for n in "${names[@]}"; do
+    local marker="  "
+    [ "$n" = "$active" ] && marker="● "
+    local padded
+    padded=$(printf "%-${name_width}s" "$n")
+
+    local -a colors
+    colors=("${(@f)$(jq -r --arg n "$n" '.themes[$n] | [.background, .foreground, .cursor, .palette.red, .palette.green, .palette.yellow, .palette.blue, .palette.magenta, .palette.cyan][] // "null"' <<< "$data_json")}")
+
+    local swatches="" c
+    for c in "${colors[@]}"; do
+      swatches+="$(_swatch_for "$c")"
+    done
+
+    items+=("${marker}${padded} ${swatches}")
+  done
+
+  local selected
+  selected=$(printf '%s\n' "${items[@]}" \
+    | fzf --ansi --no-sort --reverse --header "Theme Switcher" --height "$((${#names[@]} + 4))" --prompt "› " \
+    | sed -E 's/\x1b\[[0-9;]*m//g; s/^●[[:space:]]+//' \
+    | awk '{print $1}')
+
+  [ -z "$selected" ] && return
+
+  local theme_name="$selected"
+  if [ "$theme_name" = "$active" ]; then
+    echo "'$theme_name' is already the active theme"
+    return
+  fi
+
+  local content
+  content=$(<"$data_path")
+  local -a lines
+  lines=("${(@f)content}")
+  local i
+  for i in {1..$#lines}; do
+    if [[ "${lines[$i]}" == active_theme\ =\ * ]]; then
+      lines[$i]="active_theme = \"$theme_name\""
+    fi
+  done
+  print -r -- "${(F)lines}" > "$data_path"
+
+  echo "Applying '$theme_name'..."
+  chezmoi apply
+
+  echo "Switched to '$theme_name'!"
+  echo
+  echo "Reload notes:"
+  echo "  Ghostty: auto-reloads on config change"
+  echo "  Zellij:  open a new tab/session to pick up the new theme"
+  echo "  Neovim:  restart to pick up the new theme"
+}
+
+opam-env() {
+  eval "$(opam env)"
+}
+
+_fm-launch() {
+  local harness="$1"
+  (
+    cd "$HOME/.local/share/firstmate" || return 1
+    export FM_HOME="$HOME/.local/state/firstmate"
+    export FM_BACKEND=herdr
+    case "$harness" in
+      claude) claude ;;
+      pi) pi ;;
+      grok) grok --trust ;;
+      *) echo "unknown harness: $harness" >&2; return 1 ;;
+    esac
+  )
+}
+
+fm() { _fm-launch "{{ if hasSuffix "@kivra.com" .email }}claude{{ else }}pi{{ end }}"; }
+fm-claude() { _fm-launch claude; }
+fm-pi() { _fm-launch pi; }
+fm-grok() { _fm-launch grok; }

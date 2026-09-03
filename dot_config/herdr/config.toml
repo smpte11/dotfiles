@@ -1,5 +1,5 @@
 [terminal]
-default_shell = "nu"
+default_shell = "zsh"
 
 [theme]
 name = "terminal"
