@@ -1,7 +1,7 @@
 [metadata]
 name = "git-tags"
 description = "Browse and checkout git tags"
-requirements = ["git"]
+requirements = ["git", "gum"]
 
 [source]
 command = "git tag --sort=-creatordate"
@@ -22,5 +22,5 @@ mode = "execute"
 
 [actions.delete]
 description = "Delete the selected tag"
-command = "git tag -d '{}'"
+command = "gum confirm 'Delete tag {}?' && git tag -d '{}'"
 mode = "execute"

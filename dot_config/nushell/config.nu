@@ -105,12 +105,11 @@ def --wrapped repeat [
 
     let print_block = {|color, message, is_stderr|
         if not $quiet {
-            let width = (term size).columns
-            let sep = ("" | fill -c "━" -w $width)
-            let style = (ansi $"($color)_bold")
-            let reset = (ansi reset)
-            let output = $"($style)($sep)\n ($message)\n($sep)($reset)"
-            if $is_stderr { print -e $output } else { print $output }
+            if $is_stderr {
+                ^gum style --border normal --border-foreground $color --bold $message | print -e
+            } else {
+                ^gum style --border normal --border-foreground $color --bold $message | print
+            }
         }
     }
 
@@ -177,7 +176,7 @@ def switch-theme [] {
 
     let selected = ($items
         | str join "\n"
-        | ^fzf --ansi --no-sort --reverse --header "Theme Switcher" --height $"(($names | length) + 4)" --prompt "› "
+        | ^gum filter --no-strip-ansi --reverse --height $"(($names | length) + 4)" --placeholder "Theme Switcher" --prompt "› "
         | str trim)
 
     if ($selected | is-empty) { return }
@@ -185,7 +184,7 @@ def switch-theme [] {
     let theme_name = ($selected | ansi strip | str trim | str replace -r '^●\s+' '' | split row ' ' | first)
 
     if $theme_name == $active {
-        print $"'($theme_name)' is already the active theme"
+        ^gum style --foreground 3 $"'($theme_name)' is already the active theme"
         return
     }
 
@@ -193,15 +192,9 @@ def switch-theme [] {
     let updated = ($content | str replace -r 'active_theme\s*=\s*"[^"]*"' $'active_theme = "($theme_name)"')
     $updated | save -f $data_path
 
-    print $"Applying '($theme_name)'..."
-    chezmoi apply
+    ^gum spin --spinner dot --title $"Applying '($theme_name)'..." -- chezmoi apply
 
-    print $"Switched to '($theme_name)'!"
-    print ""
-    print "Reload notes:"
-    print "  Ghostty: auto-reloads on config change"
-    print "  Zellij:  open a new tab/session to pick up the new theme"
-    print "  Neovim:  restart to pick up the new theme"
+    ^gum style --border rounded --margin "1 0" --padding "0 1" $"Switched to '($theme_name)'!" "" "Reload notes:" "  Ghostty: auto-reloads on config change" "  Zellij:  open a new tab/session to pick up the new theme" "  Neovim:  restart to pick up the new theme"
 }
 
 const ocaml_module = ($nu.config-path | path dirname | path join "ocaml.nu")

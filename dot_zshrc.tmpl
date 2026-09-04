@@ -10,6 +10,10 @@ bindkey -v
 
 autoload -Uz compinit && compinit
 
+zstyle ':completion:*' menu no
+source "$HOME/.local/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh"
+source "$HOME/.local/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
 if [ -f "$HOME/Downloads/google-cloud-sdk/completion.zsh.inc" ]; then
   source "$HOME/Downloads/google-cloud-sdk/completion.zsh.inc"
 fi
@@ -23,7 +27,14 @@ source <(carapace _carapace zsh)
 
 # ─── aliases ────────────────────────────────────────────────────────────
 
-alias ll='ls -l'
+alias ls='eza --group-directories-first --icons=auto --color=auto'
+alias l='eza -blF --git --header --group-directories-first --icons=auto --color=auto'
+alias ll='eza -la --git --header --octal-permissions --group-directories-first --icons=auto --color=auto'
+alias la='eza -la --git --header --group-directories-first --icons=auto --color=auto'
+alias lm='eza -l --git --header --sort=modified --reverse --group-directories-first --icons=auto --color=auto'
+alias l1='eza --oneline --group-directories-first --icons=auto --color=auto'
+alias lt='eza --tree --level=2 --group-directories-first --icons=auto --color=auto'
+alias l.='eza -a --oneline --color=never | grep -E "^\."'
 
 # ─── custom commands ────────────────────────────────────────────────────
 
@@ -59,14 +70,10 @@ repeat() {
   _repeat_banner() {
     [ "$quiet" -eq 1 ] && return
     local color="$1" message="$2" to_stderr="$3"
-    local width sep out
-    width=$(tput cols)
-    sep=$(printf '%*s' "$width" '' | tr ' ' '━')
-    out=$'\n'"$sep"$'\n'" $message"$'\n'"$sep"
     if [ "$to_stderr" = 1 ]; then
-      print -P "%F{$color}%B$out%b%f" >&2
+      gum style --border normal --border-foreground "$color" --bold "$message" >&2
     else
-      print -P "%F{$color}%B$out%b%f"
+      gum style --border normal --border-foreground "$color" --bold "$message"
     fi
   }
 
@@ -112,16 +119,16 @@ switch-theme() {
   }
 
   local -a items
+  local marker padded swatches c
+  local -a colors
   for n in "${names[@]}"; do
-    local marker="  "
+    marker="  "
     [ "$n" = "$active" ] && marker="● "
-    local padded
     padded=$(printf "%-${name_width}s" "$n")
 
-    local -a colors
     colors=("${(@f)$(jq -r --arg n "$n" '.themes[$n] | [.background, .foreground, .cursor, .palette.red, .palette.green, .palette.yellow, .palette.blue, .palette.magenta, .palette.cyan][] // "null"' <<< "$data_json")}")
 
-    local swatches="" c
+    swatches=""
     for c in "${colors[@]}"; do
       swatches+="$(_swatch_for "$c")"
     done
@@ -131,15 +138,15 @@ switch-theme() {
 
   local selected
   selected=$(printf '%s\n' "${items[@]}" \
-    | fzf --ansi --no-sort --reverse --header "Theme Switcher" --height "$((${#names[@]} + 4))" --prompt "› " \
-    | sed -E 's/\x1b\[[0-9;]*m//g; s/^●[[:space:]]+//' \
-    | awk '{print $1}')
+    | gum filter --no-strip-ansi --reverse --height "$((${#names[@]} + 4))" --placeholder "Theme Switcher" --prompt "› ")
 
   [ -z "$selected" ] && return
 
-  local theme_name="$selected"
+  local theme_name
+  theme_name=$(sed -E 's/\x1b\[[0-9;]*m//g; s/^●[[:space:]]+//' <<< "$selected" | awk '{print $1}')
+
   if [ "$theme_name" = "$active" ]; then
-    echo "'$theme_name' is already the active theme"
+    gum style --foreground 3 "'$theme_name' is already the active theme"
     return
   fi
 
@@ -155,15 +162,15 @@ switch-theme() {
   done
   print -r -- "${(F)lines}" > "$data_path"
 
-  echo "Applying '$theme_name'..."
-  chezmoi apply
+  gum spin --spinner dot --title "Applying '$theme_name'..." -- chezmoi apply
 
-  echo "Switched to '$theme_name'!"
-  echo
-  echo "Reload notes:"
-  echo "  Ghostty: auto-reloads on config change"
-  echo "  Zellij:  open a new tab/session to pick up the new theme"
-  echo "  Neovim:  restart to pick up the new theme"
+  gum style --border rounded --margin "1 0" --padding "0 1" \
+    "Switched to '$theme_name'!" \
+    "" \
+    "Reload notes:" \
+    "  Ghostty: auto-reloads on config change" \
+    "  Zellij:  open a new tab/session to pick up the new theme" \
+    "  Neovim:  restart to pick up the new theme"
 }
 
 opam-env() {
@@ -179,13 +186,16 @@ _fm-launch() {
     case "$harness" in
       claude) claude ;;
       pi) pi ;;
-      grok) grok --trust ;;
       *) echo "unknown harness: $harness" >&2; return 1 ;;
     esac
   )
 }
 
-fm() { _fm-launch "{{ if hasSuffix "@kivra.com" .email }}claude{{ else }}pi{{ end }}"; }
+fm() {
+  local harness
+  harness=$(gum choose --selected="{{ if hasSuffix "@kivra.com" .email }}claude{{ else }}pi{{ end }}" claude pi)
+  [ -z "$harness" ] && return 1
+  _fm-launch "$harness"
+}
 fm-claude() { _fm-launch claude; }
 fm-pi() { _fm-launch pi; }
-fm-grok() { _fm-launch grok; }

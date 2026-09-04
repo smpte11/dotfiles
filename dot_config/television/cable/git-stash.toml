@@ -1,7 +1,7 @@
 [metadata]
 name = "git-stash"
 description = "Browse and manage git stash entries"
-requirements = ["git"]
+requirements = ["git", "gum"]
 
 [source]
 command = "git stash list --color=always"
@@ -33,5 +33,5 @@ mode = "execute"
 
 [actions.drop]
 description = "Drop the selected stash"
-command = "git stash drop '{strip_ansi|split:\\::0}'"
+command = "gum confirm 'Drop stash {strip_ansi|split:\\::0}?' && git stash drop '{strip_ansi|split:\\::0}'"
 mode = "execute"

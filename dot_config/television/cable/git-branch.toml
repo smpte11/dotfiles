@@ -1,7 +1,7 @@
 [metadata]
 name = "git-branch"
 description = "A channel to select from git branches"
-requirements = ["git"]
+requirements = ["git", "gum"]
 
 [source]
 command = "git --no-pager branch --all --format=\"%(refname:short)\""
@@ -23,7 +23,7 @@ mode = "execute"
 
 [actions.delete]
 description = "Delete the selected branch"
-command = "git branch -d '{0}'"
+command = "gum confirm 'Delete branch {0}?' && git branch -d '{0}'"
 mode = "execute"
 
 [actions.merge]

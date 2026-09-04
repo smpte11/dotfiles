@@ -1,7 +1,7 @@
 [metadata]
 name = "zellij-sessions"
 description = "List and attach to zellij sessions"
-requirements = ["zellij"]
+requirements = ["zellij", "gum"]
 
 [source]
 command = "zellij list-sessions 2>/dev/null | sed $'s/\\x1b\\[[0-9;]*[mGKHF]//g' | awk '{print $1}'"
@@ -22,5 +22,5 @@ mode = "execute"
 
 [actions.kill]
 description = "Kill the selected session"
-command = "zellij kill-session '{}'"
-mode = "fork"
+command = "gum confirm 'Kill session {}?' && zellij kill-session '{}'"
+mode = "execute"

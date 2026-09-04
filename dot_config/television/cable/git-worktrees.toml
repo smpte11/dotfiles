@@ -1,7 +1,7 @@
 [metadata]
 name = "git-worktrees"
 description = "List and switch between git worktrees"
-requirements = ["git"]
+requirements = ["git", "gum"]
 
 [source]
 command = "git worktree list --porcelain | grep '^worktree' | cut -d' ' -f2-"
@@ -20,5 +20,5 @@ mode = "execute"
 
 [actions.remove]
 description = "Remove the selected worktree"
-command = "git worktree remove '{}'"
+command = "gum confirm 'Remove worktree {}?' && git worktree remove '{}'"
 mode = "execute"
