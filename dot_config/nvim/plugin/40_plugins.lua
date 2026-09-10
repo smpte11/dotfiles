@@ -464,3 +464,16 @@ later(function()
     { src = 'https://github.com/mrcjkb/rustaceanvim', version = vim.version.range('^9') }
   })
 end)
+
+later(function()
+	add({ "https://github.com/ChmaraX/herdr-nvim" })
+	-- The herdr-nvim sidebar daemon is a headless `nvim --listen ...` process that
+	-- re-requires and re-runs setup() itself on VimEnter (to survive rtp resets).
+	-- Calling setup() here too would register the same keymaps twice, and the
+	-- plugin's own maparg() guard warns on the second registration. Skip our call
+	-- for that specific process; the daemon configures itself.
+	local is_herdr_daemon = vim.tbl_contains(vim.v.argv, "--listen") and vim.tbl_contains(vim.v.argv, "--headless")
+	if not is_herdr_daemon then
+		require("herdr-nvim").setup({})
+	end
+end)

@@ -369,8 +369,14 @@ now_if_args(function()
 	MiniMisc.setup_restore_cursor()
 
 	-- Synchronize terminal emulator background with Neovim's background to remove
-	-- possibly different color padding around Neovim instance
-	MiniMisc.setup_termbg_sync()
+	-- possibly different color padding around Neovim instance.
+	-- Herdr answers some terminal capability queries (DA1, XTGETTCAP) itself as
+	-- the pty layer but doesn't forward the OSC 11 background-color query through
+	-- to the real terminal in time, so this always times out and warns inside a
+	-- herdr pane. Skip it there.
+	if vim.env.HERDR_ENV ~= "1" then
+		MiniMisc.setup_termbg_sync()
+	end
 end)
 
 -- Step two ===================================================================

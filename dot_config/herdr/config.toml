@@ -6,6 +6,8 @@ name = "terminal"
 
 [keys]
 prefix = "ctrl+a"
+edit_scrollback = "prefix+shift+e"
+open_notification_target = ""
 
 [ui.toast]
 delivery = "system"
@@ -15,3 +17,21 @@ enabled = false
 
 [ui]
 status_indicators = "symbols"
+
+[[keys.command]]
+key = "prefix+e"
+type = "plugin_action"
+command = "chmarax.herdr-nvim.toggle"
+
+[[keys.command]]
+key = "prefix+o"
+type = "plugin_action"
+command = "chmarax.herdr-nvim.pick-file"
+
+[[keys.command]]
+key = "prefix+alt+j"
+type = "popup"
+command = "cd \"$(herdr pane get \"$HERDR_ACTIVE_PANE_ID\" | jq -r .result.pane.foreground_cwd)\" && jjui"
+description = "run jjui"
+width = "80%"
+height = "80%"

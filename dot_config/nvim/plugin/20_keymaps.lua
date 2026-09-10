@@ -53,8 +53,8 @@ nmap('<Esc>', '<cmd>noh<cr>', 'Clear Search')
 -- This is used to provide 'mini.clue' with extra clues.
 -- Add an entry if you create a new group.
 Config.leader_group_clues = {
-  { mode = 'n', keys = '<Leader>a', desc = '+AI' },
-  { mode = 'x', keys = '<Leader>a', desc = '+AI' },
+  { mode = 'n', keys = '<Leader>a', desc = '+Herdr' },
+  { mode = 'x', keys = '<Leader>a', desc = '+Herdr' },
   { mode = 'n', keys = '<Leader>b', desc = '+Buffer' },
   { mode = 'n', keys = '<Leader>c', desc = '+Config' },
   { mode = 'n', keys = '<Leader>e', desc = '+Explore/Edit' },
