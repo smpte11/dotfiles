@@ -433,6 +433,19 @@ later(function()
 end)
 
 Config.now(function()
+	add({
+		"https://github.com/julienvincent/hunk.nvim",
+		"https://github.com/MunifTanjim/nui.nvim",
+	})
+	require("hunk").setup({
+		ui = {
+			layout = "vertical",
+			tree = { width = 35 },
+		},
+	})
+end)
+
+Config.now(function()
 	add({ "https://github.com/larpios/jj-conflict.nvim" })
 	require("jj-conflict").setup({
 		mappings = {

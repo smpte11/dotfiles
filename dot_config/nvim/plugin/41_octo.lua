@@ -59,10 +59,6 @@ local function flatten_bubbles()
 	end
 end
 
--- PR create/checkout are handled by jj.nvim (`:J` open_pr / fetch_pr), which
--- is jj-aware; octo's git-branch-based equivalents break in this colocated,
--- detached-HEAD repo. See keymaps in 'plugin/42_jj.lua'.
-
 later(function()
 	add({
 		"https://github.com/pwntester/octo.nvim",
@@ -88,7 +84,6 @@ later(function()
 	Config.new_autocmd("ColorScheme", "*", flatten_bubbles, "Octo flat bubbles")
 
 	-- Entry points under a dedicated <Leader>G +GitHub group (g is mini.git).
-	-- PR create/checkout live under <Leader>J (jj.nvim), not here.
 	local map = function(lhs, rhs, desc)
 		vim.keymap.set("n", lhs, rhs, { desc = desc })
 	end
