@@ -5,17 +5,17 @@ The followings are the instructions for using Felix's agents. Please read them c
 ## General Instructions and Guidelines
 
 ## General
-- Avoid writing `.md` files and other unnecessary artifacts.
+- Avoid writing `.md` files and other unnecessary artifacts. This covers READMEs for new or scaffolded projects and scratch files used to stage text for another tool; write one only when the user asks for it.
 - Do not leave unnecessary artifacts in the repository.
 If an artifact is required, for example as an output of a task or an E2E test, yet not necessary, cleanup afterwards.
 
 ### Writing
-- Never use em dashes "—" in your responses. Use hyphens "-" instead.
+- Never use em dashes "—" in anything you write: chat responses, explanations, code, commit messages, PR bodies. Use hyphens "-" instead. This holds for every task type; a coding, review or debugging task does not exempt your own prose.
 - Avoid emojis in your responses.
 - Favour terseness over unnecessary verbosity. Avoid long-winded explanations and unnecessary details.
 
 ### Version Control System (VCS)
-- Use Jujutsu for version control. You may have to use Git for some tasks, but Jujutsu is preferred.
+- Use Jujutsu for version control, including read-only inspection: reach for `jj st`, `jj diff`, `jj log`, `jj git clone` rather than their `git` equivalents. Fall back to Git only for what Jujutsu cannot do.
 - When writing commit messages, use conventional commit format. For example, "feat: add new feature" or "fix: correct typo in code".
 - When writing commit messages, use the imperative mood. For example, "Add new feature" instead of "Added new feature".
 - When writing commit messages, never add yourself as a co-author.
@@ -27,6 +27,7 @@ This applies even when surrounding code already has comments. Do not add or exte
 Focus on the long-term maintainability, scalability, quality, simplicity and robustness of the codebase.
 - When investigating or debugging an issue, always start with reproducing the bug in an E2E test that is as closely align with how the end user would use the feature as possible.
 This will help you find the actual problem and fix it.
+Do this even when reading the code, the logs or a schema already suggests a cause; a static diagnosis is a hypothesis, not a reproduction.
 - Always apply the same high standards for engineering excellence: lint, test failures and flakiness.
 If you see even one of those, fix it. Regardless of whether it is your code or not.
 If you see a flaky test, fix it.
