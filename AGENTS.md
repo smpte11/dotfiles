@@ -18,7 +18,7 @@ If an artifact is required, for example as an output of a task or an E2E test, y
 - Use Jujutsu for version control, including read-only inspection: reach for `jj st`, `jj diff`, `jj log`, `jj git clone` rather than their `git` equivalents. Fall back to Git only for what Jujutsu cannot do.
 - When writing commit messages, use conventional commit format. For example, "feat: add new feature" or "fix: correct typo in code".
 - When writing commit messages, use the imperative mood. For example, "Add new feature" instead of "Added new feature".
-- When writing commit messages, never add yourself as a co-author.
+- When writing commit messages, never add yourself as a co-author. However, agents may be added as co-reviewers in PRs and commits when the commit author is kivra-felbro.
 
 ### Engineering
 - Avoid comments in code. If you find a comment to be necessary, it is likely that the code is not clear enough and should be refactored.
