@@ -1,0 +1,20 @@
+{
+  "name": "erlang-lsp",
+  "description": "Erlang language server (ELP) for code intelligence",
+  "version": "1.0.0",
+  "author": {
+    "name": "Felix Brousseau-Tremblay",
+    "email": "felix.brousseau-tremblay@kivra.com"
+  },
+  "lspServers": {
+    "elp": {
+      "command": "elp",
+      "args": ["server"],
+      "extensionToLanguage": {
+        ".erl": "erlang",
+        ".hrl": "erlang",
+        ".escript": "erlang"
+      }
+    }
+  }
+}

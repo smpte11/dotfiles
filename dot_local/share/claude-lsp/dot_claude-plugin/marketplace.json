@@ -1,0 +1,35 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-lsp",
+  "description": "Language servers not covered by the official Claude Code marketplace",
+  "owner": {
+    "name": "Felix Brousseau-Tremblay",
+    "email": "felix.brousseau-tremblay@kivra.com"
+  },
+  "plugins": [
+    {
+      "name": "elixir-lsp",
+      "description": "Elixir language server (Expert) for code intelligence",
+      "version": "1.0.0",
+      "source": "./plugins/elixir-lsp",
+      "category": "development",
+      "strict": false
+    },
+    {
+      "name": "erlang-lsp",
+      "description": "Erlang language server (ELP) for code intelligence",
+      "version": "1.0.0",
+      "source": "./plugins/erlang-lsp",
+      "category": "development",
+      "strict": false
+    },
+    {
+      "name": "scala-lsp",
+      "description": "Scala language server (Metals) for code intelligence",
+      "version": "1.0.0",
+      "source": "./plugins/scala-lsp",
+      "category": "development",
+      "strict": false
+    }
+  ]
+}

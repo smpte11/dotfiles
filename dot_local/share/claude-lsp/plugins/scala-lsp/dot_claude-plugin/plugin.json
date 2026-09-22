@@ -1,0 +1,19 @@
+{
+  "name": "scala-lsp",
+  "description": "Scala language server (Metals) for code intelligence",
+  "version": "1.0.0",
+  "author": {
+    "name": "Felix Brousseau-Tremblay",
+    "email": "felix.brousseau-tremblay@kivra.com"
+  },
+  "lspServers": {
+    "metals": {
+      "command": "metals",
+      "extensionToLanguage": {
+        ".scala": "scala",
+        ".sc": "scala",
+        ".sbt": "scala"
+      }
+    }
+  }
+}
