@@ -19,5 +19,15 @@ vim.b.miniclue_config = {
   },
 }
 
+-- Override octo's git-based checkout with the jj-native command on PR buffers.
+-- Deferred so it lands after octo applies its own mappings; gated on octo
+-- having set <LocalLeader>po (i.e. this is a PR buffer, not an issue buffer).
+vim.schedule(function()
+  if vim.fn.maparg(",po", "n") ~= "" then
+    vim.keymap.set("n", "<LocalLeader>po", "<Cmd>OctoPrCheckoutJj<CR>", { buffer = 0, desc = "Checkout PR (jj)" })
+    if MiniClue then MiniClue.ensure_buf_triggers() end
+  end
+end)
+
 -- Re-create mini.clue triggers so they remain the latest buffer-local mappings
 MiniClue.ensure_buf_triggers()
