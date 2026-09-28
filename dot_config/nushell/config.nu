@@ -9,10 +9,13 @@
 $env.EDITOR = 'nvim'
 $env.VISUAL = 'nvim'
 
-$env.KUBECONFIG = $"($env.HOME)/.kube/kivra-app-01-vbg.yaml:($env.HOME)/.kube/kivra-app-sandbox.yaml"
 $env.K9S_CONFIG_DIR = $"($env.HOME)/.config/k9s"
 
 $env.RIPGREP_CONFIG_PATH = $"($env.HOME)/.config/ripgrep/.ripgreprc"
+
+# Canonical firstmate operational home. Without it, firstmate scripts fall
+# back to the repo root as the home and create a second one there.
+$env.FM_HOME = $"($env.HOME)/.local/state/firstmate"
 
 $env.SSH_AUTH_SOCK = if $nu.os-info.name == "macos" {
     $"($env.HOME)/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"

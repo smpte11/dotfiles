@@ -1,3 +1,4 @@
+onboarding = false
 [terminal]
 default_shell = "zsh"
 
@@ -10,10 +11,10 @@ edit_scrollback = "prefix+shift+e"
 open_notification_target = ""
 
 [ui.toast]
-delivery = "system"
+delivery = "herdr"
 
 [ui.sound]
-enabled = false
+enabled = true
 
 [ui]
 status_indicators = "symbols"

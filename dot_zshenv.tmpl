@@ -8,10 +8,13 @@
 export EDITOR=nvim
 export VISUAL=nvim
 
-export KUBECONFIG="$HOME/.kube/kivra-app-01-vbg.yaml:$HOME/.kube/kivra-app-sandbox.yaml:$HOME/.kube/kivra-app-prod.yaml"
 export K9S_CONFIG_DIR="$HOME/.config/k9s"
 
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/.ripgreprc"
+
+# Canonical firstmate operational home. Without it, firstmate scripts fall
+# back to the repo root as the home and create a second one there.
+export FM_HOME="$HOME/.local/state/firstmate"
 
 case "$(uname -s)" in
   Darwin)
