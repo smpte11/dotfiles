@@ -1,0 +1,25 @@
+{{- $t := index .themes .active_theme -}}
+{{- $bg := $t.background -}}
+{{- $p := $t.palette -}}
+[appearance]
+# theme='' + background='off' ride the terminal palette (switch-theme via Ghostty).
+theme = ''
+background = 'off'
+dockbar_position = 'top'
+whichkey_enabled = true
+border_focused_color = '{{ $p.bright_green }}'
+border_unfocused_color = '{{ $p.bright_black }}'
+
+[appearance.selection]
+bg = '{{ $t.selection_bg }}'
+fg = '{{ $t.selection_fg }}'
+search_bg = '{{ $p.yellow }}'
+search_fg = '{{ $bg }}'
+match_bg = '{{ $p.bright_yellow }}'
+match_fg = '{{ $bg }}'
+cursor_bg = '{{ $t.cursor }}'
+cursor_fg = '{{ $bg }}'
+
+[startup]
+daemon = true
+

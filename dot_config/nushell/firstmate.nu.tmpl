@@ -3,11 +3,17 @@
 export def --env _fm-launch [harness: string] {
     let fm_src = $"($env.HOME)/.local/share/firstmate"
     let fm_state = $"($env.HOME)/.local/state/firstmate"
+    let herdr_socket = if "XDG_RUNTIME_DIR" in $env {
+        $"($env.XDG_RUNTIME_DIR)/tuios/tuios.sock.herdr"
+    } else {
+        $"/tmp/tuios-(id -u)/tuios.sock.herdr"
+    }
 
     cd $fm_src
     with-env {
         FM_HOME: $fm_state
         FM_BACKEND: herdr
+        HERDR_SOCKET_PATH: $herdr_socket
     } {
         match $harness {
             "claude" => { ^claude }

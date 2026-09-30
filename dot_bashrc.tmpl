@@ -1,0 +1,125 @@
+# .bashrc
+#
+# Bash configuration: env vars, PATH, vendor integrations, aliases, and
+# custom commands all in one file (bash has no zshenv/zshrc split).
+# Mirrors dot_zshenv.tmpl + dot_zshrc.tmpl and dot_config/nushell/config.nu.
+
+if [ -f /etc/bashrc ]; then
+  . /etc/bashrc
+fi
+
+if [ -d ~/.bashrc.d ]; then
+  for rc in ~/.bashrc.d/*; do
+    [ -f "$rc" ] && . "$rc"
+  done
+  unset rc
+fi
+
+# ─── environment variables ───────────────────────────────────────────
+
+export EDITOR=nvim
+export VISUAL=nvim
+
+export K9S_CONFIG_DIR="$HOME/.config/k9s"
+
+export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/.ripgreprc"
+
+export ZK_NOTEBOOK_DIR="$HOME/notebook"
+
+# Canonical firstmate operational home. Without it, firstmate scripts fall
+# back to the repo root as the home and create a second one there.
+export FM_HOME="$HOME/.local/state/firstmate"
+
+case "$(uname -s)" in
+  Darwin)
+    export SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+    ;;
+  *)
+    export SSH_AUTH_SOCK="$HOME/.ssh/proton-pass-agent.sock"
+    ;;
+esac
+
+# ─── PATH ────────────────────────────────────────────────────────────
+# Each block prepends, later blocks win — mirrors zsh/nu's path add order.
+
+PATH="$HOME/.local/bin:$PATH"
+PATH="/usr/local/bin:$PATH"
+
+case "$(uname -s)" in
+  Darwin)
+    PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+    ;;
+  Linux)
+    PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+    ;;
+esac
+
+PATH="$HOME/.krew/bin:$PATH"
+PATH="$HOME/.nix-profile/bin:$PATH"
+PATH="/nix/var/nix/profiles/default/bin:$PATH"
+
+PATH="$PATH:$HOME/.filen-cli/bin"
+PATH="$PATH:$HOME/.lmstudio/bin"
+
+export PATH
+
+# ─── vendor integrations ───────────────────────────────────────────────
+
+eval "$(mise activate bash)"
+eval "$(zoxide init bash --cmd cd)"
+eval "$(tv init bash)"
+eval "$(oh-my-posh init bash --config ~/.config/ohmyposh/.minischeme.omp.toml)"
+
+source <(carapace _carapace bash)
+
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+# ─── aliases ────────────────────────────────────────────────────────────
+
+alias ls='eza --group-directories-first --icons=auto --color=auto'
+alias l='eza -blF --git --header --group-directories-first --icons=auto --color=auto'
+alias ll='eza -la --git --header --octal-permissions --group-directories-first --icons=auto --color=auto'
+alias la='eza -la --git --header --group-directories-first --icons=auto --color=auto'
+alias lm='eza -l --git --header --sort=modified --reverse --group-directories-first --icons=auto --color=auto'
+alias l1='eza --oneline --group-directories-first --icons=auto --color=auto'
+alias lt='eza --tree --level=2 --group-directories-first --icons=auto --color=auto'
+alias l.='eza -a --oneline --color=never | grep -E "^\."'
+
+alias gearlever='flatpak run it.mijorus.gearlever'
+alias update-mlib="systemctl --user restart plex.service && systemctl --user restart jellyfin.service"
+
+# ─── custom commands ────────────────────────────────────────────────────
+
+opam-env() {
+  eval "$(opam env)"
+}
+
+_fm-launch() {
+  local harness="$1"
+  local herdr_socket
+  if [ -n "$XDG_RUNTIME_DIR" ]; then
+    herdr_socket="$XDG_RUNTIME_DIR/tuios/tuios.sock.herdr"
+  else
+    herdr_socket="/tmp/tuios-$(id -u)/tuios.sock.herdr"
+  fi
+  (
+    cd "$HOME/.local/share/firstmate" || return 1
+    export FM_HOME="$HOME/.local/state/firstmate"
+    export FM_BACKEND=herdr
+    export HERDR_SOCKET_PATH="$herdr_socket"
+    case "$harness" in
+      claude) claude ;;
+      pi) pi ;;
+      *) echo "unknown harness: $harness" >&2; return 1 ;;
+    esac
+  )
+}
+
+fm() {
+  local harness
+  harness=$(gum choose --selected="{{ if hasSuffix "@kivra.com" .email }}claude{{ else }}pi{{ end }}" claude pi)
+  [ -z "$harness" ] && return 1
+  _fm-launch "$harness"
+}
+fm-claude() { _fm-launch claude; }
+fm-pi() { _fm-launch pi; }
