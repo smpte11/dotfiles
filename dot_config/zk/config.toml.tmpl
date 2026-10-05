@@ -60,12 +60,16 @@ recent = "zk edit --sort created- --created-after 'last two weeks' --interactive
 lucky = "zk list --quiet --format full --sort random --limit 1"
 
 daily = '''
-case "$1" in
-  personal) zk new --no-input "$ZK_NOTEBOOK_DIR/journal/personal" ;;
-  work)     zk new --no-input "$ZK_NOTEBOOK_DIR/journal/work" ;;
-  "")       echo "usage: zk daily {personal|work}" >&2; exit 2 ;;
-  *)        echo "zk daily: unknown kind '$1' (use 'personal' or 'work')" >&2; exit 2 ;;
+kind="$1"
+case "$kind" in
+  personal|work) ;;
+  "")  echo "usage: zk daily {personal|work}" >&2; exit 2 ;;
+  *)   echo "zk daily: unknown kind '$kind' (use 'personal' or 'work')" >&2; exit 2 ;;
 esac
+dir="$ZK_NOTEBOOK_DIR/journal/$kind"
+today="$(date +%F)"
+prev="$(ls "$dir"/*.md 2>/dev/null | sed 's#.*/##; s/\.md$//' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' | awk -v t="$today" '$0 < t' | sort | tail -1)"
+zk new --no-input --extra "prev=$prev" "$dir"
 '''
 
 # LSP

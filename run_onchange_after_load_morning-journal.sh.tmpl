@@ -1,0 +1,14 @@
+#!/bin/bash
+# plist hash: {{ include "Library/LaunchAgents/com.felbro.morning-journal.plist.tmpl" | sha256sum }}
+set -euo pipefail
+
+{{ if ne .chezmoi.os "darwin" -}}
+exit 0
+{{ end -}}
+
+label="com.felbro.morning-journal"
+plist="$HOME/Library/LaunchAgents/$label.plist"
+uid="$(id -u)"
+
+launchctl bootout "gui/$uid/$label" 2>/dev/null || true
+launchctl bootstrap "gui/$uid" "$plist"

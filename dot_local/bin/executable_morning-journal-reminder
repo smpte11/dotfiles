@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eu
+
+export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+note="$HOME/notebook/journal/work/$(date +%F).md"
+
+zk daily work >/dev/null 2>&1 || true
+
+osascript -e 'display notification "Slack, metrics & dashboards, inbox, calendar, then set priorities." with title "Morning routine" subtitle "Start-of-day checklist"' >/dev/null 2>&1 || true
+
+command -v herdr >/dev/null 2>&1 || exit 0
+tab="$(herdr workspace list 2>/dev/null | jq -r '.result.workspaces[] | select(.label=="notes") | .active_tab_id' 2>/dev/null)" || exit 0
+[ -n "$tab" ] || exit 0
+pane="$(herdr pane list 2>/dev/null | jq -r --arg t "$tab" '.result.panes[] | select(.tab_id==$t) | .pane_id' 2>/dev/null | head -1)" || exit 0
+[ -n "$pane" ] || exit 0
+
+herdr pane read "$pane" --source visible --lines 3 2>/dev/null | grep -q '❯[[:space:]]*$' || exit 0
+herdr pane run "$pane" "nvim '$note'" >/dev/null 2>&1 || true

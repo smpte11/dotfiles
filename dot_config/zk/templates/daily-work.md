@@ -7,6 +7,16 @@ keywords: [journal, daily, work]
 ---
 
 # {{format-date now "long"}} - Work
+{{#if extra.prev}}
+Previous: [[{{extra.prev}}]]
+{{/if}}
+
+## Morning routine
+- [ ] Catch up on Slack: mentions, DMs, team channels
+- [ ] Check metrics & dashboards for anomalies
+- [ ] Triage inbox & review notifications (PRs, reviews, issues)
+- [ ] Scan calendar for today's meetings
+- [ ] Set top 1-3 priorities below
 
 ## Plan
 <!-- What matters today. -->

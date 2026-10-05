@@ -7,6 +7,9 @@ keywords: [journal, daily, personal]
 ---
 
 # {{format-date now "long"}} - Personal
+{{#if extra.prev}}
+Previous: [[{{extra.prev}}]]
+{{/if}}
 
 ## Plan
 <!-- What matters today. -->
