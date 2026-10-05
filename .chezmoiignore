@@ -8,3 +8,8 @@ mise.toml
 {{- if ne .chezmoi.hostname "Felixs-MacBook-Pro" }}
 .config/k9s/skins/active-theme.yaml
 {{- end }}
+{{- if ne .chezmoi.os "darwin" }}
+Library/LaunchAgents/com.felbro.morning-journal.plist
+.local/bin/morning-journal-reminder
+run_onchange_after_load_morning-journal.sh
+{{- end }}
