@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+PATH="$HOME/.local/share/mise/shims:$PATH"
+runtime=${XDG_RUNTIME_DIR:+$XDG_RUNTIME_DIR/tuios}
+herdr=${runtime:-/tmp/tuios-$(id -u)}/herdr/bin/herdr
+"$herdr" workspace list | jq -r '.result.workspaces[].workspace_id' | while read -r ws; do
+  "$herdr" tab list --workspace "$ws" \
+    | jq -r '.result.tabs | if length > 1 then .[] | select(.pane_count == 0) | .tab_id else empty end' \
+    | while read -r tab; do "$herdr" tab close "$tab" >/dev/null; done
+done
