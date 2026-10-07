@@ -190,7 +190,7 @@ _fm-launch() {
     export FM_HOME="$HOME/.local/state/firstmate"
     export FM_BACKEND=herdr
     export HERDR_SOCKET_PATH="$herdr_socket"
-    export PATH="$HOME/.local/share/firstmate-tuios/bin:$PATH"
+    export PATH="$(dirname "$herdr_socket")/herdr/bin:$PATH"
     case "$harness" in
       claude) claude ;;
       pi) pi ;;

@@ -14,7 +14,7 @@ export def --env _fm-launch [harness: string] {
         FM_HOME: $fm_state
         FM_BACKEND: herdr
         HERDR_SOCKET_PATH: $herdr_socket
-        PATH: ($env.PATH | prepend $"($env.HOME)/.local/share/firstmate-tuios/bin")
+        PATH: ($env.PATH | prepend ($herdr_socket | path dirname | path join herdr bin))
     } {
         match $harness {
             "claude" => { ^claude }

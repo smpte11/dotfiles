@@ -202,3 +202,19 @@ E2E through firstmate's own backend functions (`fm_backend_herdr_container_ensur
 Slot leak: tuios keeps a herdr tab (tuios workspace) with zero panes and its label after its last pane closes, and `tab create` does not reuse it. firstmate closes tasks by closing or killing the pane and expects herdr to drop the emptied tab, so each finished task held one of the 9 slots for good. `herdr tab close` on the empty tab frees it. Workaround: the `after-close-window` hook closes every zero-pane tab that is not its session's last. Verified for a direct `pane close` and for `fm_backend_kill`.
 
 Open: blocked prompts read as `busy`, so firstmate cannot tell a stuck crew from a working one; at most 8 concurrent tasks per firstmate workspace.
+
+## 7. Update 2026-10-07: tuios fork
+
+The herdr-front gaps are fixed on `smpte11/tuios` (one branch each, based on upstream main, merged as `fm-combined`):
+
+| Branch | Fix |
+| --- | --- |
+| `herdr-foreground-cwd` | `pane get .foreground_cwd` reports the foreground process cwd. Before, it stayed on the shell cwd, so firstmate never saw `treehouse get` enter the worktree and every ship/scout spawn timed out after 60s. |
+| `herdr-strip-session` | `--session NAME` is stripped anywhere before `--`; names other than `default` fail with usage exit 2. |
+| `herdr-close-empty-tab` | a herdr-opened tab closes when its last pane closes or exits; a session's last tab stays and is reused. |
+
+Setup now builds `fm-combined` into `~/.local/bin/tuios` (`run_onchange_after_install_tuios.sh.tmpl`) and `_fm-launch` puts tuios's own herdr link first on `PATH`. The section 4 wrapper and the `after-close-window` hook are gone.
+
+E2E on the live daemon with unmodified firstmate: version check, workspace, task create, `treehouse get` worktree seen after 1s, send and capture, kill, pane gone, no empty tab left.
+
+A firstmate-side alternative (omit `--session` for `default` under `HERDR_SOCKET_PATH`) is not enough with the real herdr client: its `session list` reads herdr's local session registry and ignores `HERDR_SOCKET_PATH`, so firstmate's presentation lock and server state read the wrong server.
