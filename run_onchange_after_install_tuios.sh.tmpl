@@ -1,19 +1,4 @@
 #!/bin/bash
-# template hash: tuios-fork-fm-combined-v1
+# template hash: tuios-fork-v2
 set -euo pipefail
-
-SRC="$HOME/.local/share/tuios-fork"
-REF=fm-combined
-
-if [ ! -d "$SRC/.git" ]; then
-  git clone --branch "$REF" https://github.com/smpte11/tuios "$SRC"
-else
-  git -C "$SRC" fetch origin "$REF"
-  git -C "$SRC" checkout -B "$REF" "origin/$REF"
-fi
-
-commit=$(git -C "$SRC" rev-parse --short HEAD)
-mkdir -p "$HOME/.local/bin"
-(cd "$SRC" && CGO_ENABLED=0 go build -trimpath \
-  -ldflags "-s -w -X main.version=fork-$commit -X main.commit=$commit -X main.date=$(date -u +%Y-%m-%dT%H:%M:%SZ) -X main.builtBy=chezmoi" \
-  -o "$HOME/.local/bin/tuios" ./cmd/tuios)
+"$HOME/.local/bin/fork-sync" build

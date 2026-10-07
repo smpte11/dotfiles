@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SRC="$HOME/src"
+TUIOS="$SRC/tuios"
+TUIOS_COMBINED=fm-combined
+TUIOS_BIN="$HOME/.local/bin/tuios"
+
+usage() {
+  cat <<EOF
+usage: fork-sync [sync|build|clone]
+  sync   rebase fork branches onto upstream main, push them to the forks, rebuild tuios (default)
+  build  build tuios from $TUIOS_COMBINED into $TUIOS_BIN
+  clone  clone missing forks into $SRC
+EOF
+}
+
+clone() {
+  local name=$1 upstream=$2
+  [ -d "$SRC/$name/.jj" ] && return 0
+  mkdir -p "$SRC"
+  jj git clone --colocate --remote origin "personalgit:smpte11/$name.git" "$SRC/$name"
+  jj -R "$SRC/$name" git remote add upstream "git@github.com:$upstream/$name.git"
+}
+
+clone_all() {
+  clone tuios Gaurav-Gosain
+  clone firstmate kunchenguid
+}
+
+fetch() {
+  jj -R "$1" git fetch --remote upstream --branch main
+  jj -R "$1" git fetch --remote origin
+}
+
+sync_main() {
+  jj -R "$1" bookmark set main -r main@upstream --allow-backwards
+  jj -R "$1" git push --remote origin --bookmark main
+}
+
+sync_tuios() {
+  local fixes
+  fetch "$TUIOS"
+  jj -R "$TUIOS" rebase -b "$TUIOS_COMBINED" -d main@upstream
+  if [ -n "$(jj -R "$TUIOS" log --no-graph -r "conflicts() & main@upstream::$TUIOS_COMBINED" -T 'change_id.short() ++ "\n"')" ]; then
+    echo "error: rebasing $TUIOS_COMBINED onto upstream left conflicts; resolve them in $TUIOS and rerun" >&2
+    jj -R "$TUIOS" log -r "conflicts() & main@upstream::$TUIOS_COMBINED" >&2
+    exit 1
+  fi
+  fixes=$(jj -R "$TUIOS" log --no-graph -r "parents($TUIOS_COMBINED)" -T 'local_bookmarks.map(|b| "-b " ++ b.name()).join(" ") ++ " "')
+  sync_main "$TUIOS"
+  # shellcheck disable=SC2086
+  jj -R "$TUIOS" git push --remote origin $fixes --bookmark "$TUIOS_COMBINED"
+}
+
+sync_firstmate() {
+  fetch "$SRC/firstmate"
+  sync_main "$SRC/firstmate"
+}
+
+build() {
+  local commit tree
+  commit=$(jj -R "$TUIOS" log --no-graph -r "$TUIOS_COMBINED" -T 'commit_id')
+  tree=$(mktemp -d)
+  trap 'rm -rf "$tree"' RETURN
+  git -C "$TUIOS" archive "$commit" | tar -x -C "$tree"
+  mkdir -p "$(dirname "$TUIOS_BIN")"
+  (cd "$tree" && CGO_ENABLED=0 go build -trimpath \
+    -ldflags "-s -w -X main.version=fork-${commit:0:8} -X main.commit=${commit:0:8} -X main.date=$(date -u +%Y-%m-%dT%H:%M:%SZ) -X main.builtBy=fork-sync" \
+    -o "$TUIOS_BIN.new" ./cmd/tuios)
+  mv -f "$TUIOS_BIN.new" "$TUIOS_BIN"
+  echo "built $("$TUIOS_BIN" --version | head -1); restart the tuios daemon to run it"
+}
+
+case "${1:-sync}" in
+  sync) clone_all; sync_tuios; sync_firstmate; build ;;
+  build) clone_all; build ;;
+  clone) clone_all ;;
+  -h|--help) usage ;;
+  *) usage >&2; exit 2 ;;
+esac
