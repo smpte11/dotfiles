@@ -13,6 +13,7 @@ If an artifact is required, for example as an output of a task or an E2E test, y
 - Never use em dashes "—" in anything you write: chat responses, explanations, code, commit messages, PR bodies. Use hyphens "-" instead. This holds for every task type; a coding, review or debugging task does not exempt your own prose.
 - Avoid emojis in your responses.
 - Favour terseness over unnecessary verbosity. Avoid long-winded explanations and unnecessary details.
+- When asked to write "in my voice" (PR bodies, review comments, tickets, messages), read and follow `~/VOICE.md`.
 
 ### Version Control System (VCS)
 - Use Jujutsu for version control, including read-only inspection: reach for `jj st`, `jj diff`, `jj log`, `jj git clone` rather than their `git` equivalents. Fall back to Git only for what Jujutsu cannot do.
