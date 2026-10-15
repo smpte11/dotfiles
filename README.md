@@ -36,5 +36,5 @@ chezmoi apply
 
 Installed automatically via the `hooks.read-source-state.pre` hook on `chezmoi init`:
 
-- **Work Mac** (`Felixs-MacBook-Pro`) — 1Password CLI (`op`)
-- **All other hosts** — Proton Pass CLI (`pass-cli`)
+- **Work machines** (chezmoi `email` ends in `@kivra.com`) - 1Password CLI (`op`)
+- **All other machines** - Proton Pass CLI (`pass-cli`)

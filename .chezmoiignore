@@ -3,9 +3,11 @@ docs/**
 ~/.config/nvim/.git/
 ~/.config/nvim/.git/**
 install.sh
+README.md
 cmd/
 mise.toml
-{{- if ne .chezmoi.hostname "Felixs-MacBook-Pro" }}
+{{- $work := hasSuffix "@kivra.com" .email }}
+{{- if not $work }}
 .config/k9s/skins/active-theme.yaml
 {{- end }}
 {{- if ne .chezmoi.os "darwin" }}
@@ -13,6 +15,6 @@ Library/LaunchAgents/com.felbro.morning-journal.plist
 .local/bin/morning-journal-reminder
 run_onchange_after_load_morning-journal.sh
 {{- end }}
-{{- if hasSuffix "@kivra.com" .email }}
+{{- if $work }}
 .config/mise/conf.d/ai.toml
 {{- end }}
