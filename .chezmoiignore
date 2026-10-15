@@ -13,3 +13,6 @@ Library/LaunchAgents/com.felbro.morning-journal.plist
 .local/bin/morning-journal-reminder
 run_onchange_after_load_morning-journal.sh
 {{- end }}
+{{- if hasSuffix "@kivra.com" .email }}
+.config/ai.env
+{{- end }}

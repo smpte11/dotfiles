@@ -275,34 +275,71 @@ now_if_args(function()
 	require("mason").setup()
 end)
 
-later(function()
-	add({ "https://github.com/zbirenbaum/copilot.lua" })
-	require("copilot").setup({
-		suggestion = {
-			enabled = true,
-			auto_trigger = true,
-			hide_during_completion = true, -- Hide when completion menu is open
-			debounce = 75,
-			keymap = {
-				accept = "<M-l>", -- Option+l to accept suggestion
-				accept_word = false,
-				accept_line = false,
-				next = "<M-]>", -- Option+] for next suggestion
-				prev = "<M-[>", -- Option+[ for previous suggestion
-				dismiss = "<M-d>", -- Option+d to dismiss
+now_if_args(function()
+	local provider = vim.env.NVIM_AI_PROVIDER or "copilot"
+	local keymap = { accept = "<M-l>", next = "<M-]>", prev = "<M-[>", dismiss = "<M-d>" }
+	local debounce = 75
+
+	local function setup_copilot()
+		add({ "https://github.com/zbirenbaum/copilot.lua" })
+		require("copilot").setup({
+			suggestion = {
+				enabled = true,
+				auto_trigger = true,
+				hide_during_completion = true,
+				debounce = debounce,
+				keymap = vim.tbl_extend("force", keymap, { accept_word = false, accept_line = false }),
 			},
-		},
-		panel = { enabled = false },
-		filetypes = {
-			yaml = true,
-			markdown = true,
-			help = false,
-			gitcommit = true,
-			gitrebase = false,
-			["."] = false,
-		},
-		-- copilot_model = "claude-sonnet-4.6"
-	})
+			panel = { enabled = false },
+			filetypes = {
+				yaml = true,
+				markdown = true,
+				help = false,
+				gitcommit = true,
+				gitrebase = false,
+				["."] = false,
+			},
+		})
+	end
+
+	local function setup_minuet()
+		add({ "https://github.com/milanglacier/minuet-ai.nvim" })
+		require("minuet").setup({
+			provider = provider,
+			debounce = debounce,
+			virtualtext = {
+				auto_trigger_ft = { "*" },
+				auto_trigger_ignore_ft = { "help", "gitrebase" },
+				show_on_completion_menu = false,
+				keymap = keymap,
+			},
+		})
+	end
+
+	local function map_toggle(toggle, is_on)
+		vim.keymap.set("n", "\\a", function()
+			toggle()
+			vim.notify("AI completion: " .. (is_on() and "on" or "off"))
+		end, { desc = "Toggle AI completion" })
+	end
+
+	if provider == "off" then
+		return
+	elseif provider == "copilot" then
+		setup_copilot()
+		map_toggle(function()
+			require("copilot.suggestion").toggle_auto_trigger()
+		end, function()
+			return vim.b.copilot_suggestion_auto_trigger
+		end)
+	else
+		setup_minuet()
+		map_toggle(function()
+			vim.b.minuet_virtual_text_auto_trigger = not vim.b.minuet_virtual_text_auto_trigger
+		end, function()
+			return vim.b.minuet_virtual_text_auto_trigger
+		end)
+	end
 end)
 
 later(function()

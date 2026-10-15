@@ -17,6 +17,11 @@ $env.RIPGREP_CONFIG_PATH = $"($env.HOME)/.config/ripgrep/.ripgreprc"
 # back to the repo root as the home and create a second one there.
 $env.FM_HOME = $"($env.HOME)/.local/state/firstmate"
 
+let ai_env = $"($env.HOME)/.config/ai.env"
+if ($ai_env | path exists) {
+    open $ai_env | lines | parse "{name}={value}" | transpose -r -d | load-env
+}
+
 $env.SSH_AUTH_SOCK = if $nu.os-info.name == "macos" {
     $"($env.HOME)/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 } else {

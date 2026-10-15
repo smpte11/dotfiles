@@ -30,6 +30,12 @@ export ZK_NOTEBOOK_DIR="$HOME/notebook"
 # back to the repo root as the home and create a second one there.
 export FM_HOME="$HOME/.local/state/firstmate"
 
+if [ -f "$HOME/.config/ai.env" ]; then
+  set -a
+  . "$HOME/.config/ai.env"
+  set +a
+fi
+
 case "$(uname -s)" in
   Darwin)
     export SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
