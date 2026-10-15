@@ -14,5 +14,5 @@ Library/LaunchAgents/com.felbro.morning-journal.plist
 run_onchange_after_load_morning-journal.sh
 {{- end }}
 {{- if hasSuffix "@kivra.com" .email }}
-.config/ai.env
+.config/mise/conf.d/ai.toml
 {{- end }}
