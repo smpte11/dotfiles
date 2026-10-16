@@ -1,0 +1,25 @@
+{
+  "Name": "Journal",
+  "Version": "1.0.0.0",
+  "Author": "Felix Brousseau-Tremblay",
+  "Description": "Open today's journal in nvim inside tuios.",
+  "UUID": "com.felbro.journal",
+  "Icon": "imgs/journal",
+  "Category": "Journal",
+  "CategoryIcon": "imgs/journal",
+  "CodePath": "plugin.js",
+  "SDKVersion": 2,
+  "Software": { "MinimumVersion": "6.5" },
+  "OS": [{ "Platform": "mac", "MinimumVersion": "12" }],
+  "Nodejs": { "Version": "24" },
+  "Actions": [
+    {
+      "Name": "Today",
+      "UUID": "com.felbro.journal.open",
+      "Icon": "imgs/journal",
+      "Tooltip": "Open today's journal",
+      "Controllers": ["Keypad"],
+      "States": [{ "Image": "imgs/journal", "ShowTitle": false }]
+    }
+  ]
+}

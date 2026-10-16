@@ -1,0 +1,20 @@
+#!/bin/bash
+{{ if eq .chezmoi.os "darwin" -}}
+# plist hash: {{ include "Library/LaunchAgents/com.felbro.journal.plist.tmpl" | sha256sum }}
+set -euo pipefail
+
+label="com.felbro.journal"
+uid="$(id -u)"
+
+launchctl bootout "gui/$uid/com.felbro.morning-journal" 2>/dev/null || true
+rm -f "$HOME/Library/LaunchAgents/com.felbro.morning-journal.plist" "$HOME/.local/bin/morning-journal-reminder"
+
+launchctl bootout "gui/$uid/$label" 2>/dev/null || true
+launchctl bootstrap "gui/$uid" "$HOME/Library/LaunchAgents/$label.plist"
+{{- else -}}
+# unit hash: {{ include "dot_config/systemd/user/journal-reminder.service" | sha256sum }} {{ include "dot_config/systemd/user/journal-reminder.timer" | sha256sum }}
+set -euo pipefail
+
+systemctl --user daemon-reload
+systemctl --user enable --now journal-reminder.timer
+{{- end }}

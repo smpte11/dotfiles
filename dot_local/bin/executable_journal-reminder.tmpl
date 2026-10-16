@@ -1,0 +1,26 @@
+#!/bin/sh
+set -eu
+
+export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+kind={{ if hasSuffix "@kivra.com" .email }}work{{ else }}personal{{ end }}
+state="${XDG_STATE_HOME:-$HOME/.local/state}/journal"
+
+zk daily "$kind" --print-path >/dev/null
+mkdir -p "$state"
+touch "$state/pending"
+
+{{ if eq .chezmoi.os "darwin" -}}
+choice="$(alerter --title "Morning routine" --subtitle "Start-of-day checklist" \
+  --message "Slack, metrics & dashboards, inbox, calendar, then set priorities." \
+  --actions Open --timeout 3600 2>/dev/null)" || exit 0
+case "$choice" in
+  @CONTENTCLICKED | Open) exec journal-open ;;
+esac
+{{- else -}}
+choice="$(notify-send --app-name Journal --wait --action=open=Open \
+  "Evening journal" "Plan tomorrow, reflect on today." 2>/dev/null)" || exit 0
+case "$choice" in
+  open) exec journal-open ;;
+esac
+{{- end }}

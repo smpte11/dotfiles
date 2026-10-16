@@ -10,10 +10,12 @@ mise.toml
 {{- if not $work }}
 .config/k9s/skins/active-theme.yaml
 {{- end }}
-{{- if ne .chezmoi.os "darwin" }}
-Library/LaunchAgents/com.felbro.morning-journal.plist
-.local/bin/morning-journal-reminder
-run_onchange_after_load_morning-journal.sh
+{{- if eq .chezmoi.os "darwin" }}
+.config/systemd
+.config/opendeck
+.var
+{{- else }}
+Library
 {{- end }}
 {{- if $work }}
 .config/mise/conf.d/ai.toml

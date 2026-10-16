@@ -1,0 +1,6 @@
+[Unit]
+Description=Evening journal reminder
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/journal-reminder
