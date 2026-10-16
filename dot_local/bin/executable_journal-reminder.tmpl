@@ -11,11 +11,12 @@ mkdir -p "$state"
 touch "$state/pending"
 
 {{ if eq .chezmoi.os "darwin" -}}
-choice="$(alerter --title "Morning routine" --subtitle "Start-of-day checklist" \
+result="$(alerter --title "Morning routine" --subtitle "Start-of-day checklist" \
   --message "Slack, metrics & dashboards, inbox, calendar, then set priorities." \
-  --actions Open --timeout 3600 2>/dev/null)" || exit 0
-case "$choice" in
-  @CONTENTCLICKED | Open) exec journal-open ;;
+  --actions Open --timeout 3600 --json)" || exit 0
+echo "$(date '+%F %T') $(echo "$result" | jq -c .)"
+case "$(echo "$result" | jq -r .activationType)" in
+  contentsClicked | actionClicked) exec journal-open ;;
 esac
 {{- else -}}
 choice="$(notify-send --app-name Journal --wait --action=open=Open \
