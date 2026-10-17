@@ -1,0 +1,256 @@
+# Language Server Configurations
+# This file configures LSP servers for Helix editor
+# Based on Neovim LSP configurations plus requested additions
+
+# =============================================================================
+# LSP Server Definitions
+# =============================================================================
+
+# Lua Language Server
+[language-server.lua-ls]
+command = "lua-language-server"
+
+# Go Language Server (gopls)
+[language-server.gopls]
+command = "gopls"
+args = ["-v"]
+
+# YAML Language Server
+[language-server.yamlls]
+command = "yaml-language-server"
+args = ["--stdio"]
+
+# OCaml Language Server
+[language-server.ocamllsp]
+command = "ocamllsp"
+args = ["--stdio"]
+
+# Elixir Language Server (expert)
+[language-server.expert]
+command = "expert"
+args = ["--stdio"]
+
+# Elixir LS (alternative)
+[language-server.elixir-ls]
+command = "elixir-ls"
+
+# Python - basedpyright
+[language-server.basedpyright]
+command = "basedpyright-langserver"
+args = ["--stdio"]
+
+# Python - pyright (fallback)
+[language-server.pyright]
+command = "pyright-langserver"
+args = ["--stdio"]
+
+# Scala - Metals
+[language-server.metals]
+command = "metals"
+config = { isHttpEnabled = true }
+
+# TypeScript - typescript-language-server (the most popular)
+[language-server.typescript-language-server]
+command = "typescript-language-server"
+args = ["--stdio"]
+
+# TypeScript - tsserver (alternative, built into Node.js)
+[language-server.tsserver]
+command = "typescript-language-server"
+args = ["--stdio"]
+
+# JSON Language Server
+[language-server.jsonls]
+command = "vscode-json-language-server"
+args = ["--stdio"]
+
+# =============================================================================
+# Language Definitions
+# =============================================================================
+
+# Lua
+[[language]]
+name = "lua"
+scope = "source.lua"
+injection-regex = "lua"
+file-types = ["lua"]
+comment-token = "--"
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["lua-ls"]
+auto-format = true
+
+# Go
+[[language]]
+name = "go"
+scope = "source.go"
+injection-regex = "go"
+file-types = ["go", "gomod", "gosum", "gotmpl"]
+roots = ["go.mod", ".git"]
+comment-token = "//"
+indent = { tab-width = 4, unit = "    " }
+language-servers = ["gopls"]
+auto-format = true
+
+# YAML
+[[language]]
+name = "yaml"
+scope = "source.yaml"
+injection-regex = "yaml"
+file-types = ["yaml", "yml"]
+roots = [".git"]
+comment-token = "#"
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["yamlls"]
+auto-format = true
+
+# OCaml
+[[language]]
+name = "ocaml"
+scope = "source.ocaml"
+injection-regex = "ocaml|ml"
+file-types = ["ml", "mli", "cmx", "cmo", "cmt", "cmti", "dune"]
+roots = ["dune", "dune-project", ".git"]
+comment-token = "(*"
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["ocamllsp"]
+
+# Elixir
+[[language]]
+name = "elixir"
+scope = "source.elixir"
+injection-regex = "elixir|ex|exs"
+file-types = ["ex", "exs", "heex"]
+roots = ["mix.exs", ".git"]
+shebangs = ["elixir"]
+comment-token = "#"
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["expert", "elixir-ls"]
+auto-format = true
+
+# EEx (Embedded Elixir)
+[[language]]
+name = "eex"
+scope = "text.html.elixir"
+injection-regex = "eex|heex"
+file-types = ["heex", "eex", "html.heex", "html.eex"]
+roots = ["mix.exs", ".git"]
+comment-token = "<--"
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["expert", "elixir-ls"]
+
+# Python
+[[language]]
+name = "python"
+scope = "source.python"
+injection-regex = "python|py"
+file-types = ["py", "pyi", "pyx", "pyw"]
+roots = ["pyproject.toml", "setup.py", "setup.cfg", "poetry.lock", "requirements.txt", ".git"]
+shebangs = ["python", "python3", "py"]
+comment-token = "#"
+indent = { tab-width = 4, unit = "    " }
+language-servers = ["basedpyright", "pyright"]
+auto-format = true
+
+# TypeScript
+[[language]]
+name = "typescript"
+scope = "source.ts"
+injection-regex = "typescript|ts"
+file-types = ["ts"]
+roots = ["package.json", "tsconfig.json", ".git"]
+comment-token = "//"
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["typescript-language-server", "tsserver"]
+auto-format = true
+
+# JavaScript
+[[language]]
+name = "javascript"
+scope = "source.js"
+injection-regex = "javascript|js"
+file-types = ["js", "jsx", "mjs", "cjs"]
+roots = ["package.json", "jsconfig.json", ".git"]
+comment-token = "//"
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["typescript-language-server", "tsserver"]
+auto-format = true
+
+# TypeScript React (TSX)
+[[language]]
+name = "tsx"
+scope = "source.tsx"
+injection-regex = "tsx"
+file-types = ["tsx"]
+roots = ["package.json", "tsconfig.json", ".git"]
+comment-token = "//"
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["typescript-language-server", "tsserver"]
+auto-format = true
+
+# JSON
+[[language]]
+name = "json"
+scope = "source.json"
+injection-regex = "json"
+file-types = ["json", "jsonc", "json5"]
+roots = ["package.json", ".git"]
+comment-token = "//"
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["jsonls"]
+auto-format = true
+
+# JSON with Comments
+[[language]]
+name = "jsonc"
+scope = "source.json.comments"
+injection-regex = "jsonc"
+file-types = ["jsonc"]
+roots = [".git"]
+comment-token = "//"
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["jsonls"]
+auto-format = true
+
+# Scala
+[[language]]
+name = "scala"
+scope = "source.scala"
+injection-regex = "scala"
+file-types = ["scala", "sc"]
+roots = ["build.sbt", "build.sc", "project.clj", ".git"]
+comment-token = "//"
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["metals"]
+auto-format = true
+
+# Markdown
+[[language]]
+name = "markdown"
+scope = "text.markdown"
+injection-regex = "markdown|md"
+file-types = ["md", "markdown"]
+comment-token = "<!-- -->"
+indent = { tab-width = 2, unit = "  " }
+auto-format = false
+
+# TOML
+[[language]]
+name = "toml"
+scope = "source.toml"
+injection-regex = "toml"
+file-types = ["toml"]
+roots = ["Cargo.toml", "Pipfile", "poetry.lock", "pyproject.toml", ".git"]
+comment-token = "#"
+indent = { tab-width = 2, unit = "  " }
+auto-format = true
+
+# Nushell
+[[language]]
+name = "nu"
+scope = "source.nu"
+injection-regex = "nu|nushell"
+file-types = ["nu", "nushell"]
+roots = ["nuon.json", ".git"]
+comment-token = "#"
+indent = { tab-width = 2, unit = "  " }
+auto-format = true
