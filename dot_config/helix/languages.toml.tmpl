@@ -1,3 +1,4 @@
+{{- /* Helix Editor Languages Configuration Template */ -}}
 # Language Server Configurations
 # This file configures LSP servers for Helix editor
 # Based on Neovim LSP configurations plus requested additions
@@ -13,7 +14,9 @@ command = "lua-language-server"
 # Go Language Server (gopls)
 [language-server.gopls]
 command = "gopls"
+{{- if eq .chezmoi.os "darwin" }}
 args = ["-v"]
+{{- end }}
 
 # YAML Language Server
 [language-server.yamlls]
@@ -48,6 +51,9 @@ args = ["--stdio"]
 [language-server.metals]
 command = "metals"
 config = { isHttpEnabled = true }
+{{- if eq .chezmoi.os "darwin" }}
+config.metals = { inlayHints = { typeParameters = { enable = true }, hintsInPatternMatch = { enable = true } } }
+{{- end }}
 
 # TypeScript - typescript-language-server (the most popular)
 [language-server.typescript-language-server]

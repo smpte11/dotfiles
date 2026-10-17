@@ -1,0 +1,66 @@
+{{- /* Helix Editor Configuration Template */ -}}
+{{- /* Uses theme from chezmoidata.toml */ -}}
+{{- $t := index .themes .active_theme -}}
+
+# Theme configuration
+theme = "{{ .active_theme }}"
+
+[editor]
+# General editor settings
+line-number = "relative"
+scroll-lines = 3
+scrolloff = 8
+true-color = true
+cursor-shape.insert = "bar"
+mouse = true
+bufferline = "multiple"
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.lsp]
+display-messages = true
+display-inlay-hints = true
+
+[editor.statusline]
+left = ["mode", "spinner", "file-name", "file-modification-indicator"]
+center = ["version-control"]
+right = ["diagnostics", "selections", "position", "file-encoding", "file-line-ending", "file-type"]
+separator = "│"
+mode.normal = "NORMAL"
+mode.insert = "INSERT"
+mode.select = "SELECT"
+
+[editor.indent-guides]
+render = true
+character = "│"
+debounce = 100
+
+[editor.soft-wrap]
+enable = true
+
+[editor.file-picker]
+hidden = false
+
+[editor.search]
+smart-case = true
+wrap-around = true
+
+[editor.whitespace]
+render = "all"
+char = "·"
+
+[keys]
+# Standard keybindings
+normal = { "C-s" = ":write", "C-q" = ":quit", "C-x" = ":quit!" }
+insert = { "C-s" = ":write", "C-q" = ":quit" }
+
+# Theme colors for helix UI elements
+[ui]
+# Use theme colors from chezmoidata
+{{- if $t }}
+background = '{{ $t.background }}'
+foreground = '{{ $t.foreground }}'
+{{- end }}
