@@ -55,6 +55,11 @@ config = { isHttpEnabled = true }
 config.metals = { inlayHints = { typeParameters = { enable = true }, hintsInPatternMatch = { enable = true } } }
 {{- end }}
 
+# zk - Zettelkasten note-taking LSP
+[language-server.zk]
+command = "zk"
+args = ["lsp"]
+
 # TypeScript - typescript-language-server (the most popular)
 [language-server.typescript-language-server]
 command = "typescript-language-server"
@@ -238,6 +243,19 @@ file-types = ["md", "markdown"]
 comment-token = "<!-- -->"
 indent = { tab-width = 2, unit = "  " }
 auto-format = false
+language-servers = ["zk"]
+
+# Zettelkasten notes (zk-specific markdown)
+[[language]]
+name = "zk-note"
+scope = "text.markdown.zk"
+injection-regex = "zk|note"
+file-types = ["md"]
+roots = [".zk"]
+comment-token = "<!-- -->"
+indent = { tab-width = 2, unit = "  " }
+auto-format = false
+language-servers = ["zk"]
 
 # TOML
 [[language]]
