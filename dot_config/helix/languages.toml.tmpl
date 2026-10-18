@@ -75,6 +75,16 @@ args = ["--stdio"]
 command = "vscode-json-language-server"
 args = ["--stdio"]
 
+# Bash Language Server
+[language-server.bashls]
+command = "bash-language-server"
+args = ["start"]
+
+# ShellScript Language Server (alternative)
+[language-server.shls]
+command = "shellcheck"
+args = ["--format", "json"]
+
 # =============================================================================
 # Language Definitions
 # =============================================================================
@@ -294,3 +304,31 @@ comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
 auto-format = true
 formatter = { command = "nufmt", args = ["--stdin-filepath", "$FILENAME"] }
+
+# Bash
+[[language]]
+name = "bash"
+scope = "source.bash"
+injection-regex = "bash|sh"
+file-types = ["sh", "bash", "zsh", "fish", "dash"]
+roots = [".bashrc", ".bash_profile", ".zshrc", ".git"]
+shebangs = ["bash", "sh", "zsh", "fish", "dash", "#!/bin/bash", "#!/bin/sh", "#!/usr/bin/env bash", "#!/usr/bin/env sh"]
+comment-token = "#"
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["bashls"]
+auto-format = true
+formatter = { command = "shfmt", args = ["-filename", "$FILENAME"] }
+
+# Shell Script
+[[language]]
+name = "sh"
+scope = "source.sh"
+injection-regex = "sh|shell"
+file-types = ["sh"]
+roots = [".git"]
+shebangs = ["sh", "#!/bin/sh", "#!/usr/bin/env sh"]
+comment-token = "#"
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["bashls", "shls"]
+auto-format = true
+formatter = { command = "shfmt", args = ["-filename", "$FILENAME"] }
