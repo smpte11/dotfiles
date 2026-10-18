@@ -89,6 +89,7 @@ comment-token = "--"
 indent = { tab-width = 2, unit = "  " }
 language-servers = ["lua-ls"]
 auto-format = true
+formatter = { command = "stylua", args = ["--stdin-filepath", "$FILENAME"] }
 
 # Go
 [[language]]
@@ -101,6 +102,7 @@ comment-token = "//"
 indent = { tab-width = 4, unit = "    " }
 language-servers = ["gopls"]
 auto-format = true
+formatter = { command = "gofumpt", args = ["-w", "-l", "$FILENAME"] }
 
 # YAML
 [[language]]
@@ -113,6 +115,7 @@ comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
 language-servers = ["yamlls"]
 auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "$FILENAME"] }
 
 # OCaml
 [[language]]
@@ -124,6 +127,8 @@ roots = ["dune", "dune-project", ".git"]
 comment-token = "(*"
 indent = { tab-width = 2, unit = "  " }
 language-servers = ["ocamllsp"]
+auto-format = true
+formatter = { command = "ocamlformat", args = ["--stdin-filepath", "$FILENAME"] }
 
 # Elixir
 [[language]]
@@ -137,6 +142,7 @@ comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
 language-servers = ["expert", "elixir-ls"]
 auto-format = true
+formatter = { command = "mix", args = ["format", "$FILENAME"] }
 
 # EEx (Embedded Elixir)
 [[language]]
@@ -148,6 +154,8 @@ roots = ["mix.exs", ".git"]
 comment-token = "<--"
 indent = { tab-width = 2, unit = "  " }
 language-servers = ["expert", "elixir-ls"]
+auto-format = true
+formatter = { command = "mix", args = ["format", "$FILENAME"] }
 
 # Python
 [[language]]
@@ -161,6 +169,7 @@ comment-token = "#"
 indent = { tab-width = 4, unit = "    " }
 language-servers = ["basedpyright", "pyright"]
 auto-format = true
+formatter = { command = "ruff", args = ["format", "--stdin-filepath", "$FILENAME"] }
 
 # TypeScript
 [[language]]
@@ -173,6 +182,7 @@ comment-token = "//"
 indent = { tab-width = 2, unit = "  " }
 language-servers = ["typescript-language-server", "tsserver"]
 auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "$FILENAME"] }
 
 # JavaScript
 [[language]]
@@ -185,6 +195,7 @@ comment-token = "//"
 indent = { tab-width = 2, unit = "  " }
 language-servers = ["typescript-language-server", "tsserver"]
 auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "$FILENAME"] }
 
 # TypeScript React (TSX)
 [[language]]
@@ -197,6 +208,7 @@ comment-token = "//"
 indent = { tab-width = 2, unit = "  " }
 language-servers = ["typescript-language-server", "tsserver"]
 auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "$FILENAME"] }
 
 # JSON
 [[language]]
@@ -209,6 +221,7 @@ comment-token = "//"
 indent = { tab-width = 2, unit = "  " }
 language-servers = ["jsonls"]
 auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "$FILENAME"] }
 
 # JSON with Comments
 [[language]]
@@ -233,6 +246,7 @@ comment-token = "//"
 indent = { tab-width = 2, unit = "  " }
 language-servers = ["metals"]
 auto-format = true
+formatter = { command = "scalafmt", args = ["--stdin", "$FILENAME"] }
 
 # Markdown
 [[language]]
@@ -267,6 +281,7 @@ roots = ["Cargo.toml", "Pipfile", "poetry.lock", "pyproject.toml", ".git"]
 comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
 auto-format = true
+formatter = { command = "taplo", args = ["format", "--stdin-filepath", "$FILENAME"] }
 
 # Nushell
 [[language]]
@@ -278,3 +293,4 @@ roots = ["nuon.json", ".git"]
 comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
 auto-format = true
+formatter = { command = "nufmt", args = ["--stdin-filepath", "$FILENAME"] }
