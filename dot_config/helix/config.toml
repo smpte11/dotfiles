@@ -1,17 +1,10 @@
-{{- /* Helix Editor Configuration Template */ -}}
-{{- /* Uses theme from chezmoidata.toml */ -}}
-{{- $t := index .themes .active_theme -}}
-
-# Theme configuration
-theme = "{{ .active_theme }}"
+theme = "active-theme"
 
 [editor]
-# General editor settings
 line-number = "relative"
 scroll-lines = 3
 scrolloff = 8
 true-color = true
-cursor-shape.insert = "bar"
 mouse = true
 bufferline = "multiple"
 
@@ -50,17 +43,13 @@ wrap-around = true
 
 [editor.whitespace]
 render = "all"
-char = "·"
+characters = { space = "·", nbsp = "⍽", tab = "→", newline = "⏎" }
 
-[keys]
-# Standard keybindings
-normal = { "C-s" = ":write", "C-q" = ":quit", "C-x" = ":quit!" }
-insert = { "C-s" = ":write", "C-q" = ":quit" }
+[keys.normal]
+C-s = ":write"
+C-q = ":quit"
+C-x = ":quit!"
 
-# Theme colors for helix UI elements
-[ui]
-# Use theme colors from chezmoidata
-{{- if $t }}
-background = '{{ $t.background }}'
-foreground = '{{ $t.foreground }}'
-{{- end }}
+[keys.insert]
+C-s = ":write"
+C-q = ":quit"
