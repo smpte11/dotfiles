@@ -33,6 +33,9 @@ sourceDir = {{ .chezmoi.sourceDir | quote }}
     configured = {{ $configured }}
     password_manager = {{ $passwordManager | quote }}
 
+[update]
+    command = {{ joinPath .chezmoi.sourceDir ".update-source.sh" | quote }}
+
 [edit]
 command = "nvim"
 

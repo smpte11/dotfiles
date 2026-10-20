@@ -1,16 +1,16 @@
-[identities.personal]
-  email = "felix@brouss.eu"
-  ssh_host = "personalgit"
-  password_manager = "proton"
-  harness = "pi"
-  [identities.personal.ssh_keys]
-    1password = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA2SNbjsQnQBKdvFz/xyU3gtDCOe7JZ01ucIe0l8OocF"
-    proton = ""
-
-[identities.work]
-  email = "felix.brousseau-tremblay@kivra.com"
-  ssh_host = "workgit"
-  password_manager = "1password"
-  harness = "claude"
-  [identities.work.ssh_keys]
-    1password = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK4nEcdXAfF7z3XjFneLKpXPGMNBlqvV0MwyprvsnwQS"
+[identities]
+  [identities.personal]
+    email = "felix@brouss.eu"
+    harness = "pi"
+    password_manager = "proton"
+    ssh_host = "personalgit"
+    [identities.personal.ssh_keys]
+      1password = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA2SNbjsQnQBKdvFz/xyU3gtDCOe7JZ01ucIe0l8OocF"
+      proton = ""
+  [identities.work]
+    email = "felix.brousseau-tremblay@kivra.com"
+    harness = "claude"
+    password_manager = "1password"
+    ssh_host = "workgit"
+    [identities.work.ssh_keys]
+      1password = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK4nEcdXAfF7z3XjFneLKpXPGMNBlqvV0MwyprvsnwQS"
