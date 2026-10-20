@@ -16,14 +16,9 @@ export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/.ripgreprc"
 # back to the repo root as the home and create a second one there.
 export FM_HOME="$HOME/.local/state/firstmate"
 
-case "$(uname -s)" in
-  Darwin)
-    export SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-    ;;
-  *)
-    export SSH_AUTH_SOCK="$HOME/.ssh/proton-pass-agent.sock"
-    ;;
-esac
+{{ with includeTemplate "ssh-agent-socket" . -}}
+export SSH_AUTH_SOCK="$HOME/{{ . }}"
+{{- end }}
 
 # ─── PATH ────────────────────────────────────────────────────────────
 # Each block prepends, later blocks win — mirrors nu's `path add` order.

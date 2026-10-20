@@ -22,6 +22,9 @@ export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
 # makes it permanent.
 if is_container; then
     mise exec chezmoi@latest -- chezmoi init --apply "https://github.com/${GITHUB_USER}/${REPO}.git"
+elif [ -t 0 ]; then
+    mise exec chezmoi@latest -- chezmoi init "git@github.com:${GITHUB_USER}/${REPO}.git"
+    "$(mise exec chezmoi@latest -- chezmoi source-path)/setup.sh"
 else
     mise exec chezmoi@latest -- chezmoi init --apply "git@github.com:${GITHUB_USER}/${REPO}.git"
 fi

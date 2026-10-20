@@ -1,10 +1,8 @@
 #!/bin/sh
+set -eu
 
-CONFIG_FILE="${CHEZMOI_CONFIG_FILE:-$HOME/.config/chezmoi/chezmoi.toml}"
-
-case "$(grep -s '^[[:space:]]*email[[:space:]]*=' "$CONFIG_FILE")" in
-*@kivra.com*)
-    type op >/dev/null 2>&1 && exit 0
+install_1password() {
+    type op >/dev/null 2>&1 && return 0
 
     case "$(uname -s)" in
     Darwin)
@@ -15,9 +13,34 @@ case "$(grep -s '^[[:space:]]*email[[:space:]]*=' "$CONFIG_FILE")" in
         exit 1
         ;;
     esac
-    ;;
+}
+
+install_proton() {
+    PATH="$HOME/.local/bin:$PATH"
+
+    if ! type pass-cli >/dev/null 2>&1; then
+        if type jq >/dev/null 2>&1; then
+            curl -fsSL https://proton.me/download/pass-cli/install.sh | bash
+        else
+            curl -fsSL https://proton.me/download/pass-cli/install.sh | mise exec jq@latest -- bash
+        fi
+    fi
+
+    pass-cli info >/dev/null 2>&1 && return 0
+
+    if [ -t 0 ]; then
+        pass-cli login
+    else
+        echo "pass-cli is not logged in; run 'pass-cli login'" >&2
+        exit 1
+    fi
+}
+
+case "${1:-}" in
+1password) install_1password ;;
+proton) install_proton ;;
 *)
-    type pass-cli >/dev/null 2>&1 && exit 0
-    curl -fsSL https://proton.me/download/pass-cli/install.sh | bash
+    echo "usage: $0 1password|proton (stale chezmoi config? run 'chezmoi init')" >&2
+    exit 1
     ;;
 esac

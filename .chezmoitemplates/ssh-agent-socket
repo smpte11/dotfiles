@@ -1,0 +1,7 @@
+{{- if eq .password_manager "proton" -}}
+.ssh/proton-pass-agent.sock
+{{- else if and (eq .password_manager "1password") (eq .chezmoi.os "darwin") -}}
+Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock
+{{- else if eq .password_manager "1password" -}}
+.1password/agent.sock
+{{- end -}}

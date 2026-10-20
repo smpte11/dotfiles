@@ -1,0 +1,14 @@
+{{- $names := list "personal" -}}
+{{- if .work -}}
+{{-   $names = append $names .profile -}}
+{{- end -}}
+{{- range $names -}}
+Host {{ (index $.identities .).ssh_host }}
+  HostName github.com
+  User git
+  IdentityFile "~/.ssh/{{ ternary "personal" "work" (eq . "personal") }}.pub"
+  IdentitiesOnly yes
+
+{{ end -}}
+Host *
+  IdentityAgent "~/{{ includeTemplate "ssh-agent-socket" . }}"

@@ -1,32 +1,37 @@
-{{- /* Checks if running interactively, which is not the case for GitHub Codespaces */ -}}
-{{- $interactive := stdinIsATTY -}}
+{{- $container := or (env "CODESPACES") (env "REMOTE_CONTAINERS") (env "container") (stat "/.dockerenv") (stat "/run/.containerenv") -}}
 
-{{- /* Initializes the name variable with a default value */ -}}
-{{- $name := "Felix Brousseau-Tremblay" -}}
-{{- /* If name was previously set, reuses it */ -}}
-{{- if hasKey . "name" -}}
-{{-   $name = .name -}}
-{{- /* Otherwise, if running interactively, prompts for a name */ -}}
-{{- else if $interactive -}}
-{{-   $name = promptString "name" $name -}}
+{{- $name := or (env "DOTFILES_NAME") (get . "name") "Felix Brousseau-Tremblay" -}}
+{{- $profile := or (env "DOTFILES_PROFILE") (get . "profile") -}}
+{{- if and (not $profile) (hasKey . "work") -}}
+{{-   $profile = ternary "work" "personal" .work -}}
+{{- end -}}
+{{- $configured := not (not $profile) -}}
+{{- if not $configured -}}
+{{-   $profile = "personal" -}}
 {{- end -}}
 
-{{- /* Does the same for the email */ -}}
-{{- $email := "your@email.com" -}}
-{{- if hasKey . "email" -}}
-{{-   $email = .email -}}
-{{- else if $interactive -}}
-{{-   $email = promptString "email" $email -}}
+{{- $identities := (include ".chezmoidata/identities.toml" | fromToml).identities -}}
+{{- if not (hasKey $identities $profile) -}}
+{{-   fail (printf "unknown profile %q, expected one of: %s" $profile (keys $identities | sortAlpha | join ", ")) -}}
 {{- end -}}
 
-{{- if $interactive -}}
-{{-   writeToStdout "💡 Tip: you can re-enter your name and email with `chezmoi init --data=false`.\n" -}}
+{{- $passwordManager := (index $identities $profile).password_manager -}}
+{{- if or $container (not $configured) -}}
+{{-   $passwordManager = "none" -}}
+{{- end -}}
+
+{{- if and (not $configured) (not $container) stdinIsATTY -}}
+{{-   writeToStdout "Machine profile not set; run `dotfiles-setup` to configure it.\n" -}}
 {{- end -}}
 
 sourceDir = {{ .chezmoi.sourceDir | quote }}
 
 [data]
-    email = {{ $email | quote }}
+    name = {{ $name | quote }}
+    profile = {{ $profile | quote }}
+    work = {{ ne $profile "personal" }}
+    configured = {{ $configured }}
+    password_manager = {{ $passwordManager | quote }}
 
 [edit]
 command = "nvim"
@@ -37,6 +42,9 @@ command = "zsh"
 [merge]
     command = "codediff-editor"
     args = ["{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Source {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
+{{- if ne $passwordManager "none" }}
 
 [hooks.read-source-state.pre]
-    command = ".local/share/chezmoi/.install-password-manager.sh"
+    command = {{ joinPath .chezmoi.sourceDir ".install-password-manager.sh" | quote }}
+    args = [{{ $passwordManager | quote }}]
+{{- end }}

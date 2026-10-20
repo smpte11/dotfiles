@@ -32,9 +32,13 @@ Then run:
 chezmoi apply
 ```
 
-## Password Manager
+## Machine Setup
 
-Installed automatically via the `hooks.read-source-state.pre` hook on `chezmoi init`:
+Run `dotfiles-setup` (also launched by `install.sh` on first install) to pick the machine profile and edit identities in a gum TUI.
 
-- **Work machines** (chezmoi `email` ends in `@kivra.com`) - 1Password CLI (`op`)
-- **All other machines** - Proton Pass CLI (`pass-cli`)
+Everything identity-specific (email, SSH host alias, password manager, agent harness, SSH public keys) lives in `.chezmoidata/identities.toml`. Switching jobs means editing the `work` identity there, or adding a new profile, then committing that file.
+
+The profile decides the password manager, installed and logged in by the `hooks.read-source-state.pre` hook:
+
+- **1Password** (`op`) or **Proton Pass** (`pass-cli`, logged in with `pass-cli login` when needed), per the identity
+- **Containers** (Codespaces, dev containers, Docker, Podman) and unconfigured machines - nothing is installed

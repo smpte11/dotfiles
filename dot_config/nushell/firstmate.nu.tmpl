@@ -26,7 +26,7 @@ export def --env _fm-launch [harness: string] {
 }
 
 export def --env fm [] {
-    _fm-launch {{ if hasSuffix "@kivra.com" .email -}}"claude"{{- else -}}"pi"{{- end }}
+    _fm-launch {{ (index .identities .profile).harness | quote }}
 }
 
 export def --env fm-claude [] { _fm-launch "claude" }

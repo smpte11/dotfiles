@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "author": {
     "name": "Felix Brousseau-Tremblay",
-    "email": "felix.brousseau-tremblay@kivra.com"
+    "email": {{ (index .identities .profile).email | quote }}
   },
   "lspServers": {
     "elp": {

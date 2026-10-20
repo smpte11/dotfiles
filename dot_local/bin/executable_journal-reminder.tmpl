@@ -3,7 +3,7 @@ set -eu
 
 export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
-kind={{ if hasSuffix "@kivra.com" .email }}work{{ else }}personal{{ end }}
+kind={{ .profile }}
 state="${XDG_STATE_HOME:-$HOME/.local/state}/journal"
 
 zk daily "$kind" --print-path >/dev/null

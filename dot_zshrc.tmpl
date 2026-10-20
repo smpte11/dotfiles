@@ -201,7 +201,7 @@ _fm-launch() {
 
 fm() {
   local harness
-  harness=$(gum choose --selected="{{ if hasSuffix "@kivra.com" .email }}claude{{ else }}pi{{ end }}" claude pi)
+  harness=$(gum choose --selected="{{ (index .identities .profile).harness }}" claude pi)
   [ -z "$harness" ] && return 1
   _fm-launch "$harness"
 }
