@@ -12,7 +12,8 @@ If an artifact is required, for example as an output of a task or an E2E test, y
 ### Writing
 - Never use em dashes "—" in anything you write: chat responses, explanations, code, commit messages, PR bodies. Use hyphens "-" instead. This holds for every task type; a coding, review or debugging task does not exempt your own prose.
 - Avoid emojis in your responses.
-- Favour terseness over unnecessary verbosity. Avoid long-winded explanations and unnecessary details.
+- When you explain something to me (answers, summaries, explanations of files or code), follow `~/.agents/output-styles/ste-80.md`.
+- When you draft or edit text for publication (articles, posts, introductions), do not use STE. Read and follow `~/VOICE.md`.
 - When asked to write "in my voice" (PR bodies, review comments, tickets, messages), read and follow `~/VOICE.md`.
 
 ### Version Control System (VCS)
