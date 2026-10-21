@@ -1,0 +1,71 @@
+local now, now_if_args, later = Config.now, Config.now_if_args, Config.later
+
+{{- $nv := (index .themes .active_theme).nvim }}
+now(function()
+{{- with (index $nv "plugin") }}
+	vim.pack.add({ '{{ . }}' })
+{{- end }}
+{{- range $k, $v := (index $nv "settings") }}
+	vim.g.{{ $k }} = "{{ $v }}"
+{{- end }}
+	vim.o.background = "{{ $nv.background }}"
+	vim.cmd("colorscheme {{ $nv.colorscheme }}")
+	vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
+	vim.api.nvim_set_hl(0, "NormalNC", { bg = "NONE" })
+end)
+
+now(function()
+	require("mini.basics").setup({
+		options = { basic = false },
+		mappings = {
+			windows = true,
+			move_with_alt = true,
+		},
+	})
+end)
+
+now_if_args(function()
+	require("mini.misc").setup()
+	MiniMisc.setup_auto_root()
+	MiniMisc.setup_restore_cursor()
+	if vim.env.HERDR_ENV ~= "1" then
+		MiniMisc.setup_termbg_sync()
+	end
+end)
+
+later(function()
+	local ai = require("mini.ai")
+	local buffer = function()
+		local last = vim.fn.line("$")
+		return { from = { line = 1, col = 1 }, to = { line = last, col = math.max(vim.fn.getline(last):len(), 1) } }
+	end
+	ai.setup({
+		custom_textobjects = {
+			B = buffer,
+			F = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }),
+		},
+		search_method = "cover",
+	})
+end)
+
+later(function()
+	require("mini.align").setup()
+end)
+
+later(function()
+	require("mini.operators").setup()
+	vim.keymap.set("n", "(", "gxiagxila", { remap = true, desc = "Swap arg left" })
+	vim.keymap.set("n", ")", "gxiagxina", { remap = true, desc = "Swap arg right" })
+end)
+
+later(function()
+	require("mini.pairs").setup({ modes = { command = true } })
+end)
+
+later(function()
+	require("mini.splitjoin").setup()
+end)
+
+later(function()
+	require("mini.surround").setup()
+end)
