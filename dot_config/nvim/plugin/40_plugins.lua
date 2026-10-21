@@ -474,10 +474,33 @@ Config.now(function()
 		"https://github.com/julienvincent/hunk.nvim",
 		"https://github.com/MunifTanjim/nui.nvim",
 	})
+	local on_mount = function(ctx)
+		vim.keymap.set("n", "<LocalLeader>a", "<Plug>(hunk-accept)", {
+			buffer = ctx.buf,
+			remap = true,
+			desc = "Accept selection",
+		})
+		later(function() MiniClue.ensure_buf_triggers(ctx.buf) end)
+	end
 	require("hunk").setup({
+		keys = {
+			global = {
+				accept = { "<Plug>(hunk-accept)" },
+				quit = { "q", "<LocalLeader>q" },
+				focus_tree = { "<LocalLeader>e" },
+			},
+			diff = {
+				prev_hunk = { "[h", "<LocalLeader>p" },
+				next_hunk = { "]h", "<LocalLeader>n" },
+			},
+		},
 		ui = {
 			layout = "vertical",
 			tree = { width = 35 },
+		},
+		hooks = {
+			on_tree_mount = on_mount,
+			on_diff_mount = on_mount,
 		},
 	})
 end)
