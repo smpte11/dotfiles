@@ -475,7 +475,7 @@ Config.now(function()
 		"https://github.com/MunifTanjim/nui.nvim",
 	})
 	local on_mount = function(ctx)
-		vim.keymap.set("n", "<LocalLeader>a", "<Plug>(hunk-accept)", {
+		vim.keymap.set("n", "<LocalLeader>s", "<Plug>(hunk-accept)", {
 			buffer = ctx.buf,
 			remap = true,
 			desc = "Accept selection",
@@ -489,7 +489,12 @@ Config.now(function()
 				quit = { "q", "<LocalLeader>q" },
 				focus_tree = { "<LocalLeader>e" },
 			},
+			tree = {
+				toggle_file = { "a", "<LocalLeader>a" },
+			},
 			diff = {
+				toggle_line = { "a", "<LocalLeader>a" },
+				toggle_hunk = { "A", "<LocalLeader>A" },
 				prev_hunk = { "[h", "<LocalLeader>p" },
 				next_hunk = { "]h", "<LocalLeader>n" },
 			},
