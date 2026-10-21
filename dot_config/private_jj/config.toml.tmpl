@@ -1,16 +1,18 @@
 #:schema https://jj-vcs.github.io/jj/latest/config-schema.json
 [ui]
-# SCENARIO: `jj log`, `jj diff`, `jj show`
-# Used for quick, read-only viewing in the terminal.
 paginate = "never"
+pager = ["moor", "-quit-if-one-screen", "-no-linenumbers"]
 default-command = "log"
 diff-editor = ["nvim", "-c", "DiffEditor $left $right $output"]
 diff-instructions = false
-# 'curved' or 'square' usually looks cleaner than the default 'ascii'
 graph.style = "curved"
 
-[settings]
-diff.format = "color-words"
+[[--scope]]
+--when.commands = ["diff", "show"]
+[--scope.ui]
+paginate = "auto"
+diff-formatter = ":git"
+pager = { command = ["delta"], env = { DELTA_PAGER = "moor -quit-if-one-screen -no-linenumbers" } }
 
 {{ $identity := index .identities .profile -}}
 [user]
@@ -30,31 +32,27 @@ backends.ssh.program = "/opt/1Password/op-ssh-sign"
 {{- end }}
 
 [revsets]
-log = '''overview'''
+log = "home"
 
 [revset-aliases]
-hidden = "none()"
-# "mutable_commits(max)" = "ancestors(immutable_heads().., max)"
-recent = "committer_date(after:'1 weeks ago')"
-# "Show me the last week of the world, connected to the trunk"
-overview = '''present(parents(trunk()..@)::@)
-    | ancestors(immutable_heads().., 3) & recent
-    | heads(immutable_heads()) & recent
-    & ~hidden'''
-# "Everything recent that isn't bot-noise, plus my current spot"
-daily_work = '(trunk()..((bookmarks() | mine()) & recent) | trunk()..@) & ~author("renovate")'
-# "Just my stuff and the branch I'm standing on"
-active = 'trunk()..((mine() & recent) | @ | (@ & bookmarks()))'
+recent = "committer_date(after:'3 days ago')"
+home = '''trunk()
+    | trunk()..@
+    | trunk()..(mine() & recent)
+    | (trunk()..(bookmarks() & recent) ~ author("renovate"))'''
+stack = "trunk() | trunk()..@ | @::"
+mine_open = "trunk() | trunk()..mine() | @"
+everything = "trunk()..(visible_heads() | remote_bookmarks()) | ancestors(trunk(), 5)"
 
 [aliases]
 tidy = ["abandon", "-r", "(empty() ~ @) ~ ::trunk()"]
 fetch = ["git", "fetch"]
 push = ["git", "push"]
-# Re-graft the branch of current commits on trunk to the latest upstream commit
 lift = ["rebase", "--source", "roots(trunk()..@)", "--destination", "trunk()"]
 tug = ["bookmark", "move", "--from", "heads(::@- & bookmarks())", "--to", "@-"]
-day = ["log", "-r", "daily_work"]
-now = ["log", "-r", "active"]
+stack = ["log", "-r", "stack"]
+mine = ["log", "-r", "mine_open"]
+all = ["log", "-r", "everything", "--config", "ui.paginate=auto"]
 
 [remotes.origin]
 auto-track-bookmarks = "*"
@@ -64,21 +62,35 @@ auto-track-bookmarks = "*"
 bookmarks = { fg = "magenta", reverse = false, italic = true }
 
 [template-aliases]
-# Make IDs (jj and Git) shorter
 'format_short_id(id)' = 'id.shortest()'
-# Relative timestamps
-'format_timestamp(timestamp)' = 'timestamp.ago()'
+'format_timestamp(timestamp)' = '''
+timestamp.ago()
+  .replace(regex:" seconds? ago$", "s")
+  .replace(regex:" minutes? ago$", "m")
+  .replace(regex:" hours? ago$", "h")
+  .replace(regex:" days? ago$", "d")
+  .replace(regex:" weeks? ago$", "w")
+  .replace(regex:" months? ago$", "mo")
+  .replace(regex:" years? ago$", "y")
+'''
+'format_author(signature)' = 'signature.email().local().replace(regex:"^[0-9]+\\+", "").replace("[bot]", "")'
 
 [templates]
 log = '''
 label(if(current_working_copy, "working_copy"),
   concat(
-    format_short_id(change_id), " ",
-    author.name(), " ",
-    author.timestamp().format("%Y-%m-%d %H:%M"), " ",
-    bookmarks,
+    separate(" ",
+      format_short_id(change_id),
+      if(!mine, label("author", format_author(author))),
+      format_timestamp(committer.timestamp()),
+      bookmarks,
+      tags,
+      if(empty, label("empty", "(empty)")),
+      if(conflict, label("conflict", "(conflict)")),
+      if(divergent, label("divergent", "(divergent)")),
+    ),
     "\n",
-    description.first_line(),
+    if(description, description.first_line(), description_placeholder),
   )
 )
 '''
@@ -87,8 +99,8 @@ label("node",
   coalesce(
     if(!self, label("elided", "┊")),
     if(current_working_copy, label("working_copy", "@")),
-    if(empty, label("working_copy empty", "⋅")),
     if(conflict, label("conflict", "×")),
+    if(empty, label("empty", "◌")),
     if(bookmarks.any(|b| b.name() == "main" || b.name() == "master"), label("trunk_node", "◉")),
     if(immutable, label("immutable", "●")),
     label("normal", "○")
