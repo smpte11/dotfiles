@@ -521,7 +521,19 @@ later(function()
     -- Define which clues to show. By default shows only clues for custom mappings
     -- (uses `desc` field from the mapping; takes precedence over custom clue).
     window = {
-      delay = 50
+      delay = 50,
+      config = function(buf_id)
+        local width = math.floor(vim.o.columns * 0.9)
+        local height = math.min(math.max(vim.api.nvim_buf_line_count(buf_id), 4), 25)
+        return {
+          anchor = 'SW',
+          width = width,
+          height = height,
+          col = math.floor((vim.o.columns - width - 2) / 2),
+          row = vim.o.lines - vim.o.cmdheight - (vim.o.laststatus > 0 and 1 or 0),
+          title_pos = 'center',
+        }
+      end,
     },
     clues = {
       -- This is defined in 'plugin/20_keymaps.lua' with Leader group descriptions
