@@ -18,7 +18,7 @@ local modes = {
 
 local function mode()
 	local m = modes[vim.fn.mode():sub(1, 1)] or modes.n
-	return "%#MiniStatuslineMode" .. m[1] .. "# " .. m[2] .. " %*"
+	return "%#StatusMode" .. m[1] .. "# " .. m[2] .. " %*"
 end
 
 local function vcs()
@@ -57,42 +57,48 @@ function M.render()
 	local wide = vim.o.columns > 100
 	return table.concat({
 		mode(),
-		"%#MiniStatuslineDevinfo#",
+		"%#StatusInfo#",
 		wide and section(vcs()) or "",
 		section(diagnostics()),
 		wide and section(lsp()) or "",
-		"%#MiniStatuslineFilename# %f%m%r %=",
-		"%#MiniStatuslineFileinfo#",
+		"%#StatusLine# %f%m%r %=",
+		"%#StatusInfo#",
 		section(vim.bo.filetype),
 		mode():match("^%%#[^#]+#") or "",
 		" %l:%v %P ",
 	})
 end
 
-local fallbacks = {
-	MiniStatuslineModeNormal = "Cursor",
-	MiniStatuslineModeInsert = "DiffChange",
-	MiniStatuslineModeVisual = "DiffAdd",
-	MiniStatuslineModeReplace = "DiffDelete",
-	MiniStatuslineModeCommand = "DiffText",
-	MiniStatuslineModeOther = "IncSearch",
-	MiniStatuslineDevinfo = "StatusLine",
-	MiniStatuslineFilename = "StatusLineNC",
-	MiniStatuslineFileinfo = "StatusLine",
+local mode_sources = {
+	Normal = "Function",
+	Insert = "String",
+	Visual = "Keyword",
+	Replace = "DiagnosticError",
+	Command = "Constant",
+	Other = "Type",
 }
 
-local function set_fallbacks()
-	for group, link in pairs(fallbacks) do
-		if vim.tbl_isempty(vim.api.nvim_get_hl(0, { name = group })) then
-			vim.api.nvim_set_hl(0, group, { link = link })
-		end
-	end
+local function fg(group)
+	return vim.api.nvim_get_hl(0, { name = group, link = false }).fg
 end
 
-set_fallbacks()
+local function set_highlights()
+	local bg = vim.api.nvim_get_hl(0, { name = "Normal", link = false }).bg
+	for name, source in pairs(mode_sources) do
+		vim.api.nvim_set_hl(0, "StatusMode" .. name, { fg = bg, bg = fg(source), bold = true })
+	end
+	local line = vim.api.nvim_get_hl(0, { name = "StatusLine", link = false })
+	vim.api.nvim_set_hl(
+		0,
+		"StatusInfo",
+		{ fg = line.fg, bg = vim.api.nvim_get_hl(0, { name = "CursorLine", link = false }).bg }
+	)
+end
+
+set_highlights()
 vim.api.nvim_create_autocmd("ColorScheme", {
 	group = vim.api.nvim_create_augroup("statusline", { clear = true }),
-	callback = set_fallbacks,
+	callback = set_highlights,
 })
 vim.api.nvim_create_autocmd({ "ModeChanged", "DiagnosticChanged", "LspAttach", "LspDetach" }, {
 	group = "statusline",

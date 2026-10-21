@@ -13,11 +13,7 @@ return {
 		Lua = {
 			codeLens = { enable = true },
 			hint = { enable = true, semicolon = "Disable" },
-			runtime = { version = "LuaJIT", path = vim.split(package.path, ";") },
-			workspace = {
-				ignoreSubmodules = true,
-				library = { vim.env.VIMRUNTIME },
-			},
+			workspace = { ignoreSubmodules = true },
 		},
 	},
 }
