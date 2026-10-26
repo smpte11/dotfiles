@@ -7,6 +7,7 @@ theme = ''
 background = 'off'
 dockbar_position = 'top'
 whichkey_enabled = true
+nvim_navigation = true
 border_focused_color = '{{ $p.bright_green }}'
 border_unfocused_color = '{{ $p.bright_black }}'
 
@@ -26,6 +27,10 @@ leader_key = 'ctrl+a'
 [keybindings.terminal_mode]
 terminal_next_window = ['opt+tab']
 terminal_prev_window = ['opt+shift+tab']
+terminal_focus_left = ['opt+h']
+terminal_focus_down = ['opt+j']
+terminal_focus_up = ['opt+k']
+terminal_focus_right = ['opt+l']
 
 [startup]
 daemon = true

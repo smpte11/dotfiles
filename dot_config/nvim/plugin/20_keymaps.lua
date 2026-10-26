@@ -274,11 +274,4 @@ nmap_leader('vV', '<Cmd>lua MiniVisits.remove_label("core")<CR>', 'Remove "core"
 nmap_leader('vl', '<Cmd>lua MiniVisits.add_label()<CR>', 'Add label')
 nmap_leader('vL', '<Cmd>lua MiniVisits.remove_label()<CR>', 'Remove label')
 
-
-
--- tmux-navigator
-nmap('c-h', '<Cmd>TmuxNavigateLeft<CR>', 'Navigate Left')
-nmap('c-j', '<Cmd>TmuxNavigateDown<CR>', 'Navigate Down')
-nmap('c-k', '<Cmd>TmuxNavigateUp<CR>', 'Navigate Up')
-nmap('c-l', '<Cmd>TmuxNavigateRight<CR>', 'Navigate Right')
 -- stylua: ignore end

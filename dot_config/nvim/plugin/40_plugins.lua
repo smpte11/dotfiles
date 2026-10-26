@@ -555,3 +555,13 @@ later(function()
 		require("herdr-nvim").setup({})
 	end
 end)
+
+later(function()
+	if #vim.api.nvim_list_uis() == 0 then
+		return
+	end
+	add({ "https://github.com/Tim4c/tuios-nvim-navigator" })
+	require("tuios-nvim-navigator").setup({
+		keymaps = { left = "<M-h>", down = "<M-j>", up = "<M-k>", right = "<M-l>" },
+	})
+end)

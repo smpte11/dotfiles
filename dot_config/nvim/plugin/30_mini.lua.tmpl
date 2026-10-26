@@ -58,7 +58,6 @@ end)
 -- - `go` / `gO` - insert empty line before/after in Normal mode
 -- - `gy` / `gp` - copy / paste from system clipboard
 -- - `\` + key - toggle common options. Like `\h` toggles highlighting search.
--- - `<C-hjkl>` (four combos) - navigate between windows.
 -- - `<M-hjkl>` in Insert/Command mode - navigate in that mode.
 --
 -- See also:
@@ -70,8 +69,7 @@ now(function()
 		-- Manage options in 'plugin/10_options.lua' for didactic purposes
 		options = { basic = false },
 		mappings = {
-			-- Create `<C-hjkl>` mappings for window navigation
-			windows = true,
+			windows = false,
 			-- Create `<M-hjkl>` mappings for navigation in Insert and Command modes
 			move_with_alt = true,
 		},
@@ -800,14 +798,13 @@ later(function()
 	end
 end)
 
--- Move any selection in any direction. Example usage in Normal mode:
--- - `<M-j>`/`<M-k>` - move current line down / up
--- - `<M-h>`/`<M-l>` - decrease / increase indent of current line
---
--- Example usage in Visual mode:
--- - `<M-h>`/`<M-j>`/`<M-k>`/`<M-l>` - move selection left/down/up/right
+-- Move any selection in any direction. Example usage:
+-- - `]e`/`[e` - move current line down / up
+-- - `<M-h>`/`<M-j>`/`<M-k>`/`<M-l>` in Visual mode - move selection left/down/up/right
 later(function()
-	require("mini.move").setup()
+	require("mini.move").setup({
+		mappings = { line_left = "", line_right = "", line_down = "]e", line_up = "[e" },
+	})
 end)
 
 -- Text edit operators. All operators have mappings for:
