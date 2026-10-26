@@ -47,7 +47,7 @@ sync_tuios() {
     jj -R "$TUIOS" log -r "conflicts() & main@upstream::$TUIOS_COMBINED" >&2
     exit 1
   fi
-  fixes=$(jj -R "$TUIOS" log --no-graph -r "parents($TUIOS_COMBINED)" -T 'local_bookmarks.map(|b| "-b " ++ b.name()).join(" ") ++ " "')
+  fixes=$(jj -R "$TUIOS" log --no-graph -r "main@upstream..parents($TUIOS_COMBINED)" -T 'local_bookmarks.map(|b| "-b " ++ b.name()).join(" ") ++ " "')
   sync_main "$TUIOS"
   # shellcheck disable=SC2086
   jj -R "$TUIOS" git push --remote origin $fixes --bookmark "$TUIOS_COMBINED"
