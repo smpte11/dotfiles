@@ -38,6 +38,7 @@ log = "home"
 recent = "committer_date(after:'3 days ago')"
 home = '''trunk()
     | trunk()..@
+    | trunk()..working_copies()
     | trunk()..(mine() & recent)
     | (trunk()..(bookmarks() & recent) ~ author("renovate"))'''
 stack = "trunk() | trunk()..@ | @::"
@@ -81,6 +82,7 @@ label(if(current_working_copy, "working_copy"),
   concat(
     separate(" ",
       format_short_id(change_id),
+      working_copies,
       if(!mine, label("author", format_author(author))),
       format_timestamp(committer.timestamp()),
       bookmarks,
