@@ -8,6 +8,7 @@ background = 'off'
 dockbar_position = 'top'
 whichkey_enabled = true
 nvim_navigation = true
+git_dirty = false
 border_focused_color = '{{ $p.bright_green }}'
 border_unfocused_color = '{{ $p.bright_black }}'
 
@@ -23,7 +24,7 @@ cursor_fg = '{{ $bg }}'
 
 [appearance.sidebar]
 width = 32
-sections = 'agents:55,terminals,sessions:20'
+sections = 'agents:45,sessions:20,files:25,terminals'
 subagent_rows = 'tree'
 subagent_collapse = 'expanded'
 subagent_fields = 'mark,name,time'
