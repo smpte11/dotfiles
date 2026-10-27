@@ -24,6 +24,9 @@ cursor_fg = '{{ $bg }}'
 
 [appearance.sidebar]
 width = 32
+density = 'roomy'
+header_style = 'pill'
+header_case = 'uppercase'
 sections = 'agents:45,sessions:20,files:25,terminals'
 subagent_rows = 'tree'
 subagent_collapse = 'expanded'
@@ -55,3 +58,6 @@ daemon = true
 [agents.permissions]
 mode = 'strict'
 grants = ['admin', 'respond']
+
+[spotlight]
+enabled = true
