@@ -21,6 +21,22 @@ match_fg = '{{ $bg }}'
 cursor_bg = '{{ $t.cursor }}'
 cursor_fg = '{{ $bg }}'
 
+[appearance.sidebar]
+width = 32
+sections = 'agents:55,terminals,sessions:20'
+subagent_rows = 'tree'
+subagent_collapse = 'expanded'
+subagent_fields = 'mark,name,time'
+subagent_max_rows = 5
+subagent_hide_finished = '30s'
+
+[appearance.sidebar.agent_row]
+tokens = ['need', 'harness', 'name', 'elapsed', 'context', 'subagents', 'now']
+
+[[appearance.sidebar.agent_row.elapsed.rule]]
+gt = 30
+fg = 'warning'
+
 [keybindings]
 leader_key = 'ctrl+a'
 
