@@ -197,7 +197,7 @@ def switch-theme [] {
 
     ^gum spin --spinner dot --title $"Applying '($theme_name)'..." -- chezmoi apply
 
-    ^gum style --border rounded --margin "1 0" --padding "0 1" $"Switched to '($theme_name)'!" "" "Reload notes:" "  Ghostty: auto-reloads on config change" "  Zellij:  open a new tab/session to pick up the new theme" "  Neovim:  restart to pick up the new theme"
+    ^gum style --border rounded --margin "1 0" --padding "0 1" $"Switched to '($theme_name)'!" "" "Reload notes:" "  Ghostty: auto-reloads on config change" "  Neovim:  restart to pick up the new theme"
 }
 
 const ocaml_module = ($nu.config-path | path dirname | path join "ocaml.nu")
