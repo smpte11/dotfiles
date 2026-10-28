@@ -23,6 +23,8 @@ vim.cmd('setlocal spell nowrap')
 -- Fold with tree-sitter
 vim.cmd('setlocal foldmethod=expr foldexpr=v:lua.vim.treesitter.foldexpr()')
 
+require('todo_cycle').attach(0)
+
 -- zk keymaps: only active inside a zk notebook
 local zk_ok, zk_util = pcall(require, "zk.util")
 local nb_root = zk_ok and zk_util.notebook_root(vim.fn.expand("%:p")) or nil

@@ -53,3 +53,9 @@ C-x = ":quit!"
 [keys.insert]
 C-s = ":write"
 C-q = ":quit"
+
+[keys.normal.space]
+x = ["extend_to_line_bounds", ":pipe md-todo-cycle"]
+
+[keys.select.space]
+x = ["extend_to_line_bounds", ":pipe md-todo-cycle"]

@@ -1,0 +1,8 @@
+#!/bin/sh
+item='^([[:space:]]*([-*+]|[0-9]+[.)]) )'
+exec sed -E \
+  -e "s/$item\[ \]/\1[\/]/" -e t \
+  -e "s/$item\[\/\]/\1[x]/" -e t \
+  -e "s/$item\[[xX]\]/\1[ ]/" -e t \
+  -e "s/$item/\1[ ] /" -e t \
+  -e 's/^([[:space:]]*)([^[:space:]])/\1- [ ] \2/'
