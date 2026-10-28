@@ -30,3 +30,6 @@ Library/LaunchAgents/com.felbro.proton-pass-ssh-agent.plist
 {{- if not .work }}
 .ssh/work.pub
 {{- end }}
+{{- if not .work }}
+.claude/keybindings.json
+{{- end }}
