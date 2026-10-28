@@ -185,6 +185,7 @@ local git_log_buf_cmd = git_log_cmd .. ' --follow -- %'
 
 nmap_leader('ga', '<Cmd>Git diff --cached<CR>', 'Added diff')
 nmap_leader('gA', '<Cmd>Git diff --cached -- %<CR>', 'Added diff buffer')
+nmap_leader('gb', '<Cmd>vertical Git blame -- %<CR>', 'Blame buffer')
 nmap_leader('gc', '<Cmd>Git commit<CR>', 'Commit')
 nmap_leader('gC', '<Cmd>Git commit --amend<CR>', 'Commit amend')
 nmap_leader('gd', '<Cmd>Git diff<CR>', 'Diff')
