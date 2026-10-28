@@ -58,11 +58,10 @@ $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
 mkdir $"($nu.cache-dir)"
 carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
 
-zoxide init nushell --cmd cd | save -f ~/.zoxide.nu
-
 mkdir ($nu.data-dir | path join "vendor/autoload")
 tv init nu | save -f ($nu.data-dir | path join "vendor/autoload/tv.nu")
 ^mise activate nu | save -f ($nu.data-dir | path join "vendor/autoload/mise.nu")
+zoxide init nushell --cmd cd | save -f ($nu.data-dir | path join "vendor/autoload/zoxide.nu")
 
 oh-my-posh init nu --config ~/.config/ohmyposh/.minischeme.omp.toml
 
@@ -209,4 +208,3 @@ use $firstmate_module *
 # ─── sources ─────────────────────────────────────────────────────────
 
 source $"($nu.cache-dir)/carapace.nu"
-source ~/.zoxide.nu
