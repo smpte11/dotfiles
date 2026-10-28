@@ -277,7 +277,7 @@ end)
 
 now_if_args(function()
 	local provider = vim.env.NVIM_AI_PROVIDER or "copilot"
-	local keymap = { accept = "<M-l>", next = "<M-]>", prev = "<M-[>", dismiss = "<M-d>" }
+	local keymap = { accept = "<M-y>", next = "<M-]>", prev = "<M-[>", dismiss = "<M-d>" }
 	local debounce = 75
 
 	local function setup_copilot()
