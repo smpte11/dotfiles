@@ -6,6 +6,8 @@
 
 bindkey -v
 
+[[ -t 0 ]] && stty -ixon
+
 # ─── vendor integrations ───────────────────────────────────────────────
 
 autoload -Uz compinit && compinit
