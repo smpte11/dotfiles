@@ -17,7 +17,6 @@ Config.leader_groups = {
   { '<Leader>G', group = 'GitHub' },
   { '<Leader>l', group = 'Language', mode = { 'n', 'x' } },
   { '<Leader>o', group = 'Other' },
-  { '<Leader>t', group = 'Terminal' },
   { '<Leader>q', group = 'Quit/Session' },
   { '\\', group = 'Toggle' },
   { '<Leader>w', group = 'Window', proxy = '<C-w>' },
@@ -151,10 +150,6 @@ xmap_leader('lf', '<Cmd>lua require("conform").format()<CR>', 'Format selection'
 nmap_leader('or', '<Cmd>lua MiniMisc.resize_window()<CR>', 'Resize to default width')
 nmap_leader('ot', [[<Cmd>keeppatterns %s/\s\+$//e<CR>]], 'Trim trailspace')
 nmap_leader('oz', function() Snacks.zoom() end, 'Zoom toggle')
-
-nmap_leader('tT', function() Snacks.terminal.toggle(nil, { win = { position = 'right' } }) end, 'Terminal (right)')
-nmap_leader('tt', function() Snacks.terminal.toggle() end, 'Terminal')
-vim.keymap.set('t', '<C-/>', function() Snacks.terminal.toggle() end, { desc = 'Hide terminal' })
 
 vim.keymap.set({ 'n', 't' }, ']]', function() Snacks.words.jump(vim.v.count1) end, { desc = 'Next reference' })
 vim.keymap.set({ 'n', 't' }, '[[', function() Snacks.words.jump(-vim.v.count1) end, { desc = 'Prev reference' })

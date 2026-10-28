@@ -53,8 +53,6 @@ nmap('<Esc>', '<cmd>noh<cr>', 'Clear Search')
 -- This is used to provide 'mini.clue' with extra clues.
 -- Add an entry if you create a new group.
 Config.leader_group_clues = {
-  { mode = 'n', keys = '<Leader>a', desc = '+Herdr' },
-  { mode = 'x', keys = '<Leader>a', desc = '+Herdr' },
   { mode = 'n', keys = '<Leader>b', desc = '+Buffer' },
   { mode = 'n', keys = '<Leader>c', desc = '+Config' },
   { mode = 'n', keys = '<Leader>e', desc = '+Explore/Edit' },
@@ -65,7 +63,6 @@ Config.leader_group_clues = {
   { mode = 'n', keys = '<Leader>m', desc = '+Map' },
   { mode = 'n', keys = '<Leader>o', desc = '+Other' },
   { mode = 'n', keys = '<Leader>s', desc = '+Session' },
-  { mode = 'n', keys = '<Leader>t', desc = '+Terminal' },
   { mode = 'n', keys = '<Leader>v', desc = '+Visits' },
   { mode = 'n', keys = '<Leader>q', desc = '+Quit' },
   { mode = 'n', keys = '<Leader>w', desc = '+Window' },
@@ -250,10 +247,6 @@ nmap_leader('sn', '<Cmd>lua ' .. session_new .. '<CR>', 'New')
 nmap_leader('sr', '<Cmd>lua MiniSessions.select("read")<CR>', 'Read')
 nmap_leader('sR', '<Cmd>lua MiniSessions.restart()<CR>', 'Restart')
 nmap_leader('sw', '<Cmd>lua MiniSessions.write()<CR>', 'Write current')
-
--- t is for 'Terminal'
-nmap_leader('tT', '<Cmd>horizontal term<CR>', 'Terminal (horizontal)')
-nmap_leader('tt', '<Cmd>vertical term<CR>', 'Terminal (vertical)')
 
 -- v is for 'Visits'. Common usage:
 -- - `<Leader>vv` - add    "core" label to current file.
