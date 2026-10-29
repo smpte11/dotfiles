@@ -6,7 +6,7 @@
     ssh_host = "personalgit"
     [identities.personal.ssh_keys]
       1password = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA2SNbjsQnQBKdvFz/xyU3gtDCOe7JZ01ucIe0l8OocF"
-      proton = ""
+      proton = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILwq/xPxiqx2Rd6x45cb2jO49jmyEXIgaNfRVOIh6TQV fbrousseau@bazzite"
   [identities.work]
     email = "felix.brousseau-tremblay@kivra.com"
     harness = "claude"
