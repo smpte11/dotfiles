@@ -32,4 +32,6 @@ Library/LaunchAgents/com.felbro.proton-pass-ssh-agent.plist
 {{- end }}
 {{- if not .work }}
 .claude/keybindings.json
+{{- else }}
+.config/mise/conf.d/personal.toml
 {{- end }}
