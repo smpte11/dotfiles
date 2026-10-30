@@ -1,0 +1,1 @@
+../../nvim/lua/jj_statusline.lua

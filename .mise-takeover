@@ -1,1 +1,13 @@
 .config/television/cable
+.config/nvim
+.config/nvim-snacks
+.config/helix/config.toml
+.config/zk/templates
+.config/crib/config.toml
+.config/ohmyposh/.minischeme.omp.toml
+.config/ripgrep/.ripgreprc
+.config/treehouse/config.toml
+.config/nix/nix.conf
+.local/bin/codediff-editor
+.local/bin/fork-sync
+.local/bin/md-todo-cycle

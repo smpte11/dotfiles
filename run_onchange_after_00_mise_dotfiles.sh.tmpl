@@ -1,0 +1,29 @@
+#!/bin/bash
+# dotfiles hash: {{ include "dot_config/mise/conf.d/dotfiles.toml.tmpl" | sha256sum }} {{ include ".mise-takeover" | sha256sum }}
+set -euo pipefail
+
+home={{ joinPath .chezmoi.sourceDir "home" | quote }}
+
+drop_foreign_links() {
+    local source rel
+    while IFS= read -r -d '' source; do
+        rel=${source#"$home"/}
+        if [ -L "$HOME/$rel" ] && [ "$(readlink "$HOME/$rel")" != "$source" ]; then
+            rm "$HOME/$rel"
+        fi
+    done < <(find "$home/$1" \( -type f -o -type l \) -print0)
+}
+
+takeover=()
+while read -r target; do
+    [ -n "$target" ] || continue
+    drop_foreign_links "$target"
+    if [ -e "$HOME/$target" ] && [ ! -L "$HOME/$target" ]; then
+        takeover+=("$HOME/$target")
+    fi
+done <"{{ .chezmoi.sourceDir }}/.mise-takeover"
+
+if [ ${#takeover[@]} -gt 0 ]; then
+    mise dot apply --yes --force "${takeover[@]}"
+fi
+mise dot apply --yes
