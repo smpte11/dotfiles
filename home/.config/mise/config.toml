@@ -79,6 +79,9 @@ exclude = [".config/mise"]
 "~/.local/share/zsh/plugins/zsh-autosuggestions" = { url = "https://github.com/zsh-users/zsh-autosuggestions.git" }
 "~/.local/share/firstmate" = { url = "https://github.com/kunchenguid/firstmate" }
 
+[bootstrap.services.mise-history]
+builtin = "history-watch"
+
 [tasks."dotfiles:update"]
 description = "Pull the dotfiles repository and bootstrap this machine again"
 dir = "{{ env.HOME }}/.dotfiles"
