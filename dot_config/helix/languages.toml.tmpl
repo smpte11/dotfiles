@@ -10,9 +10,6 @@ args = ["--stdio"]
 command = "zk"
 args = ["lsp"]
 
-[language-server.typescript-language-server.config.tsserver]
-fallbackPath = "{{ .chezmoi.homeDir }}/.local/share/mise/installs/npm-typescript/6/node_modules/typescript/lib"
-
 [language-server.metals.config]
 isHttpEnabled = true
 {{- if eq .chezmoi.os "darwin" }}
