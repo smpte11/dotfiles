@@ -14,6 +14,11 @@ launchctl bootstrap "gui/$uid" "$HOME/Library/LaunchAgents/$label.plist"
 # unit hash: {{ include "dot_config/systemd/user/proton-pass-ssh-agent.service" | sha256sum }}
 set -euo pipefail
 
+if [ ! -d /run/systemd/system ]; then
+    echo "systemd is not running; skipped loading units" >&2
+    exit 0
+fi
+
 systemctl --user daemon-reload
 systemctl --user enable --now proton-pass-ssh-agent.service
 systemctl --user restart proton-pass-ssh-agent.service

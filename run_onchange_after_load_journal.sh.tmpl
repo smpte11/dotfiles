@@ -15,6 +15,11 @@ launchctl bootstrap "gui/$uid" "$HOME/Library/LaunchAgents/$label.plist"
 # unit hash: {{ include "dot_config/systemd/user/journal-reminder.service" | sha256sum }} {{ include "dot_config/systemd/user/journal-reminder.timer" | sha256sum }}
 set -euo pipefail
 
+if [ ! -d /run/systemd/system ]; then
+    echo "systemd is not running; skipped loading units" >&2
+    exit 0
+fi
+
 systemctl --user daemon-reload
 systemctl --user enable --now journal-reminder.timer
 {{- end }}

@@ -1,4 +1,6 @@
+{{ if ne .password_manager "none" -}}
 #!/bin/bash
 # template hash: tuios-fork-v2
 set -euo pipefail
 "$HOME/.local/bin/fork-sync" build
+{{ end -}}
