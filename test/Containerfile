@@ -1,0 +1,16 @@
+FROM ubuntu:24.04
+
+ARG MISE_VERSION
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates curl git zsh unzip xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN useradd --create-home --shell /bin/bash tester
+USER tester
+WORKDIR /home/tester
+
+RUN curl -fsSL https://mise.run | MISE_VERSION="v${MISE_VERSION}" sh \
+    && mkdir -p /home/tester/.local/share/mise
+
+ENV PATH=/home/tester/.local/bin:/home/tester/.local/share/mise/shims:$PATH

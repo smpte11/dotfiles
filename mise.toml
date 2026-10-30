@@ -65,3 +65,15 @@ chezmoi edit "$HOME/$t"
 [tasks.data]
 description = "Print merged chezmoi template data"
 run = "chezmoi data"
+
+[tasks."test:container"]
+description = "Upgrade a Linux container from main to the working copy and check it (BASE_REF=none for a fresh install)"
+run = "test/run.sh"
+
+[tasks."test:container:shell"]
+description = "Open a shell in the test container"
+run = "test/run.sh shell"
+
+[tasks."test:clean"]
+description = "Remove the test image and tool cache volume"
+run = "test/run.sh clean"

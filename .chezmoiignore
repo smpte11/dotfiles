@@ -1,5 +1,9 @@
 docs/
 docs/**
+test/
+test/**
+home/
+home/**
 ~/.config/nvim/.git/
 ~/.config/nvim/.git/**
 install.sh
