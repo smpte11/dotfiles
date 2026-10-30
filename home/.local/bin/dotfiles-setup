@@ -18,7 +18,22 @@ choose_modules() {
     fi
 }
 
+read_modules() {
+    [ -f "$miserc" ] || return 0
+    sed -n 's/^env = \[\(.*\)\]$/\1/p' "$miserc" | tr -d '" ' | tr ',' '\n' | sed '/^$/d'
+}
+
+unapply_removed_modules() {
+    for module in $1; do
+        case "$2" in
+        *",$module,"*) ;;
+        *) mise bootstrap unapply "$module" --yes ;;
+        esac
+    done
+}
+
 write_modules() {
+    unapply_removed_modules "$(read_modules | paste -sd' ' -)" ",$(printf '%s' "$1" | tr -d ' ' | sed 's/,*$//'),"
     list="$(printf '%s' "$1" | tr ',' '\n' | sed '/^$/d; s/.*/"&"/' | paste -sd, -)"
     printf 'env = [%s]\n' "$list" >"$miserc"
 }
@@ -30,4 +45,4 @@ elif [ -t 0 ] && ! in_container; then
 fi
 
 exec mise bootstrap --from "$(git -C "$dotfiles" remote get-url origin)" \
-    --from-dir "$dotfiles" --config-dir "$config_dir" --yes "$@"
+    --from-dir "$dotfiles" --config-dir "$config_dir" --prune-dotfiles --yes "$@"

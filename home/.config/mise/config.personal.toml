@@ -18,7 +18,7 @@ root = "personal"
 [bootstrap.services.proton-pass-ssh-agent]
 scope = "user"
 description = "Proton Pass SSH agent"
-command = "{{ env.HOME }}/.local/bin/pass-cli ssh-agent start --socket-path {{ env.HOME }}/.ssh/proton-pass-agent.sock"
+command = "~/.local/bin/proton-pass-ssh-agent"
 restart = "always"
 
 [bootstrap.hooks]

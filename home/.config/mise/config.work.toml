@@ -19,6 +19,9 @@ root = "work"
 "~/.ssh/config.d/agent" = { mode = "template" }
 "~/.config/k9s/skins/active-theme.yaml" = { mode = "template" }
 
+[dotfiles]
+"~/.dotfiles/work/.config/k9s/skins/active-theme.yaml.tera" = { mode = "track" }
+
 [bootstrap.hooks]
 pre-dotfiles = "install -d -m 700 ~/.ssh"
 final = "test -x ~/.local/bin/tuios || mise exec -- ~/.local/bin/fork-sync build"

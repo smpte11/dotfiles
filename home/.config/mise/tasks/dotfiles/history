@@ -1,0 +1,119 @@
+#!/bin/sh
+#MISE description="Browse the saved checkpoints of the tracked files"
+#MISE raw=true
+#MISE dir="{{cwd}}"
+#USAGE arg "[path]" help="Limit the history to one tracked path"
+set -eu
+
+self="$(command -v "$0")"
+path="${DOTFILES_HISTORY_PATH:-}"
+
+with_path() {
+    if [ -n "$path" ]; then
+        "$@" --path "$path"
+    else
+        "$@"
+    fi
+}
+
+pause() {
+    printf '\nPress enter to go back.'
+    read -r _
+}
+
+paged() {
+    delta --paging=never --width="${FZF_PREVIEW_COLUMNS:-$(tput cols)}"
+}
+
+list() {
+    with_path mise dot history --limit 0
+}
+
+change() {
+    with_path mise dot history diff "$1" --patch 2>&1 | paged
+}
+
+restore_diff() {
+    with_path mise dot history diff latest "$1" --patch 2>&1 | paged
+}
+
+restore_plan() {
+    if [ -n "$path" ]; then
+        mise dot rollback "$path" --to "$1" --dry-run
+    else
+        mise dot rollback --to "$1" --all --dry-run
+    fi
+}
+
+restore() {
+    clear
+    mise dot save --quiet
+    if with_path mise dot history diff latest "$1" --exit-code >/dev/null 2>&1; then
+        echo "Checkpoint $1 matches the latest saved version. Nothing to restore."
+        pause
+        return
+    fi
+    restore_diff "$1"
+    echo
+    restore_plan "$1"
+    echo
+    if gum confirm "Restore ${path:-every tracked file} to checkpoint $1?"; then
+        if [ -n "$path" ]; then
+            mise dot rollback "$path" --to "$1" --yes
+        else
+            mise dot rollback --to "$1" --all --yes
+        fi
+        pause
+    fi
+}
+
+undo() {
+    clear
+    if ! mise dot undo "$1" --dry-run; then
+        pause
+        return
+    fi
+    echo
+    if gum confirm "Undo the operation that recorded checkpoint $1?"; then
+        mise dot undo "$1" --yes
+        pause
+    fi
+}
+
+pick_path() {
+    mise dot paths --json | jq -r '.entries[].path' | fzf --layout reverse --prompt 'path> ' --header 'Select a tracked path (esc for all paths)' || true
+}
+
+toggle_preview() {
+    case "${FZF_PREVIEW_LABEL:-}" in
+        *changed*) echo "change-preview('$self' restore-diff {1})+change-preview-label( restore to this checkpoint )" ;;
+        *) echo "change-preview('$self' change {1})+change-preview-label( what this checkpoint changed )" ;;
+    esac
+}
+
+browse() {
+    list | fzf \
+        --no-sort --ansi --layout reverse \
+        --prompt "${path:-all paths}> " \
+        --header 'enter restore  ^u undo  ^s save  ^t preview  ^p path' \
+        --preview "'$self' change {1}" \
+        --preview-label ' what this checkpoint changed ' \
+        --preview-window 'right,60%' \
+        --bind "enter:execute('$self' restore {1})+reload('$self' list)" \
+        --bind "ctrl-u:execute('$self' undo {1})+reload('$self' list)" \
+        --bind "ctrl-s:execute-silent(mise dot save --quiet)+reload('$self' list)" \
+        --bind "ctrl-t:transform('$self' toggle-preview)" \
+        --bind "ctrl-p:become('$self' pick)" || [ $? -eq 130 ]
+}
+
+case "${1:-}" in
+    list) list ;;
+    change) change "$2" ;;
+    restore-diff) restore_diff "$2" ;;
+    restore) restore "$2" ;;
+    toggle-preview) toggle_preview ;;
+    undo) undo "$2" ;;
+    pick) DOTFILES_HISTORY_PATH="$(pick_path)" exec "$self" ;;
+    "") export DOTFILES_HISTORY_PATH="$path" && browse ;;
+    *) DOTFILES_HISTORY_PATH="$1" exec "$self" ;;
+esac

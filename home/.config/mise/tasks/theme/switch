@@ -1,0 +1,70 @@
+#!/bin/sh
+#MISE description="Switch the theme of this machine and render the themed files again"
+#MISE raw=true
+#USAGE arg "[theme]" help="Theme name from themes.toml; pick one interactively when omitted"
+set -eu
+
+themes_file="$HOME/.config/mise/themes.toml"
+data_json=$(yq -p toml -o json '.' "$themes_file")
+active=$(mise vars theme)
+names=$(jq -r 'keys[]' <<EOT | sort
+$data_json
+EOT
+)
+
+swatch_for() {
+    hex="${1#\#}"
+    case "$1" in "" | null) return ;; esac
+    printf '\033[48;2;%d;%d;%dm  \033[0m' "$((0x$(printf %s "$hex" | cut -c1-2)))" "$((0x$(printf %s "$hex" | cut -c3-4)))" "$((0x$(printf %s "$hex" | cut -c5-6)))"
+}
+
+pick_theme() {
+    name_width=2
+    for n in $names; do
+        [ "${#n}" -gt "$((name_width - 2))" ] && name_width=$((${#n} + 2))
+    done
+    count=$(printf '%s\n' "$names" | wc -l | tr -d ' ')
+    items=""
+    for n in $names; do
+        marker="  "
+        [ "$n" = "$active" ] && marker="● "
+        swatches=""
+        for c in $(jq -r --arg n "$n" '.[$n] | [.background, .foreground, .cursor, .palette.red, .palette.green, .palette.yellow, .palette.blue, .palette.magenta, .palette.cyan][] // "null"' <<EOT
+$data_json
+EOT
+        ); do
+            swatches="$swatches$(swatch_for "$c")"
+        done
+        items="$items$(printf '%s%-*s %s' "$marker" "$name_width" "$n" "$swatches")
+"
+    done
+    selected=$(printf '%s' "$items" \
+        | gum filter --no-strip-ansi --reverse --height "$((count + 4))" --placeholder "Theme Switcher" --prompt "› " || true)
+    [ -n "$selected" ] || return 0
+    printf '%s\n' "$selected" | sed 's/^●[[:space:]]*//' | awk '{print $1}'
+}
+
+theme_name="${usage_theme:-}"
+if [ -z "$theme_name" ]; then
+    theme_name=$(pick_theme)
+    [ -n "$theme_name" ] || exit 0
+elif ! printf '%s\n' "$names" | grep -qxF "$theme_name"; then
+    echo "Unknown theme '$theme_name'. Available themes:" >&2
+    printf '%s\n' "$names" | sed 's/^/  /' >&2
+    exit 1
+fi
+
+if [ "$theme_name" = "$active" ]; then
+    gum style --foreground 3 "'$theme_name' is already the active theme"
+    exit 0
+fi
+
+mise vars "theme=$theme_name" >/dev/null
+gum spin --spinner dot --title "Applying '$theme_name'..." -- mise dot apply --yes
+
+gum style --border rounded --margin "1 0" --padding "0 1" \
+    "Switched to '$theme_name'!" \
+    "" \
+    "Reload notes:" \
+    "  Ghostty: auto-reloads on config change" \
+    "  Neovim:  restart to pick up the new theme"

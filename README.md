@@ -29,13 +29,15 @@ to `home/.config/mise/miserc.local.toml` (not committed) and runs
 | `home/.config/mise/themes.toml` | | Theme palettes for the `*.tera` templates |
 
 Files ending in `.tera` are templates. They read `vars` from the config and the
-palette of `mise vars theme` from `themes.toml`. `switch-theme` changes the
-theme for this machine.
+palette of `mise vars theme` from `themes.toml`. `switch-theme` runs `mise run theme:switch [theme]`
+and changes the theme for this machine. Without a name it opens a picker.
 
 ## Everyday commands
 
 - `mise run dotfiles:update` pulls the checkout and bootstraps again.
 - `mise dot status` lists what is deployed. `mise dot apply` deploys new files.
+- `mise run dotfiles:history [path]` browses the saved checkpoints of the tracked files.
+  It previews each change, restores a checkpoint and undoes an operation.
 - `mise run test:fresh` installs the repository in a Linux container and
   checks it. `mise run test:clean` removes the image and its cache.
 

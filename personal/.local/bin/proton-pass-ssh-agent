@@ -1,0 +1,2 @@
+#!/bin/sh
+exec "$HOME/.local/bin/pass-cli" ssh-agent start --socket-path "$HOME/.ssh/proton-pass-agent.sock"

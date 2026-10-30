@@ -1,10 +1,7 @@
-[settings]
-experimental = true
-
 [vars]
 profile = "personal"
 email = "felix@brouss.eu"
-theme = { default = "eldritch" }
+theme = { default = "eldritch", prompt = "Theme" }
 
 [env]
 FM_HARNESS = "pi"
@@ -73,6 +70,20 @@ exclude = [".config/mise"]
 
 [dotfiles]
 "~/.local/state/firstmate/config/backend" = { content = "herdr\n" }
+"~/.dotfiles/home/.zshrc" = { mode = "track" }
+"~/.dotfiles/home/.bashrc" = { mode = "track" }
+"~/.dotfiles/home/.zshenv" = { mode = "track" }
+"~/.dotfiles/home/.config/mise/themes.toml" = { mode = "track" }
+"~/.dotfiles/home/.config/ghostty/themes/active-theme.tera" = { mode = "track" }
+"~/.dotfiles/home/.config/helix/languages.toml.tera" = { mode = "track" }
+"~/.dotfiles/home/.config/helix/themes/active-theme.toml.tera" = { mode = "track" }
+"~/.dotfiles/home/.config/television/themes/active-theme.toml.tera" = { mode = "track" }
+"~/.dotfiles/home/.config/nvim/plugin/25_theme.lua.tera" = { mode = "track" }
+"~/.dotfiles/home/.config/tuios/config.toml.tera" = { mode = "track" }
+"~/.dotfiles/home/.local/share/claude-lsp/.claude-plugin/marketplace.json.tera" = { mode = "track" }
+"~/.dotfiles/home/.local/share/claude-lsp/plugins/elixir-lsp/.claude-plugin/plugin.json.tera" = { mode = "track" }
+"~/.dotfiles/home/.local/share/claude-lsp/plugins/erlang-lsp/.claude-plugin/plugin.json.tera" = { mode = "track" }
+"~/.dotfiles/home/.local/share/claude-lsp/plugins/scala-lsp/.claude-plugin/plugin.json.tera" = { mode = "track" }
 
 [bootstrap.repos]
 "~/.local/share/zsh/plugins/fzf-tab" = { url = "https://github.com/Aloxaf/fzf-tab.git" }
@@ -97,5 +108,5 @@ if [ -d .jj ]; then
 else
   git pull --ff-only
 fi
-mise bootstrap --update --yes
+mise bootstrap --update --prune-dotfiles --yes
 """

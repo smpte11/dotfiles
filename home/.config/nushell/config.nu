@@ -131,63 +131,8 @@ def --wrapped repeat [
     do $print_block "green" $"✓ Successfully completed all ($count) runs" false
 }
 
-def switch-theme [] {
-    let themes = (open $"($env.HOME)/.config/mise/themes.toml")
-    let active = (^mise vars theme | str trim)
-    let names = ($themes | columns | sort)
-
-    let swatch_for = {|hex|
-        if ($hex | is-empty) {
-            ""
-        } else {
-            let h = ($hex | str replace -r '^#' '')
-            let r = ($h | str substring 0..<2 | into int --radix 16)
-            let g = ($h | str substring 2..<4 | into int --radix 16)
-            let b = ($h | str substring 4..<6 | into int --radix 16)
-            let code = $"48;2;($r);($g);($b)m"
-            $"(ansi -e $code)  (ansi reset)"
-        }
-    }
-
-    let name_width = (($names | each {|n| $n | str length } | math max) + 2)
-
-    let items = ($names | each {|name|
-        let theme = ($themes | get $name)
-        let marker = if $name == $active { "● " } else { "  " }
-        let padded = ($name | fill -a left -c ' ' -w $name_width)
-        let colors = [
-            $theme.background
-            $theme.foreground
-            $theme.cursor
-            $theme.palette.red
-            $theme.palette.green
-            $theme.palette.yellow
-            $theme.palette.blue
-            $theme.palette.magenta
-            $theme.palette.cyan
-        ]
-        let swatches = ($colors | where {|c| $c | is-not-empty } | each {|c| do $swatch_for $c } | str join '')
-        $"($marker)($padded) ($swatches)"
-    })
-
-    let selected = ($items
-        | str join "\n"
-        | ^gum filter --no-strip-ansi --reverse --height $"(($names | length) + 4)" --placeholder "Theme Switcher" --prompt "› "
-        | str trim)
-
-    if ($selected | is-empty) { return }
-
-    let theme_name = ($selected | ansi strip | str trim | str replace -r '^●\s+' '' | split row ' ' | first)
-
-    if $theme_name == $active {
-        ^gum style --foreground 3 $"'($theme_name)' is already the active theme"
-        return
-    }
-
-    ^mise vars $"theme=($theme_name)" | ignore
-    ^gum spin --spinner dot --title $"Applying '($theme_name)'..." -- mise dot apply --yes
-
-    ^gum style --border rounded --margin "1 0" --padding "0 1" $"Switched to '($theme_name)'!" "" "Reload notes:" "  Ghostty: auto-reloads on config change" "  Neovim:  restart to pick up the new theme"
+def --wrapped switch-theme [...args: string] {
+    ^mise run theme:switch ...$args
 }
 
 const ocaml_module = ($nu.config-path | path dirname | path join "ocaml.nu")

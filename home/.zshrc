@@ -95,69 +95,7 @@ repeat() {
 }
 
 switch-theme() {
-  local data_json
-  data_json=$(yq -p toml -o json '.' "$HOME/.config/mise/themes.toml")
-
-  local active
-  active=$(mise vars theme)
-
-  local -a names
-  names=("${(@f)$(jq -r 'keys[]' <<< "$data_json" | sort)}")
-
-  local name_width=0 n
-  for n in "${names[@]}"; do
-    (( ${#n} > name_width )) && name_width=${#n}
-  done
-  (( name_width += 2 ))
-
-  _swatch_for() {
-    local hex="$1"
-    [ -z "$hex" ] || [ "$hex" = "null" ] && return
-    hex="${hex#\#}"
-    printf '\e[48;2;%d;%d;%dm  \e[0m' "$((16#${hex:0:2}))" "$((16#${hex:2:2}))" "$((16#${hex:4:2}))"
-  }
-
-  local -a items
-  local marker padded swatches c
-  local -a colors
-  for n in "${names[@]}"; do
-    marker="  "
-    [ "$n" = "$active" ] && marker="● "
-    padded=$(printf "%-${name_width}s" "$n")
-
-    colors=("${(@f)$(jq -r --arg n "$n" '.[$n] | [.background, .foreground, .cursor, .palette.red, .palette.green, .palette.yellow, .palette.blue, .palette.magenta, .palette.cyan][] // "null"' <<< "$data_json")}")
-
-    swatches=""
-    for c in "${colors[@]}"; do
-      swatches+="$(_swatch_for "$c")"
-    done
-
-    items+=("${marker}${padded} ${swatches}")
-  done
-
-  local selected
-  selected=$(printf '%s\n' "${items[@]}" \
-    | gum filter --no-strip-ansi --reverse --height "$((${#names[@]} + 4))" --placeholder "Theme Switcher" --prompt "› ")
-
-  [ -z "$selected" ] && return
-
-  local theme_name
-  theme_name=$(sed -E 's/\x1b\[[0-9;]*m//g; s/^●[[:space:]]+//' <<< "$selected" | awk '{print $1}')
-
-  if [ "$theme_name" = "$active" ]; then
-    gum style --foreground 3 "'$theme_name' is already the active theme"
-    return
-  fi
-
-  mise vars "theme=$theme_name" >/dev/null
-  gum spin --spinner dot --title "Applying '$theme_name'..." -- mise dot apply --yes
-
-  gum style --border rounded --margin "1 0" --padding "0 1" \
-    "Switched to '$theme_name'!" \
-    "" \
-    "Reload notes:" \
-    "  Ghostty: auto-reloads on config change" \
-    "  Neovim:  restart to pick up the new theme"
+  mise run theme:switch "$@"
 }
 
 opam-env() {

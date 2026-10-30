@@ -58,6 +58,21 @@ owned_by_mise() {
     grep -qxF "$1" "$work/mise-targets"
 }
 
+stub_systemd() {
+    mkdir -p "$work/stubs" "$work/runtime/systemd"
+    cat >"$work/stubs/systemctl" <<'STUB'
+#!/bin/sh
+case " $* " in
+*" is-enabled "*) echo enabled ;;
+*" is-active "*) echo active ;;
+esac
+exit 0
+STUB
+    chmod +x "$work/stubs/systemctl"
+    : >"$work/runtime/bus"
+    export PATH="$work/stubs:$PATH" XDG_RUNTIME_DIR="$work/runtime"
+}
+
 make_origin
 
 case "$scenario" in
@@ -136,15 +151,50 @@ mise dot status --missing >/dev/null || fail "dotfiles drifted after a second bo
 git -C "$dotfiles" status --porcelain >"$work/checkout-after"
 cmp -s "$work/checkout-before" "$work/checkout-after" || fail "bootstrap wrote into the checkout: $(diff "$work/checkout-before" "$work/checkout-after")"
 
+step "services"
+(
+    stub_systemd
+    mise bootstrap services apply --yes >/dev/null
+    mise bootstrap --only linux-systemd-units --yes >/dev/null
+)
+if [ -d "$HOME/.config/systemd/user" ] && grep -rnE '\{\{|~/' "$HOME/.config/systemd/user"; then
+    fail "unexpanded syntax in the systemd user units"
+fi
+if has_module personal; then
+    [ -s "$HOME/.config/systemd/user/dev.mise.proton-pass-ssh-agent.service" ] || fail "the proton ssh agent unit is missing"
+    [ -x "$HOME/.local/bin/proton-pass-ssh-agent" ] || fail "the proton ssh agent wrapper is not executable"
+fi
+
 step "theme switch"
 before=$(cat "$HOME/.config/ghostty/themes/active-theme")
-mise vars theme=tokyonight >/dev/null
-mise dot apply --yes >/dev/null
+mise run theme:switch tokyonight >/dev/null
 [ "$(cat "$HOME/.config/ghostty/themes/active-theme")" != "$before" ] || fail "ghostty theme did not change"
 grep -q 'colorscheme tokyonight' "$HOME/.config/nvim/plugin/25_theme.lua" || fail "nvim theme did not change"
 mise vars unset theme >/dev/null
 mise dot apply --yes >/dev/null
 [ "$(cat "$HOME/.config/ghostty/themes/active-theme")" = "$before" ] || fail "ghostty theme did not switch back"
+
+step "history"
+tracked=$(mise dot paths --json | jq -r '.entries[] | select(.mode == "track") | .path | ltrimstr("~/.dotfiles/")')
+for p in \
+    home/.zshrc \
+    home/.bashrc \
+    home/.zshenv \
+    home/.config/mise/themes.toml \
+    home/.config/ghostty/themes/active-theme.tera; do
+    grep -qxF -- "$p" <<<"$tracked" || fail "$p is not tracked"
+done
+if has_module work; then
+    grep -qxF "work/.config/k9s/skins/active-theme.yaml.tera" <<<"$tracked" || fail "the k9s skin template is not tracked"
+fi
+history_file=$dotfiles/home/.zshrc
+history_before=$(cat "$history_file")
+mise dot save >/dev/null
+echo "# e2e history edit" >>"$history_file"
+mise dot save >/dev/null
+[ "$(mise dot history --path "$history_file" --json | jq length)" -ge 1 ] || fail "no checkpoint saved for $history_file"
+mise dot rollback "$history_file" --yes >/dev/null
+[ "$(cat "$history_file")" = "$history_before" ] || fail "rollback did not restore $history_file"
 
 step "smoke"
 zsh -i -c exit || fail "zsh does not start"
@@ -185,6 +235,18 @@ if has_module work; then
     [ "$(jj config get signing.backends.ssh.program)" = /opt/1Password/op-ssh-sign ] || fail "jj does not sign with op-ssh-sign"
     [ -s "$HOME/.config/k9s/skins/active-theme.yaml" ] || fail "k9s skin is missing"
     [ -L "$HOME/.claude/keybindings.json" ] || fail "claude keybindings are missing"
+fi
+
+if [ "$scenario" = fresh ] && has_module personal; then
+    step "switch from personal to work"
+    (
+        stub_systemd
+        DOTFILES_ENV=work "$HOME/.local/bin/dotfiles-setup" "${bootstrap_args[@]}" >/dev/null
+    )
+    ssh -G workgit | grep -qx "identityagent $HOME/.1password/agent.sock" || fail "the ssh agent is not 1password after the switch"
+    grep -q 1password "$HOME/.ssh/config.d/agent" || fail "config.d/agent does not point to 1password"
+    [ ! -e "$HOME/.config/systemd/user/dev.mise.proton-pass-ssh-agent.service" ] || fail "the proton unit remains after the switch"
+    [ ! -e "$HOME/.local/bin/proton-pass-ssh-agent" ] || fail "the proton wrapper remains after the switch"
 fi
 
 echo "PASS: $scenario ${modules:-none}"
