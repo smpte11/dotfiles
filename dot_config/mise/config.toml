@@ -34,6 +34,7 @@ zoxide = "latest"
 "aqua:walles/moor" = "latest"
 "github:fgrehm/crib" = "latest"
 "github:Gaurav-Gosain/tuios" = "latest"
+"github:vjeantet/alerter" = { version = "latest", os = ["macos"] }
 "npm:chrome-devtools-axi" = "0.1.35"
 "npm:gh-axi" = "0.1.35"
 "npm:lavish-axi" = "0.1.79"
