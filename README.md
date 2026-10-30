@@ -1,44 +1,48 @@
 # Dotfiles
 
-Managed with [chezmoi](https://www.chezmoi.io/).
+Managed with [mise bootstrap](https://mise.jdx.dev/bootstrap.html) and
+[mise dotfiles](https://mise.jdx.dev/dotfiles.html). The checkout lives at
+`~/.dotfiles`, and `~/.config/mise` links to `home/.config/mise` in it.
 
-## Fresh Machine Setup
-
-Run a single command to bootstrap everything:
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/smpte11/dotfiles/main/.bootstrap.sh | bash
-```
-
-This will:
-
-1. Install Homebrew
-2. Install and authenticate GitHub CLI (`gh auth login` via browser)
-3. Generate an SSH key and upload it to GitHub
-4. Install chezmoi
-5. Clone this repo and apply all dotfiles and packages
-
-## Adding Packages
-
-Edit `.chezmoidata.toml` and add the package name to the appropriate list:
-
-- `packages.common_brews` — installed on all platforms via Homebrew
-- `packages.darwin.brews` / `.casks` / `.taps` — macOS only
-- `packages.linux.brews` — Linux only
-
-Then run:
+## Fresh machine
 
 ```sh
-chezmoi apply
+curl -fsSL https://raw.githubusercontent.com/smpte11/dotfiles/main/install.sh | sh
 ```
 
-## Machine Setup
+The script installs mise, clones the repository to `~/.dotfiles` and runs
+`dotfiles-setup`. `dotfiles-setup` asks for the machine's modules, writes them
+to `home/.config/mise/miserc.local.toml` (not committed) and runs
+`mise bootstrap`. Set `DOTFILES_ENV=work,desktop` to skip the questions.
 
-Run `dotfiles-setup` (also launched by `install.sh` on first install) to pick the machine profile and edit identities in a gum TUI.
+## Layout
 
-Everything identity-specific (email, SSH host alias, password manager, agent harness, SSH public keys) lives in `.chezmoidata/identities.toml`. Switching jobs means editing the `work` identity there, or adding a new profile, then committing that file.
+| Path | Deployed | Holds |
+| --- | --- | --- |
+| `home/` | always | Shared files, linked file by file into `~` |
+| `ssh/` | `personal` or `work` | `~/.ssh/config` |
+| `personal/` | `personal` | Proton Pass agent, personal signing key, Codestral key |
+| `work/` | `work` | 1Password agent, work identity, k9s skin, Claude keybindings |
+| `desktop/` | `desktop` | Journal reminder and Stream Deck plugin |
+| `home/.config/mise/config.toml` | always | Tools, groups, templates, repos |
+| `home/.config/mise/config.<module>.toml` | per module | The module's vars, env, groups, services and hooks |
+| `home/.config/mise/themes.toml` | | Theme palettes for the `*.tera` templates |
 
-The profile decides the password manager, installed and logged in by the `hooks.read-source-state.pre` hook:
+Files ending in `.tera` are templates. They read `vars` from the config and the
+palette of `mise vars theme` from `themes.toml`. `switch-theme` changes the
+theme for this machine.
 
-- **1Password** (`op`) or **Proton Pass** (`pass-cli`, logged in with `pass-cli login` when needed), per the identity
-- **Containers** (Codespaces, dev containers, Docker, Podman) and unconfigured machines - nothing is installed
+## Everyday commands
+
+- `mise run dotfiles:update` pulls the checkout and bootstraps again.
+- `mise dot status` lists what is deployed. `mise dot apply` deploys new files.
+- `mise run test:fresh` installs the repository in a Linux container and
+  checks it. `mise run test:clean` removes the image and its cache.
+
+## Migrating a chezmoi machine
+
+Update the chezmoi checkout to this layout, then run
+`~/.local/share/chezmoi/migrate-from-chezmoi.sh`. It moves the checkout to
+`~/.dotfiles`, keeps the machine's profile, bootstraps with mise and removes
+what chezmoi left behind. `mise run test:migrate <chezmoi-revision>` tests it
+in a container.

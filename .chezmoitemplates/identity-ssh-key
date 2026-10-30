@@ -1,5 +1,0 @@
-{{- $key := index .identity.ssh_keys .password_manager -}}
-{{- if not $key -}}
-{{-   fail (printf "set identities.%s.ssh_keys.%s in .chezmoidata.toml" .name .password_manager) -}}
-{{- end -}}
-{{- $key -}}

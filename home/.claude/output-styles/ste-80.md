@@ -1,0 +1,1 @@
+../../.agents/output-styles/ste-80.md

@@ -1,30 +1,16 @@
 #!/bin/sh
-set -e
+set -eu
 
-GITHUB_USER="smpte11"
-REPO="dotfiles"
+repo="${DOTFILES_REPO:-https://github.com/smpte11/dotfiles.git}"
+dotfiles="$HOME/.dotfiles"
 
-is_container() {
-    [ -n "${CODESPACES:-}" ] || [ -n "${REMOTE_CONTAINERS:-}" ] || [ -n "${container:-}" ] || [ -f /.dockerenv ] || [ -f /run/.containerenv ]
-}
-
-# Install mise if needed
-if ! type mise >/dev/null 2>&1; then
-    echo "Installing mise..."
-    curl https://mise.run | sh
+if ! command -v mise >/dev/null 2>&1; then
+    curl -fsSL https://mise.run | sh
 fi
-
-# Ensure mise binary and shims are on PATH for this script and chezmoi apply
 export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
 
-# Borrow chezmoi via mise to run the initial apply; the apply writes the global
-# mise config (which lists chezmoi in mise_tools) and the after-install hook
-# makes it permanent.
-if is_container; then
-    mise exec chezmoi@latest -- chezmoi init --apply "https://github.com/${GITHUB_USER}/${REPO}.git"
-elif [ -t 0 ]; then
-    mise exec chezmoi@latest -- chezmoi init "git@github.com:${GITHUB_USER}/${REPO}.git"
-    "$(mise exec chezmoi@latest -- chezmoi source-path)/setup.sh"
-else
-    mise exec chezmoi@latest -- chezmoi init --apply "git@github.com:${GITHUB_USER}/${REPO}.git"
+if [ ! -d "$dotfiles" ]; then
+    git clone "$repo" "$dotfiles"
 fi
+
+exec "$dotfiles/home/.local/bin/dotfiles-setup" --force-dotfiles "$@"

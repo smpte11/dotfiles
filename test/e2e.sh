@@ -2,94 +2,189 @@
 set -euo pipefail
 umask 022
 
-chezmoi() { mise exec chezmoi@latest -- chezmoi "$@"; }
-fail() { echo "FAIL: $*" >&2; exit 1; }
-step() { echo "--- $*"; }
+scenario=$1
+modules=${2:-}
+bootstrap_args=(--skip services --skip final-hook)
 
-source_dir=$HOME/.local/share/chezmoi
-mise_home=$source_dir/home
+dotfiles=$HOME/.dotfiles
+origin=/tmp/origin
+work=/tmp/e2e
+mkdir -p "$work"
 local_files=(
     .config/nvim/plugin/42_local.lua
     .config/zk/templates/local-journal.md
 )
+parity_targets=(
+    .config/ghostty/themes/active-theme
+    .config/helix/languages.toml
+    .config/helix/themes/active-theme.toml
+    .config/television/themes/active-theme.toml
+    .config/tuios/config.toml
+    .config/k9s/skins/active-theme.yaml
+    .local/share/claude-lsp/.claude-plugin/marketplace.json
+    .local/share/claude-lsp/plugins/elixir-lsp/.claude-plugin/plugin.json
+)
 
-chezmoi_files() { chezmoi managed -i files,symlinks -p absolute | sort; }
-owned_by_mise() { [ -e "$mise_home/${1#"$HOME"/}" ] || [ -L "$mise_home/${1#"$HOME"/}" ]; }
+fail() { echo "FAIL: $*" >&2; exit 1; }
+step() { echo "--- $*"; }
+has_module() { case ",$modules," in *",$1,"*) return 0 ;; esac; return 1; }
 
-checkout() {
-    mkdir -p "$source_dir"
-    find "$source_dir" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-    tar -C "$1" --exclude=./.git --exclude=./.jj -cf - . | tar -C "$source_dir" -xf -
-    git -C "$source_dir" init --quiet
+snapshot() {
+    mkdir -p "$2"
+    rsync -a --exclude=/.git --exclude=/.jj "$1/" "$2/"
 }
 
-if [ -d /base ]; then
-    step "apply base revision"
-    checkout /base
-    chezmoi init --apply
-    chezmoi_files >/tmp/base-managed
-else
-    : >/tmp/base-managed
-fi
+make_origin() {
+    snapshot /src "$origin"
+    git -C "$origin" init --quiet
+    git -C "$origin" add -A
+    git -C "$origin" -c user.name=test -c user.email=test@example.com commit --quiet -m snapshot
+}
 
-for f in "${local_files[@]}"; do
-    mkdir -p "$HOME/$(dirname "$f")"
-    echo "-- local $f" >"$HOME/$f"
-done
+plant_local_files() {
+    for f in "${local_files[@]}"; do
+        mkdir -p "$HOME/$(dirname "$f")"
+        echo "-- local $f" >"$HOME/$f"
+    done
+}
 
-step "upgrade to working copy"
-checkout /src
-chezmoi init --apply
+mise_targets() {
+    mise dot status --json | jq -r '(.files[] | .target), (.edits[] | .path)' | sed "s|^~|$HOME|"
+}
 
-step "chezmoi verify"
-chezmoi verify || fail "chezmoi target state differs"
+owned_by_mise() {
+    case "$(readlink "$1" 2>/dev/null)" in "$dotfiles"/*) return 0 ;; esac
+    case "$(realpath "$1" 2>/dev/null)" in "$dotfiles"/*) return 0 ;; esac
+    grep -qxF "$1" "$work/mise-targets"
+}
+
+make_origin
+
+case "$scenario" in
+fresh)
+    plant_local_files
+    step "install with modules: ${modules:-none}"
+    DOTFILES_REPO=$origin DOTFILES_ENV=$modules sh /src/install.sh "${bootstrap_args[@]}"
+    ;;
+migrate)
+    step "apply chezmoi base revision as $modules"
+    snapshot /base "$HOME/.local/share/chezmoi"
+    git -C "$HOME/.local/share/chezmoi" init --quiet
+    git -C "$HOME/.local/share/chezmoi" remote add origin "$origin"
+    DOTFILES_PROFILE=$modules mise exec chezmoi@latest -- chezmoi init --apply
+    : >"$work/empty.toml"
+    mise exec chezmoi@latest -- chezmoi --config "$work/empty.toml" state dump >"$work/chezmoi-state.json"
+    for f in "${parity_targets[@]}"; do
+        if [ -f "$HOME/$f" ]; then
+            mkdir -p "$work/parity/$(dirname "$f")"
+            sed '/^# k9s skin generated from chezmoi/d' "$HOME/$f" >"$work/parity/$f"
+        fi
+    done
+    plant_local_files
+    step "pull the mise layout and migrate"
+    find "$HOME/.local/share/chezmoi" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+    snapshot /src "$HOME/.local/share/chezmoi"
+    "$HOME/.local/share/chezmoi/migrate-from-chezmoi.sh" "${bootstrap_args[@]}"
+    ;;
+*)
+    fail "unknown scenario $scenario"
+    ;;
+esac
+
+step "layout"
+[ "$(readlink "$HOME/.config/mise")" = "$dotfiles/home/.config/mise" ] || fail "$HOME/.config/mise is not linked to the checkout"
+[ ! -e "$HOME/.local/share/chezmoi" ] || fail "the chezmoi checkout is still there"
+[ ! -e "$HOME/.config/chezmoi" ] || fail "chezmoi state is still there"
 
 step "mise dot status"
-mise dot status --missing >/dev/null || fail "mise dotfiles not applied: $(mise dot status)"
-
-step "every file in home/ is deployed"
-while read -r f; do
-    rel=${f#"$mise_home"/}
-    [ "$(readlink -f "$HOME/$rel")" = "$(readlink -f "$f")" ] || fail "$HOME/$rel does not link to $f"
-    if [ -L "$HOME/$rel" ] && [ "$(readlink "$HOME/$rel")" != "$f" ]; then
-        fail "$HOME/$rel is a symlink to $(readlink "$HOME/$rel"), not to $f"
-    fi
-done < <(find "$mise_home" \( -type f -o -type l \))
-
-step "single owner"
-both=""
-while read -r path; do
-    if owned_by_mise "$path"; then both+="$path"$'\n'; fi
-done < <(chezmoi_files)
-[ -z "$both" ] || fail "managed by chezmoi and mise: $both"
-
-step "no orphans"
-orphans=""
-while read -r path; do
-    owned_by_mise "$path" && continue
-    if [ -e "$path" ] || [ -L "$path" ]; then orphans+="$path"$'\n'; fi
-done < <(comm -23 /tmp/base-managed <(chezmoi_files))
-[ -z "$orphans" ] || fail "left behind by chezmoi: $orphans"
+mise dot status --missing >/dev/null || fail "dotfiles not applied: $(mise dot status)"
+mise_targets >"$work/mise-targets"
 
 step "local files kept"
 for f in "${local_files[@]}"; do
     [ "$(cat "$HOME/$f" 2>/dev/null)" = "-- local $f" ] || fail "$HOME/$f was changed or removed"
 done
 
+if [ "$scenario" = migrate ]; then
+    step "no chezmoi leftovers"
+    leftovers=""
+    while IFS= read -r path; do
+        [ "$path" = "$HOME/.local/bin/mise" ] && continue
+        [ -f "$path" ] || [ -L "$path" ] || continue
+        owned_by_mise "$path" || leftovers+="$path"$'\n'
+    done < <(jq -r '.entryState | to_entries[] | select(.value.type == "file") | .key' "$work/chezmoi-state.json")
+    while IFS= read -r path; do
+        [ -L "$path" ] || continue
+        owned_by_mise "$path" || leftovers+="$path"$'\n'
+    done < <(jq -r '.entryState | to_entries[] | select(.value.type == "symlink") | .key' "$work/chezmoi-state.json")
+    [ -z "$leftovers" ] || fail "left behind by chezmoi: $leftovers"
+
+    step "templates render like chezmoi did"
+    for f in "${parity_targets[@]}"; do
+        [ -f "$work/parity/$f" ] || continue
+        cmp -s "$work/parity/$f" "$HOME/$f" || fail "$f differs from the chezmoi render: $(diff "$work/parity/$f" "$HOME/$f")"
+    done
+fi
+
 step "idempotent"
-[ -z "$(chezmoi diff)" ] || fail "second chezmoi apply would change: $(chezmoi diff)"
-chezmoi apply
-mise dot status --missing >/dev/null || fail "mise dotfiles drifted after a second apply"
+git -C "$dotfiles" status --porcelain >"$work/checkout-before"
+if [ "$scenario" = fresh ] && [ -s "$work/checkout-before" ]; then
+    fail "install wrote into the checkout: $(cat "$work/checkout-before")"
+fi
+mise bootstrap --yes "${bootstrap_args[@]}" >/dev/null
+mise dot status --missing >/dev/null || fail "dotfiles drifted after a second bootstrap"
+git -C "$dotfiles" status --porcelain >"$work/checkout-after"
+cmp -s "$work/checkout-before" "$work/checkout-after" || fail "bootstrap wrote into the checkout: $(diff "$work/checkout-before" "$work/checkout-after")"
+
+step "theme switch"
+before=$(cat "$HOME/.config/ghostty/themes/active-theme")
+mise vars theme=tokyonight >/dev/null
+mise dot apply --yes >/dev/null
+[ "$(cat "$HOME/.config/ghostty/themes/active-theme")" != "$before" ] || fail "ghostty theme did not change"
+grep -q 'colorscheme tokyonight' "$HOME/.config/nvim/plugin/25_theme.lua" || fail "nvim theme did not change"
+mise vars unset theme >/dev/null
+mise dot apply --yes >/dev/null
+[ "$(cat "$HOME/.config/ghostty/themes/active-theme")" = "$before" ] || fail "ghostty theme did not switch back"
 
 step "smoke"
 zsh -i -c exit || fail "zsh does not start"
-expected=$(chezmoi execute-template '{{ (index .identities .profile).email }}')
-[ "$(jj config get user.email)" = "$expected" ] || fail "jj user.email is not $expected"
 tv list-channels | grep -qx alias || fail "television does not load the cable channels"
 hx --health 2>&1 | grep -q "Config file: $HOME/.config/helix/config.toml" || fail "helix does not find its config"
-[ -x "$HOME/.local/bin/fork-sync" ] || fail "fork-sync is not executable"
 nvim --headless +qa >/dev/null 2>&1 || fail "nvim fails to install its plugins"
 nvim_errors=$(nvim --headless +qa 2>&1 >/dev/null) || fail "nvim exits with an error: $nvim_errors"
 [ -z "$nvim_errors" ] || fail "nvim reports errors: $nvim_errors"
+if grep -rlE '\{\{|\{%' "$HOME/.config/ghostty/themes" "$HOME/.config/nvim/plugin/25_theme.lua" "$HOME/.config/tuios/config.toml"; then
+    fail "unrendered template syntax"
+fi
 
-echo "PASS: $DOTFILES_PROFILE"
+expected_email=felix@brouss.eu
+expected_harness=pi
+if has_module work; then
+    expected_email=felix.brousseau-tremblay@kivra.com
+    expected_harness=claude
+fi
+[ "$(jj config get user.email)" = "$expected_email" ] || fail "jj user.email is not $expected_email"
+[ "$(mise env --json | jq -r .FM_HARNESS)" = "$expected_harness" ] || fail "FM_HARNESS is not $expected_harness"
+
+if has_module personal || has_module work; then
+    ssh -G personalgit | grep -qx 'hostname github.com' || fail "ssh does not know personalgit"
+    [ -s "$HOME/.ssh/personal.pub" ] || fail "personal.pub is missing"
+    [ "$(stat -c %a "$HOME/.ssh")" = 700 ] || fail "$HOME/.ssh is not 0700"
+else
+    [ ! -e "$HOME/.ssh/config" ] || fail "an ssh config was deployed without an identity module"
+fi
+if has_module personal; then
+    ssh -G personalgit | grep -qx "identityagent $HOME/.ssh/proton-pass-agent.sock" || fail "personal ssh agent is not proton"
+    signing_key=$(jj config get signing.key)
+    [ "${signing_key#\~/}" = .ssh/personal.pub ] || fail "jj does not sign with the personal key"
+    if ssh -G workgit | grep -qx 'hostname github.com'; then fail "workgit is configured on a personal machine"; fi
+fi
+if has_module work; then
+    ssh -G workgit | grep -qx 'hostname github.com' || fail "ssh does not know workgit"
+    ssh -G workgit | grep -qx "identityagent $HOME/.1password/agent.sock" || fail "work ssh agent is not 1password"
+    [ "$(jj config get signing.backends.ssh.program)" = /opt/1Password/op-ssh-sign ] || fail "jj does not sign with op-ssh-sign"
+    [ -s "$HOME/.config/k9s/skins/active-theme.yaml" ] || fail "k9s skin is missing"
+    [ -L "$HOME/.claude/keybindings.json" ] || fail "claude keybindings are missing"
+fi
+
+echo "PASS: $scenario ${modules:-none}"

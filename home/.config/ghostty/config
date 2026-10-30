@@ -1,0 +1,20 @@
+font-size = 22
+font-family = Iosevka Term
+theme = active-theme
+mouse-hide-while-typing = true
+background-opacity = 0.9
+background-blur = true
+window-padding-x = 5
+window-padding-balance = true
+
+clipboard-paste-protection = false
+
+macos-icon = retro
+macos-option-as-alt = true
+
+# SHELL
+command = /bin/zsh
+shell-integration = none
+
+# CUSTOM SHADERS
+# custom-shader = ~/.config/ghostty/shaders/cursor_sweep.glsl

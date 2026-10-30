@@ -1,0 +1,33 @@
+#!/bin/sh
+set -eu
+
+dotfiles="$HOME/.dotfiles"
+config_dir="home/.config/mise"
+miserc="$dotfiles/$config_dir/miserc.local.toml"
+
+in_container() {
+    [ -n "${CODESPACES:-}${REMOTE_CONTAINERS:-}${container:-}" ] || [ -f /.dockerenv ] || [ -f /run/.containerenv ]
+}
+
+choose_modules() {
+    identity="$(mise exec gum@latest -- gum choose --header "Identity for this machine" personal work)"
+    if mise exec gum@latest -- gum confirm "Desktop machine (journal reminders, Stream Deck plugin)?"; then
+        echo "$identity,desktop"
+    else
+        echo "$identity"
+    fi
+}
+
+write_modules() {
+    list="$(printf '%s' "$1" | tr ',' '\n' | sed '/^$/d; s/.*/"&"/' | paste -sd, -)"
+    printf 'env = [%s]\n' "$list" >"$miserc"
+}
+
+if [ -n "${DOTFILES_ENV+set}" ]; then
+    write_modules "$DOTFILES_ENV"
+elif [ -t 0 ] && ! in_container; then
+    write_modules "$(choose_modules)"
+fi
+
+exec mise bootstrap --from "$(git -C "$dotfiles" remote get-url origin)" \
+    --from-dir "$dotfiles" --config-dir "$config_dir" --yes "$@"

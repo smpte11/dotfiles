@@ -1,0 +1,4 @@
+[signing]
+behavior = "own"
+backend = "ssh"
+key = "~/.ssh/personal.pub"

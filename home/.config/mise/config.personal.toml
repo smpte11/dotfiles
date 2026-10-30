@@ -1,0 +1,44 @@
+[env]
+SSH_AUTH_SOCK = "{{ env.HOME }}/.ssh/proton-pass-agent.sock"
+NVIM_AI_PROVIDER = "codestral"
+_.file = { path = "{{ env.HOME }}/.config/codestral/env", redact = true }
+
+[tools]
+"github:floatpane/matcha" = "latest"
+
+[dotfile_groups.ssh]
+root = "ssh"
+
+[dotfile_groups.personal]
+root = "personal"
+
+[dotfile_groups.personal.entries]
+"~/.config/codestral/env" = { mode = "template", create_if_missing = true, remove_empty = true, permissions = "0600" }
+
+[bootstrap.services.proton-pass-ssh-agent]
+scope = "user"
+description = "Proton Pass SSH agent"
+command = "{{ env.HOME }}/.local/bin/pass-cli ssh-agent start --socket-path {{ env.HOME }}/.ssh/proton-pass-agent.sock"
+restart = "always"
+
+[bootstrap.hooks]
+pre-dotfiles = ["install -d -m 700 ~/.ssh", "mise run dotfiles:proton-login"]
+final = "test -x ~/.local/bin/tuios || mise exec -- ~/.local/bin/fork-sync build"
+
+[tasks."dotfiles:proton-login"]
+description = "Install pass-cli and log in to Proton Pass"
+run = """
+set -eu
+pass="$HOME/.local/bin/pass-cli"
+if [ ! -x "$pass" ]; then
+  curl -fsSL https://proton.me/download/pass-cli/install.sh | mise exec jq@latest -- bash
+fi
+if "$pass" info >/dev/null 2>&1; then
+  exit 0
+fi
+if [ -t 0 ]; then
+  "$pass" login
+else
+  echo "pass-cli is not logged in; run 'pass-cli login', then 'mise bootstrap'" >&2
+fi
+"""

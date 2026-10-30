@@ -1,0 +1,16 @@
+{%- set themes = read_toml(path=mise_config_dir ~ "/themes.toml") -%}
+{%- set nv = themes[vars.theme].nvim -%}
+Config.now(function()
+{%- if nv.plugin is defined %}
+	vim.pack.add({ '{{ nv.plugin }}' })
+{%- endif %}
+{%- if nv.settings is defined %}
+{%- for k, v in nv.settings %}
+	vim.g.{{ k }} = "{{ v }}"
+{%- endfor %}
+{%- endif %}
+	vim.o.background = "{{ nv.background }}"
+	vim.cmd("colorscheme {{ nv.colorscheme }}")
+	vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
+	vim.api.nvim_set_hl(0, "NormalNC", { bg = "NONE" })
+end)

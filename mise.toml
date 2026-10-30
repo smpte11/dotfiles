@@ -1,76 +1,12 @@
-# Dev tasks for working on this chezmoi repo.
-# Not applied to $HOME — see .chezmoiignore.
+[tasks."test:fresh"]
+description = "Install the dotfiles in a Linux container and check them (modules: none, personal, work)"
+run = "test/run.sh fresh"
 
-[tasks.diff]
-description = "Show full chezmoi diff (all pending changes)"
-run = "chezmoi diff"
+[tasks."test:migrate"]
+description = "Migrate a Linux container from a chezmoi revision and check it (usage: mise run test:migrate <ref>)"
+run = "test/run.sh migrate"
 
-[tasks.diff-template]
-description = "Pick a template via tv, then diff it"
-run = """
-set -euo pipefail
-t=$(chezmoi managed --include=templates | tv)
-[ -z "$t" ] && exit 0
-chezmoi diff "$HOME/$t"
-"""
-
-[tasks.list]
-description = "List all chezmoi-managed templates by target path"
-run = "chezmoi managed --include=templates"
-
-[tasks.render]
-description = "Render a template to stdout (tv picker if no arg)"
-run = """
-set -euo pipefail
-t="${1:-}"
-if [ -z "$t" ]; then
-  t=$(chezmoi managed --include=templates | tv)
-  [ -z "$t" ] && exit 0
-fi
-chezmoi cat "$HOME/$t"
-"""
-
-[tasks.verify]
-description = "Render every template; non-zero exit if any fails"
-run = """
-set -eu
-fail=0
-for f in $(chezmoi managed --include=templates); do
-  if ! chezmoi cat "$HOME/$f" >/dev/null 2>err.log; then
-    echo "FAIL: $f"
-    sed 's/^/  /' err.log
-    fail=1
-  fi
-done
-rm -f err.log
-exit $fail
-"""
-
-[tasks.apply]
-description = "Apply pending changes (verbose)"
-run = "chezmoi apply -v"
-
-[tasks.edit]
-description = "Edit a managed file (tv picker if no arg)"
-run = """
-set -euo pipefail
-t="${1:-}"
-if [ -z "$t" ]; then
-  t=$(chezmoi managed | tv)
-  [ -z "$t" ] && exit 0
-fi
-chezmoi edit "$HOME/$t"
-"""
-
-[tasks.data]
-description = "Print merged chezmoi template data"
-run = "chezmoi data"
-
-[tasks."test:container"]
-description = "Upgrade a Linux container from main to the working copy and check it (BASE_REF=none for a fresh install)"
-run = "test/run.sh"
-
-[tasks."test:container:shell"]
+[tasks."test:shell"]
 description = "Open a shell in the test container"
 run = "test/run.sh shell"
 

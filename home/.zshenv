@@ -1,0 +1,43 @@
+# .zshenv
+#
+# Loaded for every zsh invocation (interactive or not, login or not).
+# Env vars and PATH live here so non-interactive tools that shell out to
+# zsh instead of nushell still see the same environment.
+# Mirrors ~/.config/nushell/config.nu.
+
+export EDITOR=nvim
+export VISUAL=nvim
+
+export K9S_CONFIG_DIR="$HOME/.config/k9s"
+
+export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/.ripgreprc"
+
+# Canonical firstmate operational home. Without it, firstmate scripts fall
+# back to the repo root as the home and create a second one there.
+export FM_HOME="$HOME/.local/state/firstmate"
+
+# ─── PATH ────────────────────────────────────────────────────────────
+# Each block prepends, later blocks win — mirrors nu's `path add` order.
+
+path=("$HOME/.local/bin" $path)
+path=(/usr/local/bin $path)
+
+case "$(uname -s)" in
+  Darwin)
+    path=(/opt/homebrew/bin /opt/homebrew/sbin $path)
+    ;;
+  Linux)
+    path=(/home/linuxbrew/.linuxbrew/bin /home/linuxbrew/.linuxbrew/sbin $path)
+    ;;
+esac
+
+path=("$HOME/.krew/bin" $path)
+path=("$HOME/.nix-profile/bin" $path)
+path=(/nix/var/nix/profiles/default/bin $path)
+
+typeset -U path
+export PATH
+
+if [ -f "$HOME/Downloads/google-cloud-sdk/path.zsh.inc" ]; then
+  source "$HOME/Downloads/google-cloud-sdk/path.zsh.inc"
+fi

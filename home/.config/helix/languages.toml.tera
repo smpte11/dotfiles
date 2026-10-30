@@ -1,0 +1,111 @@
+[language-server.expert]
+command = "expert"
+args = ["--stdio"]
+
+[language-server.basedpyright]
+command = "basedpyright-langserver"
+args = ["--stdio"]
+
+[language-server.zk]
+command = "zk"
+args = ["lsp"]
+
+[language-server.metals.config]
+isHttpEnabled = true
+{%- if os() == "macos" %}
+metals = { inlayHints = { typeParameters = { enable = true }, hintsInPatternMatch = { enable = true } } }
+{%- endif %}
+
+[[language]]
+name = "lua"
+auto-format = true
+formatter = { command = "stylua", args = ["--stdin-filepath", "%{buffer_name}", "-"] }
+
+[[language]]
+name = "go"
+language-servers = ["gopls"]
+auto-format = true
+formatter = { command = "gofumpt" }
+
+[[language]]
+name = "yaml"
+language-servers = ["yaml-language-server"]
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "%{buffer_name}"] }
+
+[[language]]
+name = "ocaml"
+auto-format = true
+formatter = { command = "ocamlformat", args = ["--name", "%{buffer_name}", "-"] }
+
+[[language]]
+name = "ocaml-interface"
+auto-format = true
+formatter = { command = "ocamlformat", args = ["--name", "%{buffer_name}", "-"] }
+
+[[language]]
+name = "elixir"
+language-servers = ["expert"]
+auto-format = true
+formatter = { command = "mix", args = ["format", "--stdin-filename", "%{buffer_name}", "-"] }
+
+[[language]]
+name = "heex"
+language-servers = ["expert"]
+auto-format = true
+formatter = { command = "mix", args = ["format", "--stdin-filename", "%{buffer_name}", "-"] }
+
+[[language]]
+name = "python"
+language-servers = ["basedpyright"]
+auto-format = true
+formatter = { command = "ruff", args = ["format", "--silent", "--stdin-filename", "%{buffer_name}", "-"] }
+
+[[language]]
+name = "typescript"
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "%{buffer_name}"] }
+
+[[language]]
+name = "tsx"
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "%{buffer_name}"] }
+
+[[language]]
+name = "javascript"
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "%{buffer_name}"] }
+
+[[language]]
+name = "jsx"
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "%{buffer_name}"] }
+
+[[language]]
+name = "json"
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "%{buffer_name}"] }
+
+[[language]]
+name = "jsonc"
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "%{buffer_name}"] }
+
+[[language]]
+name = "scala"
+auto-format = true
+formatter = { command = "scalafmt", args = ["--stdin", "--assume-filename", "%{buffer_name}"] }
+
+[[language]]
+name = "markdown"
+language-servers = ["zk"]
+
+[[language]]
+name = "toml"
+auto-format = true
+formatter = { command = "taplo", args = ["format", "--stdin-filepath", "%{buffer_name}", "-"] }
+
+[[language]]
+name = "bash"
+auto-format = true
+formatter = { command = "shfmt", args = ["--filename", "%{buffer_name}", "-i", "2"] }

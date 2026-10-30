@@ -1,0 +1,53 @@
+{%- set themes = read_toml(path=mise_config_dir ~ "/themes.toml") -%}
+{%- set t = themes[vars.theme] -%}
+inherits = "base16_default_dark"
+
+"ui.background" = { bg = "{{ t.background }}" }
+"ui.text" = { fg = "{{ t.foreground }}" }
+"ui.text.focus" = { fg = "{{ t.foreground }}", bg = "{{ t.base.b01 }}" }
+"ui.cursor" = { fg = "{{ t.background }}", bg = "{{ t.cursor }}" }
+"ui.cursor.primary" = { fg = "{{ t.background }}", bg = "{{ t.cursor }}" }
+"ui.cursorline.primary" = { bg = "{{ t.base.b01 }}" }
+"ui.selection" = { bg = "{{ t.selection_bg }}", fg = "{{ t.selection_fg }}" }
+"ui.linenr" = { fg = "{{ t.base.b02 }}" }
+"ui.linenr.selected" = { fg = "{{ t.foreground }}", bg = "{{ t.base.b01 }}" }
+"ui.statusline" = { fg = "{{ t.foreground }}", bg = "{{ t.base.b01 }}" }
+"ui.statusline.inactive" = { fg = "{{ t.base.b03 }}", bg = "{{ t.base.b01 }}" }
+"ui.statusline.normal" = { fg = "{{ t.ribbon_fg }}", bg = "{{ t.palette.blue }}" }
+"ui.statusline.insert" = { fg = "{{ t.ribbon_fg }}", bg = "{{ t.palette.green }}" }
+"ui.statusline.select" = { fg = "{{ t.ribbon_fg }}", bg = "{{ t.palette.magenta }}" }
+"ui.popup" = { fg = "{{ t.foreground }}", bg = "{{ t.base.b01 }}" }
+"ui.window" = { fg = "{{ t.base.b02 }}" }
+"ui.menu" = { fg = "{{ t.foreground }}", bg = "{{ t.base.b01 }}" }
+"ui.menu.selected" = { fg = "{{ t.selection_fg }}", bg = "{{ t.selection_bg }}" }
+"ui.virtual.whitespace" = { fg = "{{ t.base.b02 }}" }
+"ui.virtual.indent-guide" = { fg = "{{ t.base.b02 }}" }
+"ui.virtual.inlay-hint" = { fg = "{{ t.base.b03 }}" }
+"ui.bufferline" = { fg = "{{ t.base.b03 }}", bg = "{{ t.base.b01 }}" }
+"ui.bufferline.active" = { fg = "{{ t.foreground }}", bg = "{{ t.background }}", modifiers = ["bold"] }
+
+"comment" = { fg = "{{ t.base.b03 }}", modifiers = ["italic"] }
+"keyword" = { fg = "{{ t.palette.magenta }}" }
+"string" = { fg = "{{ t.palette.yellow }}" }
+"constant" = { fg = "{{ t.palette.bright_magenta }}" }
+"constant.numeric" = { fg = "{{ t.palette.bright_magenta }}" }
+"type" = { fg = "{{ t.palette.cyan }}" }
+"function" = { fg = "{{ t.palette.green }}" }
+"variable" = { fg = "{{ t.foreground }}" }
+"variable.parameter" = { fg = "{{ t.palette.bright_blue }}" }
+"operator" = { fg = "{{ t.palette.cyan }}" }
+"punctuation" = { fg = "{{ t.palette.silver }}" }
+"namespace" = { fg = "{{ t.palette.blue }}" }
+"attribute" = { fg = "{{ t.palette.bright_cyan }}" }
+
+"diagnostic.error" = { underline = { color = "{{ t.palette.red }}", style = "curl" } }
+"diagnostic.warning" = { underline = { color = "{{ t.palette.yellow }}", style = "curl" } }
+"diagnostic.info" = { underline = { color = "{{ t.palette.cyan }}", style = "curl" } }
+"diagnostic.hint" = { underline = { color = "{{ t.palette.silver }}", style = "curl" } }
+"error" = { fg = "{{ t.palette.red }}" }
+"warning" = { fg = "{{ t.palette.yellow }}" }
+"info" = { fg = "{{ t.palette.cyan }}" }
+"hint" = { fg = "{{ t.palette.silver }}" }
+"diff.plus" = { fg = "{{ t.palette.green }}" }
+"diff.minus" = { fg = "{{ t.palette.red }}" }
+"diff.delta" = { fg = "{{ t.palette.yellow }}" }

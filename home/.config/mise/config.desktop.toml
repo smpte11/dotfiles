@@ -1,0 +1,35 @@
+[dotfile_groups.desktop]
+root = "desktop"
+exclude = [".local/share/journal-deck"]
+
+[dotfile_groups.desktop.entries]
+"~/Library/Application Support/com.elgato.StreamDeck/Plugins/com.felbro.journal.sdPlugin" = { mode = "symlink-each", source = ".local/share/journal-deck/com.felbro.journal.sdPlugin", variants = [{ os = "macos" }] }
+"~/Library/Application Support/com.elgato.StreamDeck/Plugins/com.felbro.journal.sdPlugin/plugin.js" = { mode = "template", source = ".local/share/journal-deck/com.felbro.journal.sdPlugin/plugin.js.tera", permissions = "0755", variants = [{ os = "macos" }] }
+"~/.config/opendeck/plugins/com.felbro.journal.sdPlugin" = { mode = "symlink-each", source = ".local/share/journal-deck/com.felbro.journal.sdPlugin", variants = [{ os = "linux" }] }
+"~/.config/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js" = { mode = "template", source = ".local/share/journal-deck/com.felbro.journal.sdPlugin/plugin.js.tera", permissions = "0755", variants = [{ os = "linux" }] }
+"~/.var/app/me.amankhanna.opendeck/config/opendeck/plugins/com.felbro.journal.sdPlugin" = { mode = "symlink-each", source = ".local/share/journal-deck/com.felbro.journal.sdPlugin", variants = [{ os = "linux" }] }
+"~/.var/app/me.amankhanna.opendeck/config/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js" = { mode = "template", source = ".local/share/journal-deck/com.felbro.journal.sdPlugin/plugin.js.tera", permissions = "0755", variants = [{ os = "linux" }] }
+
+[bootstrap.macos.launchd.agents.journal]
+program = "~/.local/bin/journal-reminder"
+start_calendar_interval = [
+  { weekday = 1, hour = 8, minute = 30 },
+  { weekday = 2, hour = 8, minute = 30 },
+  { weekday = 3, hour = 8, minute = 30 },
+  { weekday = 4, hour = 8, minute = 30 },
+  { weekday = 5, hour = 8, minute = 30 },
+]
+stdout_path = "~/Library/Logs/journal.log"
+stderr_path = "~/Library/Logs/journal.log"
+
+[bootstrap.linux.systemd.units.journal-reminder]
+description = "Evening journal reminder"
+type = "oneshot"
+exec_start = "~/.local/bin/journal-reminder"
+start = false
+wanted_by = []
+
+[bootstrap.linux.systemd.units.journal-reminder-timer]
+description = "Evening journal reminder at 20:30"
+on_calendar = "*-*-* 20:30"
+unit = "journal-reminder"

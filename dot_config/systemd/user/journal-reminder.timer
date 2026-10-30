@@ -1,8 +1,0 @@
-[Unit]
-Description=Evening journal reminder at 20:30
-
-[Timer]
-OnCalendar=*-*-* 20:30
-
-[Install]
-WantedBy=timers.target

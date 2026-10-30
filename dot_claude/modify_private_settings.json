@@ -1,7 +1,0 @@
-{{- /* chezmoi:modify-template */ -}}
-{{- $settings := dict -}}
-{{- if .chezmoi.stdin -}}
-{{-   $settings = fromJson .chezmoi.stdin -}}
-{{- end -}}
-{{- $_ := set $settings "outputStyle" "ste-80" -}}
-{{ toPrettyJson $settings | trim }}

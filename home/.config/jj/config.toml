@@ -1,0 +1,98 @@
+#:schema https://jj-vcs.github.io/jj/latest/config-schema.json
+[ui]
+paginate = "never"
+pager = ["moor", "-quit-if-one-screen", "-no-linenumbers"]
+default-command = "log"
+diff-editor = ["nvim", "-c", "DiffEditor $left $right $output"]
+diff-instructions = false
+graph.style = "curved"
+
+[[--scope]]
+--when.commands = ["diff", "show"]
+[--scope.ui]
+paginate = "auto"
+diff-formatter = ":git"
+pager = { command = ["delta"], env = { DELTA_PAGER = "moor -quit-if-one-screen -no-linenumbers" } }
+
+[user]
+name = "Felix Brousseau-Tremblay"
+email = "felix@brouss.eu"
+
+[revsets]
+log = "home"
+
+[revset-aliases]
+recent = "committer_date(after:'3 days ago')"
+home = '''trunk()
+    | trunk()..@
+    | trunk()..working_copies()
+    | trunk()..(mine() & recent)
+    | (trunk()..(bookmarks() & recent) ~ author("renovate"))'''
+stack = "trunk() | trunk()..@ | @::"
+mine_open = "trunk() | trunk()..mine() | @"
+everything = "trunk()..(visible_heads() | remote_bookmarks()) | ancestors(trunk(), 5)"
+
+[aliases]
+tidy = ["abandon", "-r", "(empty() ~ @) ~ ::trunk()"]
+fetch = ["git", "fetch"]
+push = ["git", "push"]
+lift = ["rebase", "--source", "roots(trunk()..@)", "--destination", "trunk()"]
+tug = ["bookmark", "move", "--from", "heads(::@- & bookmarks())", "--to", "@-"]
+stack = ["log", "-r", "stack"]
+mine = ["log", "-r", "mine_open"]
+all = ["log", "-r", "everything", "--config", "ui.paginate=auto"]
+
+[remotes.origin]
+auto-track-bookmarks = "*"
+
+[colors]
+"working_copy change_id" = {fg = "magenta", bold = true, underline = true }
+bookmarks = { fg = "magenta", reverse = false, italic = true }
+
+[template-aliases]
+'format_short_id(id)' = 'id.shortest()'
+'format_timestamp(timestamp)' = '''
+timestamp.ago()
+  .replace(regex:" seconds? ago$", "s")
+  .replace(regex:" minutes? ago$", "m")
+  .replace(regex:" hours? ago$", "h")
+  .replace(regex:" days? ago$", "d")
+  .replace(regex:" weeks? ago$", "w")
+  .replace(regex:" months? ago$", "mo")
+  .replace(regex:" years? ago$", "y")
+'''
+'format_author(signature)' = 'signature.email().local().replace(regex:"^[0-9]+\\+", "").replace("[bot]", "")'
+
+[templates]
+log = '''
+label(if(current_working_copy, "working_copy"),
+  concat(
+    separate(" ",
+      format_short_id(change_id),
+      working_copies,
+      if(!mine, label("author", format_author(author))),
+      format_timestamp(committer.timestamp()),
+      bookmarks,
+      tags,
+      if(empty, label("empty", "(empty)")),
+      if(conflict, label("conflict", "(conflict)")),
+      if(divergent, label("divergent", "(divergent)")),
+    ),
+    "\n",
+    if(description, description.first_line(), description_placeholder),
+  )
+)
+'''
+log_node = '''
+label("node",
+  coalesce(
+    if(!self, label("elided", "┊")),
+    if(current_working_copy, label("working_copy", "@")),
+    if(conflict, label("conflict", "×")),
+    if(empty, label("empty", "◌")),
+    if(bookmarks.any(|b| b.name() == "main" || b.name() == "master"), label("trunk_node", "◉")),
+    if(immutable, label("immutable", "●")),
+    label("normal", "○")
+  )
+)
+'''

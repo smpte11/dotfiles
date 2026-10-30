@@ -1,0 +1,24 @@
+[vars]
+profile = "work"
+email = "felix.brousseau-tremblay@kivra.com"
+
+[env]
+FM_HARNESS = "claude"
+SSH_AUTH_SOCK = "{% if os() == 'macos' %}{{ env.HOME }}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock{% else %}{{ env.HOME }}/.1password/agent.sock{% endif %}"
+
+[bootstrap.packages]
+"brew-cask:1password-cli" = { os = "macos" }
+
+[dotfile_groups.ssh]
+root = "ssh"
+
+[dotfile_groups.work]
+root = "work"
+
+[dotfile_groups.work.entries]
+"~/.ssh/config.d/agent" = { mode = "template" }
+"~/.config/k9s/skins/active-theme.yaml" = { mode = "template" }
+
+[bootstrap.hooks]
+pre-dotfiles = "install -d -m 700 ~/.ssh"
+final = "test -x ~/.local/bin/tuios || mise exec -- ~/.local/bin/fork-sync build"

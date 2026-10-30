@@ -1,0 +1,65 @@
+{%- set themes = read_toml(path=mise_config_dir ~ "/themes.toml") -%}
+{%- set t = themes[vars.theme] -%}
+{%- set bg = t.background -%}
+{%- set p = t.palette -%}
+[appearance]
+# theme='' + background='off' ride the terminal palette (switch-theme via Ghostty).
+theme = ''
+background = 'off'
+dockbar_position = 'top'
+whichkey_enabled = true
+nvim_navigation = true
+git_dirty = false
+master_ratio = 70
+border_focused_color = '{{ p.bright_green }}'
+border_unfocused_color = '{{ p.bright_black }}'
+
+[appearance.selection]
+bg = '{{ t.selection_bg }}'
+fg = '{{ t.selection_fg }}'
+search_bg = '{{ p.yellow }}'
+search_fg = '{{ bg }}'
+match_bg = '{{ p.bright_yellow }}'
+match_fg = '{{ bg }}'
+cursor_bg = '{{ t.cursor }}'
+cursor_fg = '{{ bg }}'
+
+[appearance.sidebar]
+width = 32
+density = 'roomy'
+header_style = 'pill'
+header_case = 'uppercase'
+sections = 'agents:45,sessions:20,files:25,terminals'
+subagent_rows = 'tree'
+subagent_collapse = 'expanded'
+subagent_fields = 'mark,name,time'
+subagent_max_rows = 5
+subagent_hide_finished = '30s'
+
+[appearance.sidebar.agent_row]
+tokens = ['need', 'harness', 'name', 'elapsed', 'context', 'subagents', 'now']
+
+[[appearance.sidebar.agent_row.elapsed.rule]]
+gt = 30
+fg = 'warning'
+
+[keybindings]
+leader_key = 'ctrl+space'
+
+[keybindings.terminal_mode]
+terminal_next_window = ['opt+tab']
+terminal_prev_window = ['opt+shift+tab']
+terminal_focus_left = ['opt+h']
+terminal_focus_down = ['opt+j']
+terminal_focus_up = ['opt+k']
+terminal_focus_right = ['opt+l']
+
+[startup]
+daemon = true
+
+[agents.permissions]
+mode = 'strict'
+grants = ['admin', 'respond']
+
+[spotlight]
+enabled = false

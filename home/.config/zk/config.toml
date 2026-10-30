@@ -1,0 +1,80 @@
+# NOTEBOOK SETTINGS
+[notebook]
+dir = "~/notebook"
+
+# NOTE SETTINGS
+[note]
+language = "en"
+default-title = "Untitled"
+filename = "{{format-date now 'timestamp'}}{{#if extra.prefix}}-{{extra.prefix}}{{/if}}-{{slug title}}"
+extension = "md"
+template = "default.md"
+
+id-charset = "alphanum"
+id-length = 4
+id-case = "lower"
+
+[extra]
+author = "Felix Brousseau-Tremblay"
+
+# GROUP OVERRIDES
+
+[group.daily-personal]
+paths = ["journal/personal"]
+
+[group.daily-personal.note]
+filename = "{{format-date now '%Y-%m-%d'}}"
+extension = "md"
+template = "daily-personal.md"
+
+[group.daily-work]
+paths = ["journal/work"]
+
+[group.daily-work.note]
+filename = "{{format-date now '%Y-%m-%d'}}"
+extension = "md"
+template = "daily-work.md"
+
+# MARKDOWN SETTINGS
+[format.markdown]
+link-format = "wiki"
+hashtags = true
+colon-tags = true
+multiword-tags = true
+
+# EXTERNAL TOOLS
+[tool]
+editor = "nvim"
+pager = "less -FIRX"
+fzf-preview = "bat -p --color always {-1}"
+
+# NAMED FILTERS
+[filter]
+recents = "--sort created- --created-after 'last two weeks'"
+
+# COMMAND ALIASES
+[alias]
+edlast = "zk edit --limit 1 --sort modified- $@"
+recent = "zk edit --sort created- --created-after 'last two weeks' --interactive"
+lucky = "zk list --quiet --format full --sort random --limit 1"
+
+daily = '''
+kind="$1"
+[ $# -gt 0 ] && shift
+case "$kind" in
+  personal|work) ;;
+  "")  echo "usage: zk daily {personal|work}" >&2; exit 2 ;;
+  *)   echo "zk daily: unknown kind '$kind' (use 'personal' or 'work')" >&2; exit 2 ;;
+esac
+dir="$ZK_NOTEBOOK_DIR/journal/$kind"
+today="$(date +%F)"
+prev="$(ls "$dir"/*.md 2>/dev/null | sed 's#.*/##; s/\.md$//' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' | awk -v t="$today" '$0 < t' | sort | tail -1)"
+zk new --no-input --extra "prev=$prev" "$@" "$dir"
+'''
+
+# LSP
+[lsp]
+
+[lsp.diagnostics]
+wiki-title = "hint"
+dead-link = "error"
