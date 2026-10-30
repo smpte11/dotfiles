@@ -41,7 +41,6 @@ zoxide = "latest"
 "aqua:walles/moor" = "latest"
 "github:fgrehm/crib" = "latest"
 "github:kunchenguid/no-mistakes" = "latest"
-"github:Gaurav-Gosain/tuios" = "latest"
 "github:vjeantet/alerter" = { version = "latest", os = ["macos"] }
 "npm:chrome-devtools-axi" = "0.1.35"
 "npm:gh-axi" = "0.1.35"
@@ -74,6 +73,7 @@ exclude = [".config/mise"]
 "~/.dotfiles/home/.bashrc" = { mode = "track" }
 "~/.dotfiles/home/.zshenv" = { mode = "track" }
 "~/.dotfiles/home/.config/mise/themes.toml" = { mode = "track" }
+"~/.dotfiles/home/.config/mise/conf.d/theme.toml" = { mode = "track" }
 "~/.dotfiles/home/.config/ghostty/themes/active-theme.tera" = { mode = "track" }
 "~/.dotfiles/home/.config/helix/languages.toml.tera" = { mode = "track" }
 "~/.dotfiles/home/.config/helix/themes/active-theme.toml.tera" = { mode = "track" }
@@ -84,6 +84,9 @@ exclude = [".config/mise"]
 "~/.dotfiles/home/.local/share/claude-lsp/plugins/elixir-lsp/.claude-plugin/plugin.json.tera" = { mode = "track" }
 "~/.dotfiles/home/.local/share/claude-lsp/plugins/erlang-lsp/.claude-plugin/plugin.json.tera" = { mode = "track" }
 "~/.dotfiles/home/.local/share/claude-lsp/plugins/scala-lsp/.claude-plugin/plugin.json.tera" = { mode = "track" }
+
+[history.reload]
+"~/.dotfiles/home/.config/mise/conf.d/theme.toml" = "mise dot apply --yes"
 
 [bootstrap.repos]
 "~/.local/share/zsh/plugins/fzf-tab" = { url = "https://github.com/Aloxaf/fzf-tab.git" }
@@ -108,5 +111,6 @@ if [ -d .jj ]; then
 else
   git pull --ff-only
 fi
+"$HOME/.local/bin/dotfiles-setup" ensure-modules
 mise bootstrap --update --prune-dotfiles --yes
 """

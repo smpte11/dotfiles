@@ -14,13 +14,14 @@ The script installs mise, clones the repository to `~/.dotfiles` and runs
 `dotfiles-setup`. `dotfiles-setup` asks for the machine's modules, writes them
 to `home/.config/mise/miserc.local.toml` (not committed) and runs
 `mise bootstrap`. Set `DOTFILES_ENV=work,desktop` to skip the questions.
+`dotfiles-setup` adds `ssh` to every machine that has an identity module.
 
 ## Layout
 
 | Path | Deployed | Holds |
 | --- | --- | --- |
 | `home/` | always | Shared files, linked file by file into `~` |
-| `ssh/` | `personal` or `work` | `~/.ssh/config` |
+| `ssh/` | `ssh` | `~/.ssh/config`; the module also builds the tuios fork |
 | `personal/` | `personal` | Proton Pass agent, personal signing key, Codestral key |
 | `work/` | `work` | 1Password agent, work identity, k9s skin, Claude keybindings |
 | `desktop/` | `desktop` | Journal reminder and Stream Deck plugin |
@@ -30,7 +31,9 @@ to `home/.config/mise/miserc.local.toml` (not committed) and runs
 
 Files ending in `.tera` are templates. They read `vars` from the config and the
 palette of `mise vars theme` from `themes.toml`. `switch-theme` runs `mise run theme:switch [theme]`
-and changes the theme for this machine. Without a name it opens a picker.
+and changes the theme for this machine by writing `home/.config/mise/conf.d/theme.toml` (git-ignored,
+tracked by mise history). Without a name it opens a picker. `mise dot rollback` of that file restores the
+previous theme and renders the templates again.
 
 ## Everyday commands
 

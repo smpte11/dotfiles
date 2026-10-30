@@ -9,9 +9,6 @@ SSH_AUTH_SOCK = "{% if os() == 'macos' %}{{ env.HOME }}/Library/Group Containers
 [bootstrap.packages]
 "brew-cask:1password-cli" = { os = "macos" }
 
-[dotfile_groups.ssh]
-root = "ssh"
-
 [dotfile_groups.work]
 root = "work"
 
@@ -21,7 +18,3 @@ root = "work"
 
 [dotfiles]
 "~/.dotfiles/work/.config/k9s/skins/active-theme.yaml.tera" = { mode = "track" }
-
-[bootstrap.hooks]
-pre-dotfiles = "install -d -m 700 ~/.ssh"
-final = "test -x ~/.local/bin/tuios || mise exec -- ~/.local/bin/fork-sync build"

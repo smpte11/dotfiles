@@ -1,0 +1,6 @@
+[dotfile_groups.ssh]
+root = "ssh"
+
+[bootstrap.hooks]
+pre-dotfiles = "install -d -m 700 ~/.ssh"
+final = "test -x ~/.local/bin/tuios || mise exec -- ~/.local/bin/fork-sync build"

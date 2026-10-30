@@ -170,9 +170,11 @@ before=$(cat "$HOME/.config/ghostty/themes/active-theme")
 mise run theme:switch tokyonight >/dev/null
 [ "$(cat "$HOME/.config/ghostty/themes/active-theme")" != "$before" ] || fail "ghostty theme did not change"
 grep -q 'colorscheme tokyonight' "$HOME/.config/nvim/plugin/25_theme.lua" || fail "nvim theme did not change"
-mise vars unset theme >/dev/null
-mise dot apply --yes >/dev/null
-[ "$(cat "$HOME/.config/ghostty/themes/active-theme")" = "$before" ] || fail "ghostty theme did not switch back"
+theme_file=$dotfiles/home/.config/mise/conf.d/theme.toml
+grep -qx 'theme = "tokyonight"' "$theme_file" || fail "the theme choice was not written to $theme_file"
+[ "$(mise dot history --path "$theme_file" --json | jq length)" -ge 1 ] || fail "no checkpoint saved for $theme_file"
+mise dot rollback "$theme_file" --yes >/dev/null
+[ "$(cat "$HOME/.config/ghostty/themes/active-theme")" = "$before" ] || fail "ghostty theme did not switch back after the rollback"
 
 step "history"
 tracked=$(mise dot paths --json | jq -r '.entries[] | select(.mode == "track") | .path | ltrimstr("~/.dotfiles/")')
@@ -181,6 +183,7 @@ for p in \
     home/.bashrc \
     home/.zshenv \
     home/.config/mise/themes.toml \
+    home/.config/mise/conf.d/theme.toml \
     home/.config/ghostty/themes/active-theme.tera; do
     grep -qxF -- "$p" <<<"$tracked" || fail "$p is not tracked"
 done
@@ -216,12 +219,16 @@ fi
 [ "$(jj config get user.email)" = "$expected_email" ] || fail "jj user.email is not $expected_email"
 [ "$(mise env --json | jq -r .FM_HARNESS)" = "$expected_harness" ] || fail "FM_HARNESS is not $expected_harness"
 
-if has_module personal || has_module work; then
+if has_module ssh || has_module personal || has_module work; then
+    [ -L "$HOME/.ssh/config" ] || fail "the ssh config is not deployed"
     ssh -G personalgit | grep -qx 'hostname github.com' || fail "ssh does not know personalgit"
     [ -s "$HOME/.ssh/personal.pub" ] || fail "personal.pub is missing"
     [ "$(stat -c %a "$HOME/.ssh")" = 700 ] || fail "$HOME/.ssh is not 0700"
 else
-    [ ! -e "$HOME/.ssh/config" ] || fail "an ssh config was deployed without an identity module"
+    [ ! -e "$HOME/.ssh/config" ] || fail "an ssh config was deployed without the ssh module"
+fi
+if mise ls --current --json | jq -e 'has("github:Gaurav-Gosain/tuios")' >/dev/null; then
+    fail "upstream tuios is installed as a mise tool and would shadow the fork"
 fi
 if has_module personal; then
     ssh -G personalgit | grep -qx "identityagent $HOME/.ssh/proton-pass-agent.sock" || fail "personal ssh agent is not proton"
@@ -247,6 +254,9 @@ if [ "$scenario" = fresh ] && has_module personal; then
     grep -q 1password "$HOME/.ssh/config.d/agent" || fail "config.d/agent does not point to 1password"
     [ ! -e "$HOME/.config/systemd/user/dev.mise.proton-pass-ssh-agent.service" ] || fail "the proton unit remains after the switch"
     [ ! -e "$HOME/.local/bin/proton-pass-ssh-agent" ] || fail "the proton wrapper remains after the switch"
+    [ -L "$HOME/.ssh/config" ] || fail "the ssh config was pruned by the switch"
+    [ "$(stat -c %a "$HOME/.ssh")" = 700 ] || fail "$HOME/.ssh is not 0700 after the switch"
+    grep -qx 'env = \["work","ssh"\]' "$dotfiles/home/.config/mise/miserc.local.toml" || fail "the modules are not work and ssh after the switch"
 fi
 
 echo "PASS: $scenario ${modules:-none}"

@@ -12,9 +12,9 @@ in_container() {
 choose_modules() {
     identity="$(mise exec gum@latest -- gum choose --header "Identity for this machine" personal work)"
     if mise exec gum@latest -- gum confirm "Desktop machine (journal reminders, Stream Deck plugin)?"; then
-        echo "$identity,desktop"
+        echo "$identity,ssh,desktop"
     else
-        echo "$identity"
+        echo "$identity,ssh"
     fi
 }
 
@@ -32,17 +32,38 @@ unapply_removed_modules() {
     done
 }
 
+with_ssh() {
+    case ",$1," in
+    *,ssh,*) echo "$1" ;;
+    *,personal,* | *,work,*) echo "$1,ssh" ;;
+    *) echo "$1" ;;
+    esac
+}
+
 write_modules() {
-    unapply_removed_modules "$(read_modules | paste -sd' ' -)" ",$(printf '%s' "$1" | tr -d ' ' | sed 's/,*$//'),"
-    list="$(printf '%s' "$1" | tr ',' '\n' | sed '/^$/d; s/.*/"&"/' | paste -sd, -)"
+    modules="$(with_ssh "$(printf '%s' "$1" | tr -d ' ' | sed 's/,*$//')")"
+    unapply_removed_modules "$(read_modules | paste -sd' ' -)" ",$modules,"
+    list="$(printf '%s' "$modules" | tr ',' '\n' | sed '/^$/d; s/.*/"&"/' | paste -sd, -)"
     printf 'env = [%s]\n' "$list" >"$miserc"
 }
+
+ensure_ssh_module() {
+    current="$(read_modules | paste -sd, -)"
+    [ "$(with_ssh "$current")" = "$current" ] || write_modules "$current"
+}
+
+if [ "${1:-}" = ensure-modules ]; then
+    ensure_ssh_module
+    exit 0
+fi
 
 if [ -n "${DOTFILES_ENV+set}" ]; then
     write_modules "$DOTFILES_ENV"
 elif [ -t 0 ] && ! in_container; then
     write_modules "$(choose_modules)"
 fi
+
+ensure_ssh_module
 
 exec mise bootstrap --from "$(git -C "$dotfiles" remote get-url origin)" \
     --from-dir "$dotfiles" --config-dir "$config_dir" --prune-dotfiles --yes "$@"

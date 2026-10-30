@@ -5,6 +5,7 @@
 set -eu
 
 themes_file="$HOME/.config/mise/themes.toml"
+theme_file="$HOME/.config/mise/conf.d/theme.toml"
 data_json=$(yq -p toml -o json '.' "$themes_file")
 active=$(mise vars theme)
 names=$(jq -r 'keys[]' <<EOT | sort
@@ -59,7 +60,10 @@ if [ "$theme_name" = "$active" ]; then
     exit 0
 fi
 
-mise vars "theme=$theme_name" >/dev/null
+mkdir -p "$(dirname "$theme_file")"
+[ -f "$theme_file" ] || printf '[vars]\n' >"$theme_file"
+mise dot capture --label "theme:switch $theme_name" -- \
+    mise config set --file "$theme_file" vars.theme "$theme_name" >/dev/null
 gum spin --spinner dot --title "Applying '$theme_name'..." -- mise dot apply --yes
 
 gum style --border rounded --margin "1 0" --padding "0 1" \

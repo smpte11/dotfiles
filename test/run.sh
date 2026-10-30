@@ -37,7 +37,7 @@ shell)
     exit 0
     ;;
 fresh)
-    [ $# -gt 0 ] || set -- none personal work
+    [ $# -gt 0 ] || set -- none personal work,ssh
     ;;
 migrate)
     [ $# -gt 0 ] || usage
