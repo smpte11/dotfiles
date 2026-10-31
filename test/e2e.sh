@@ -201,6 +201,9 @@ mise dot rollback "$history_file" --yes >/dev/null
 
 step "smoke"
 zsh -i -c exit || fail "zsh does not start"
+reshim_err=$(mise reshim 2>&1 >/dev/null) || true
+[ -z "$reshim_err" ] || fail "mise reshim warns about unusable tool executables: $reshim_err"
+pi --version >/dev/null 2>&1 || fail "pi is not runnable through its mise shim"
 tv list-channels | grep -qx alias || fail "television does not load the cable channels"
 hx --health 2>&1 | grep -q "Config file: $HOME/.config/helix/config.toml" || fail "helix does not find its config"
 nvim --headless +qa >/dev/null 2>&1 || fail "nvim fails to install its plugins"
