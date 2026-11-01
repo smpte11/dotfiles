@@ -1,0 +1,24 @@
+{%- set themes = read_toml(path=mise_config_dir ~ "/themes.toml") -%}
+{%- set t = themes[vars.theme] -%}
+[Palette]
+Name=Active Theme
+
+Background={{ t.background }}
+Foreground={{ t.foreground }}
+Cursor={{ t.cursor }}
+Color0={{ t.palette.black }}
+Color1={{ t.palette.red }}
+Color2={{ t.palette.green }}
+Color3={{ t.palette.yellow }}
+Color4={{ t.palette.blue }}
+Color5={{ t.palette.magenta }}
+Color6={{ t.palette.cyan }}
+Color7={{ t.palette.silver }}
+Color8={{ t.palette.bright_black }}
+Color9={{ t.palette.bright_red }}
+Color10={{ t.palette.bright_green }}
+Color11={{ t.palette.bright_yellow }}
+Color12={{ t.palette.bright_blue }}
+Color13={{ t.palette.bright_magenta }}
+Color14={{ t.palette.bright_cyan }}
+Color15={{ t.palette.white }}

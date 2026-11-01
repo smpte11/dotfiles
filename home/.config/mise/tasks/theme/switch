@@ -71,4 +71,5 @@ gum style --border rounded --margin "1 0" --padding "0 1" \
     "" \
     "Reload notes:" \
     "  Ghostty: auto-reloads on config change" \
+    "  Ptyxis:  restart to pick up the new theme" \
     "  Neovim:  restart to pick up the new theme"
