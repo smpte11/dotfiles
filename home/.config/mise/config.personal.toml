@@ -1,5 +1,6 @@
 [env]
 SSH_AUTH_SOCK = "{{ env.HOME }}/.ssh/proton-pass-agent.sock"
+PROTON_PASS_LINUX_KEYRING = "dbus"
 NVIM_AI_PROVIDER = "codestral"
 _.file = { path = "{{ env.HOME }}/.config/codestral/env", redact = true }
 
@@ -17,6 +18,7 @@ scope = "user"
 description = "Proton Pass SSH agent"
 command = "~/.local/bin/proton-pass-ssh-agent"
 restart = "always"
+environment = { PROTON_PASS_LINUX_KEYRING = "dbus" }
 
 [bootstrap.hooks]
 pre-dotfiles = "mise run dotfiles:proton-login"
