@@ -178,10 +178,6 @@ now(function()
 	})
 end)
 
-now(function()
-	require("mini.statuscolumn").setup()
-end)
-
 -- Statusline. Sets `:h 'statusline'` to show more info in a line below window.
 -- Example usage:
 -- - Left most section indicates current mode (text + highlighting).
