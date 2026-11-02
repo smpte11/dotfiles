@@ -282,6 +282,12 @@ if has_module work; then
     [ -s "$HOME/.config/k9s/skins/active-theme.yaml" ] || fail "k9s skin is missing"
     [ -L "$HOME/.claude/keybindings.json" ] || fail "claude keybindings are missing"
 fi
+if has_module desktop; then
+    plugin_js=$HOME/.config/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js
+    [ "$(stat -c %a "$plugin_js")" = 755 ] || fail "$plugin_js is not 0755"
+    if grep -qE '\{\{|\{%' "$plugin_js"; then fail "$plugin_js has unrendered template syntax"; fi
+    [ -L "$HOME/.config/opendeck/plugins/com.felbro.journal.sdPlugin/manifest.json" ] || fail "the opendeck plugin manifest is not linked"
+fi
 
 if has_module ssh || has_module personal || has_module work; then
     step "tuios fork"

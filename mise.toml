@@ -1,5 +1,5 @@
 [tasks."test:fresh"]
-description = "Install the dotfiles in a Linux container and check them (modules: none, personal, work)"
+description = "Install the dotfiles in a Linux container and check them (modules: none, personal, work,ssh,desktop; run in parallel)"
 run = "test/run.sh fresh"
 
 [tasks."test:migrate"]
