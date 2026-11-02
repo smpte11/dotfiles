@@ -45,3 +45,8 @@ wanted_by = []
 description = "Evening journal reminder at 20:30"
 on_calendar = "*-*-* 20:30"
 unit = "journal-reminder"
+
+[bootstrap.hooks]
+post-dotfiles = [
+  "if [ \"$(uname -s)\" = Linux ]; then flatpak override --user --filesystem={{ env.HOME }}/.dotfiles/desktop/.local/share/opendeck me.amankhanna.opendeck; fi",
+]
