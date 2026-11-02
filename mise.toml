@@ -13,3 +13,7 @@ run = "test/run.sh shell"
 [tasks."test:clean"]
 description = "Remove the test images, checkpoints and tool cache volumes"
 run = "test/run.sh clean"
+
+[tasks."deck:import"]
+description = "Convert the Elgato Stream Deck profiles of this Mac into the OpenDeck profiles of the desktop module"
+run = "node scripts/elgato-to-opendeck.mjs"

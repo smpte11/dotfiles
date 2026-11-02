@@ -173,7 +173,15 @@ check_identity() {
         plugin_js=$HOME/.config/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js
         [ "$(stat -c %a "$plugin_js")" = 755 ] || fail "$plugin_js is not 0755"
         if grep -qE '\{\{|\{%' "$plugin_js"; then fail "$plugin_js has unrendered template syntax"; fi
-        [ -L "$HOME/.config/opendeck/plugins/com.felbro.journal.sdPlugin/manifest.json" ] || fail "the opendeck plugin manifest is not linked"
+        [ -f "$HOME/.config/opendeck/plugins/com.felbro.journal.sdPlugin/manifest.json" ] || fail "the opendeck plugin manifest is missing"
+        [ ! -L "$HOME/.config/opendeck/plugins/com.felbro.journal.sdPlugin/imgs/journal.svg" ] || fail "the opendeck plugin icon is a symlink that opendeck refuses to serve"
+        deck=$HOME/.config/opendeck/profiles/sd-AB8JA516154CTX
+        [ "$(readlink "$deck/Default.json")" = "$dotfiles/desktop/.local/share/opendeck/profiles/linux/sd-AB8JA516154CTX/Default.json" ] || fail "the opendeck default profile is not the linux profile"
+        image=$HOME/.config/opendeck/images/sd-AB8JA516154CTX/Default/Keypad.0.0/0-user.png
+        [ -f "$image" ] && [ ! -L "$image" ] || fail "the opendeck key images are not copied"
+        clock_js=$HOME/.config/opendeck/plugins/com.felbro.clock.sdPlugin/plugin.js
+        [ -f "$clock_js" ] || fail "the opendeck clock plugin is missing"
+        if grep -qE '\{\{|\{%' "$clock_js"; then fail "$clock_js has unrendered template syntax"; fi
     fi
 }
 

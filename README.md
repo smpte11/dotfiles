@@ -27,7 +27,7 @@ the key, remove `~/.config/codestral/env` and run `mise run dotfiles:update`.
 | `ssh/` | `ssh` | `~/.ssh/config`; the module also builds the tuios fork |
 | `personal/` | `personal` | Proton Pass agent, personal signing key, Codestral key |
 | `work/` | `work` | 1Password agent, work identity, k9s skin, Claude keybindings |
-| `desktop/` | `desktop` | Journal reminder and Stream Deck plugin |
+| `desktop/` | `desktop` | Journal reminder, Stream Deck journal and clock plugins, OpenDeck profiles |
 | `home/.config/mise/config.toml` | always | Tools, groups, templates, repos |
 | `home/.config/mise/config.<module>.toml` | per module | The module's vars, env, groups, services and hooks |
 | `home/.config/mise/themes.toml` | | Theme palettes for the `*.tera` templates |
@@ -48,6 +48,10 @@ previous theme and renders the templates again.
   `.tera` template of a rendered file.
 - `mise run dotfiles:history [path]` browses the saved checkpoints of the tracked files.
   It previews each change, restores a checkpoint and undoes an operation.
+- `mise run deck:import` converts the Elgato Stream Deck profiles of this Mac into the
+  OpenDeck profiles of the `desktop` module, with one set for macOS and one for Linux.
+  OpenDeck writes profile changes through the symlinks into the checkout. Key images are
+  copied, so `mise dot add --changed` brings a changed image back.
 - `mise run test:fresh` installs the repository in Linux containers with docker
   or podman and checks it. Each install is saved as a checkpoint image and is
   reused until a file outside the checks changes; `--fresh` installs again.

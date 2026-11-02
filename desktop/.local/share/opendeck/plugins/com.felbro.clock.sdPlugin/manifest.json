@@ -1,0 +1,28 @@
+{
+  "Name": "Clock",
+  "Version": "1.0.0.0",
+  "Author": "Felix Brousseau-Tremblay",
+  "Description": "Show the time and date on the Stream Deck Neo info bar.",
+  "UUID": "com.felbro.clock",
+  "Icon": "imgs/clock",
+  "Category": "Clock",
+  "CategoryIcon": "imgs/clock",
+  "CodePath": "plugin.js",
+  "SDKVersion": 2,
+  "Software": { "MinimumVersion": "6.5" },
+  "OS": [
+    { "Platform": "mac", "MinimumVersion": "12" },
+    { "Platform": "linux", "MinimumVersion": "0" }
+  ],
+  "Nodejs": { "Version": "24" },
+  "Actions": [
+    {
+      "Name": "Clock",
+      "UUID": "com.felbro.clock.time",
+      "Icon": "imgs/clock",
+      "Tooltip": "Show the time and date",
+      "Controllers": ["Infobar"],
+      "States": [{ "Image": "imgs/clock", "ShowTitle": false }]
+    }
+  ]
+}
