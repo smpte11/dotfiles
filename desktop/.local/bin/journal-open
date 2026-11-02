@@ -7,7 +7,6 @@ kind="$(mise vars profile)"
 session=notes
 window=journal
 state="${XDG_STATE_HOME:-$HOME/.local/state}/journal"
-sock="$state/nvim.sock"
 
 mkdir -p "$state"
 
@@ -17,18 +16,18 @@ has_session() {
   tuios list-sessions --json 2>/dev/null | jq -e --arg s "$session" 'any(.[]; .name == $s)' >/dev/null
 }
 
-has_window() {
-  tuios get-window -s "$session" "$window" >/dev/null 2>&1
+edit_in_window() {
+  pid="$(tuios get-window -s "$session" "$window" --json 2>/dev/null | jq -r '.pid // empty')"
+  [ -n "$pid" ] && nvim --server "$state/$pid.sock" --remote-send "<Cmd>edit $note<CR>" 2>/dev/null
 }
 
 has_session || tuios new "$session" --detach --cwd "$HOME/notebook" >/dev/null
 
-if has_window && [ -S "$sock" ]; then
-  nvim --server "$sock" --remote "$note"
-else
-  has_window && tuios close-window -s "$session" "$window" >/dev/null
-  rm -f "$sock"
-  tuios new-window -s "$session" "$window" --cwd "$HOME/notebook" --no-focus -- nvim --listen "$sock" "$note" >/dev/null
+if ! edit_in_window; then
+  tuios close-window -s "$session" "$window" >/dev/null 2>&1 || true
+  rm -f "$state"/*.sock
+  tuios new-window -s "$session" "$window" --cwd "$HOME/notebook" --no-focus -- \
+    sh -c "exec nvim --listen \"\$1/\$\$.sock\" \"\$2\"" sh "$state" "$note" >/dev/null
 fi
 
 tuios focus-window -s "$session" "$window" >/dev/null

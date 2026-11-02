@@ -46,7 +46,7 @@ const render = () => {
 };
 
 const open = (context) =>
-  execFile(opener, (error) => {
+  execFile(opener, { timeout: 30_000 }, (error) => {
     send(error ? "showAlert" : "showOk", context);
     render();
   });
