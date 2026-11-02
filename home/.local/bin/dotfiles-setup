@@ -12,7 +12,7 @@ in_container() {
 
 choose_modules() {
     identity="$(mise exec gum@latest -- gum choose --header "Identity for this machine" personal work)"
-    if mise exec gum@latest -- gum confirm "Desktop machine (journal reminders, Stream Deck plugin)?"; then
+    if mise exec gum@latest -- gum confirm "Desktop machine (journal reminders, OpenDeck plugins and profiles)?"; then
         echo "$identity,ssh,desktop"
     else
         echo "$identity,ssh"

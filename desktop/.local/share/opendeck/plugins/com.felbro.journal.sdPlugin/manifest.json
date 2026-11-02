@@ -10,7 +10,10 @@
   "CodePath": "plugin.js",
   "SDKVersion": 2,
   "Software": { "MinimumVersion": "6.5" },
-  "OS": [{ "Platform": "mac", "MinimumVersion": "12" }],
+  "OS": [
+    { "Platform": "mac", "MinimumVersion": "12" },
+    { "Platform": "linux", "MinimumVersion": "0" }
+  ],
   "Nodejs": { "Version": "24" },
   "Actions": [
     {

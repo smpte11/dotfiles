@@ -1,16 +1,14 @@
 [dotfile_groups.desktop]
 root = "desktop"
-exclude = [".local/share/journal-deck", ".local/share/opendeck"]
+exclude = [".local/share/opendeck"]
 
 [dotfile_groups.desktop.entries]
-"~/Library/Application Support/com.elgato.StreamDeck/Plugins/com.felbro.journal.sdPlugin" = { mode = "symlink-each", source = ".local/share/journal-deck/com.felbro.journal.sdPlugin", variants = [{ os = "macos" }] }
-"~/Library/Application Support/com.elgato.StreamDeck/Plugins/com.felbro.journal.sdPlugin/plugin.js" = { mode = "template", source = ".local/share/journal-deck/com.felbro.journal.sdPlugin/plugin.js.tera", variants = [{ os = "macos" }] }
-"~/Library/Application Support/opendeck/plugins/com.felbro.journal.sdPlugin" = { mode = "copy", source = ".local/share/journal-deck/com.felbro.journal.sdPlugin", variants = [{ os = "macos" }] }
-"~/Library/Application Support/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js" = { mode = "template", source = ".local/share/journal-deck/com.felbro.journal.sdPlugin/plugin.js.tera", variants = [{ os = "macos" }] }
-"~/.config/opendeck/plugins/com.felbro.journal.sdPlugin" = { mode = "copy", source = ".local/share/journal-deck/com.felbro.journal.sdPlugin", variants = [{ os = "linux" }] }
-"~/.config/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js" = { mode = "template", source = ".local/share/journal-deck/com.felbro.journal.sdPlugin/plugin.js.tera", variants = [{ os = "linux" }] }
-"~/.var/app/me.amankhanna.opendeck/config/opendeck/plugins/com.felbro.journal.sdPlugin" = { mode = "copy", source = ".local/share/journal-deck/com.felbro.journal.sdPlugin", variants = [{ os = "linux" }] }
-"~/.var/app/me.amankhanna.opendeck/config/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js" = { mode = "template", source = ".local/share/journal-deck/com.felbro.journal.sdPlugin/plugin.js.tera", variants = [{ os = "linux" }] }
+"~/Library/Application Support/opendeck/plugins/com.felbro.journal.sdPlugin" = { mode = "copy", source = ".local/share/opendeck/plugins/com.felbro.journal.sdPlugin", variants = [{ os = "macos" }] }
+"~/Library/Application Support/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js" = { mode = "template", source = ".local/share/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js.tera", variants = [{ os = "macos" }] }
+"~/.config/opendeck/plugins/com.felbro.journal.sdPlugin" = { mode = "copy", source = ".local/share/opendeck/plugins/com.felbro.journal.sdPlugin", variants = [{ os = "linux" }] }
+"~/.config/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js" = { mode = "template", source = ".local/share/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js.tera", variants = [{ os = "linux" }] }
+"~/.var/app/me.amankhanna.opendeck/config/opendeck/plugins/com.felbro.journal.sdPlugin" = { mode = "copy", source = ".local/share/opendeck/plugins/com.felbro.journal.sdPlugin", variants = [{ os = "linux" }] }
+"~/.var/app/me.amankhanna.opendeck/config/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js" = { mode = "template", source = ".local/share/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js.tera", variants = [{ os = "linux" }] }
 "~/Library/Application Support/opendeck/plugins/com.felbro.pixel.sdPlugin" = { mode = "copy", source = ".local/share/opendeck/plugins/com.felbro.pixel.sdPlugin", variants = [{ os = "macos" }] }
 "~/Library/Application Support/opendeck/plugins/com.felbro.pixel.sdPlugin/colors.json" = { mode = "template", source = ".local/share/opendeck/plugins/com.felbro.pixel.sdPlugin/colors.json.tera", variants = [{ os = "macos" }] }
 "~/.config/opendeck/plugins/com.felbro.pixel.sdPlugin" = { mode = "copy", source = ".local/share/opendeck/plugins/com.felbro.pixel.sdPlugin", variants = [{ os = "linux" }] }

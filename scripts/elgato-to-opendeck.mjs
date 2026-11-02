@@ -12,7 +12,7 @@ const { values: args } = parseArgs({
     plugins: {
       type: "string",
       multiple: true,
-      default: [path.join(repo, "desktop/.local/share/journal-deck/com.felbro.journal.sdPlugin"), path.join(repo, "desktop/.local/share/opendeck/plugins/com.felbro.pixel.sdPlugin")],
+      default: [path.join(repo, "desktop/.local/share/opendeck/plugins/com.felbro.journal.sdPlugin"), path.join(repo, "desktop/.local/share/opendeck/plugins/com.felbro.pixel.sdPlugin")],
     },
     out: { type: "string", default: path.join(repo, "desktop/.local/share/opendeck") },
   },
