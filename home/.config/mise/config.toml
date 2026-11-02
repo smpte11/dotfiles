@@ -94,6 +94,9 @@ exclude = [".config/mise"]
 "~/.local/share/zsh/plugins/zsh-autosuggestions" = { url = "https://github.com/zsh-users/zsh-autosuggestions.git" }
 "~/.local/share/firstmate" = { url = "https://github.com/kunchenguid/firstmate" }
 
+[bootstrap.mise_shell_activate]
+zprofile = "shims"
+
 [bootstrap.services.mise-history]
 builtin = "history-watch"
 
@@ -112,6 +115,5 @@ if [ -d .jj ]; then
 else
   git pull --ff-only
 fi
-"$HOME/.local/bin/dotfiles-setup" ensure-modules
-mise bootstrap --update --prune-dotfiles --yes
+exec "$HOME/.local/bin/dotfiles-setup" update
 """

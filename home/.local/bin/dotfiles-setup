@@ -4,6 +4,7 @@ set -eu
 dotfiles="$HOME/.dotfiles"
 config_dir="home/.config/mise"
 miserc="$dotfiles/$config_dir/miserc.local.toml"
+pass="$HOME/.local/bin/pass-cli"
 
 in_container() {
     [ -n "${CODESPACES:-}${REMOTE_CONTAINERS:-}${container:-}" ] || [ -f /.dockerenv ] || [ -f /run/.containerenv ]
@@ -23,11 +24,15 @@ read_modules() {
     sed -n 's/^env = \[\(.*\)\]$/\1/p' "$miserc" | tr -d '" ' | tr ',' '\n' | sed '/^$/d'
 }
 
+deployed_codestral_key() {
+    sed -n 's/^CODESTRAL_API_KEY=//p' "$HOME/.config/codestral/env" 2>/dev/null || true
+}
+
 unapply_removed_modules() {
     for module in $1; do
         case "$2" in
         *",$module,"*) ;;
-        *) mise bootstrap unapply "$module" --yes ;;
+        *) CODESTRAL_API_KEY="${CODESTRAL_API_KEY:-$(deployed_codestral_key)}" mise bootstrap unapply "$module" --yes ;;
         esac
     done
 }
@@ -52,9 +57,31 @@ ensure_ssh_module() {
     [ "$(with_ssh "$current")" = "$current" ] || write_modules "$current"
 }
 
-if [ "${1:-}" = ensure-modules ]; then
+proton_login() {
+    if [ ! -x "$pass" ]; then
+        curl -fsSL https://proton.me/download/pass-cli/install.sh | mise exec jq@latest -- bash
+    fi
+    "$pass" info >/dev/null 2>&1 && return 0
+    if [ -t 0 ]; then
+        "$pass" login
+    else
+        echo "pass-cli is not logged in; run 'pass-cli login', then 'mise run dotfiles:update'" >&2
+    fi
+}
+
+export_secrets() {
+    read_modules | grep -qx personal || return 0
+    proton_login
+    key="$("$pass" item view 'pass://Personal/Codestral/API Key' 2>/dev/null || true)"
+    CODESTRAL_API_KEY="${key:-${CODESTRAL_API_KEY:-}}"
+    export CODESTRAL_API_KEY
+}
+
+if [ "${1:-}" = update ]; then
+    shift
     ensure_ssh_module
-    exit 0
+    export_secrets
+    exec mise bootstrap --update --prune-dotfiles --yes "$@"
 fi
 
 if [ -n "${DOTFILES_ENV+set}" ]; then
@@ -64,6 +91,7 @@ elif [ -t 0 ] && ! in_container; then
 fi
 
 ensure_ssh_module
+export_secrets
 
 exec mise bootstrap --from "$(git -C "$dotfiles" remote get-url origin)" \
     --from-dir "$dotfiles" --config-dir "$config_dir" --prune-dotfiles --yes "$@"

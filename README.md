@@ -15,6 +15,9 @@ The script installs mise, clones the repository to `~/.dotfiles` and runs
 to `home/.config/mise/miserc.local.toml` (not committed) and runs
 `mise bootstrap`. Set `DOTFILES_ENV=work,desktop` to skip the questions.
 `dotfiles-setup` adds `ssh` to every machine that has an identity module.
+On a `personal` machine it also logs in to Proton Pass and gives the Codestral
+key to `mise bootstrap` as the `CODESTRAL_API_KEY` bootstrap secret. To change
+the key, remove `~/.config/codestral/env` and run `mise run dotfiles:update`.
 
 ## Layout
 

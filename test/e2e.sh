@@ -4,7 +4,7 @@ umask 022
 
 scenario=$1
 modules=${2:-}
-bootstrap_args=(--skip services --skip final-hook)
+bootstrap_args=(--skip services --skip task)
 
 dotfiles=$HOME/.dotfiles
 origin=/tmp/origin
@@ -165,6 +165,20 @@ if has_module personal; then
     [ -x "$HOME/.local/bin/proton-pass-ssh-agent" ] || fail "the proton ssh agent wrapper is not executable"
 fi
 
+if has_module personal; then
+    step "secrets"
+    codestral=$HOME/.config/codestral/env
+    [ -f "$codestral" ] && [ ! -s "$codestral" ] || fail "$codestral is not an empty file without a key"
+    rm "$codestral"
+    status_output=$(CODESTRAL_API_KEY=e2e-secret mise dot status --verbose 2>&1)
+    if grep -q e2e-secret <<<"$status_output"; then fail "mise dot status prints the codestral key"; fi
+    CODESTRAL_API_KEY=e2e-secret mise dot apply --yes >/dev/null
+    [ "$(cat "$codestral")" = CODESTRAL_API_KEY=e2e-secret ] || fail "$codestral does not hold the key"
+    [ "$(stat -c %a "$codestral")" = 600 ] || fail "$codestral is not 0600"
+    [ "$(mise env --json | jq -r .CODESTRAL_API_KEY)" = e2e-secret ] || fail "mise env does not load the codestral key"
+    mise bootstrap --yes "${bootstrap_args[@]}" >/dev/null || fail "bootstrap fails without the key in the environment"
+fi
+
 step "theme switch"
 before=$(cat "$HOME/.config/ghostty/themes/active-theme")
 mise run theme:switch tokyonight >/dev/null
@@ -204,6 +218,8 @@ zsh -i -c exit || fail "zsh does not start"
 reshim_err=$(mise reshim 2>&1 >/dev/null) || true
 [ -z "$reshim_err" ] || fail "mise reshim warns about unusable tool executables: $reshim_err"
 pi --version >/dev/null 2>&1 || fail "pi is not runnable through its mise shim"
+login_jq=$(env -i HOME="$HOME" PATH=/usr/bin:/bin zsh -l -c 'command -v jq') || fail "a zsh login shell does not find jq"
+[ "$login_jq" = "$HOME/.local/share/mise/shims/jq" ] || fail "a zsh login shell does not use the mise shims: $login_jq"
 tv list-channels | grep -qx alias || fail "television does not load the cable channels"
 hx --health 2>&1 | grep -q "Config file: $HOME/.config/helix/config.toml" || fail "helix does not find its config"
 nvim --headless +qa >/dev/null 2>&1 || fail "nvim fails to install its plugins"
@@ -227,6 +243,11 @@ if has_module ssh || has_module personal || has_module work; then
     ssh -G personalgit | grep -qx 'hostname github.com' || fail "ssh does not know personalgit"
     [ -s "$HOME/.ssh/personal.pub" ] || fail "personal.pub is missing"
     [ "$(stat -c %a "$HOME/.ssh")" = 700 ] || fail "$HOME/.ssh is not 0700"
+    chmod 755 "$HOME/.ssh"
+    if mise bootstrap files status --missing >/dev/null 2>&1; then fail "mise bootstrap files status does not report the mode of $HOME/.ssh"; fi
+    mise bootstrap files apply --yes >/dev/null
+    [ "$(stat -c %a "$HOME/.ssh")" = 700 ] || fail "mise bootstrap files apply does not restore the mode of $HOME/.ssh"
+    mise bootstrap --dry-run --only task 2>&1 | grep -q 'fork-sync build' || fail "the bootstrap task does not build the tuios fork"
 else
     [ ! -e "$HOME/.ssh/config" ] || fail "an ssh config was deployed without the ssh module"
 fi
@@ -257,6 +278,7 @@ if [ "$scenario" = fresh ] && has_module personal; then
     grep -q 1password "$HOME/.ssh/config.d/agent" || fail "config.d/agent does not point to 1password"
     [ ! -e "$HOME/.config/systemd/user/dev.mise.proton-pass-ssh-agent.service" ] || fail "the proton unit remains after the switch"
     [ ! -e "$HOME/.local/bin/proton-pass-ssh-agent" ] || fail "the proton wrapper remains after the switch"
+    [ ! -e "$HOME/.config/codestral/env" ] || fail "the codestral key remains after the switch"
     [ -L "$HOME/.ssh/config" ] || fail "the ssh config was pruned by the switch"
     [ "$(stat -c %a "$HOME/.ssh")" = 700 ] || fail "$HOME/.ssh is not 0700 after the switch"
     grep -qx 'env = \["work","ssh"\]' "$dotfiles/home/.config/mise/miserc.local.toml" || fail "the modules are not work and ssh after the switch"

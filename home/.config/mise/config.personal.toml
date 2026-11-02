@@ -11,7 +11,12 @@ _.file = { path = "{{ env.HOME }}/.config/codestral/env", redact = true }
 root = "personal"
 
 [dotfile_groups.personal.entries]
-"~/.config/codestral/env" = { mode = "template", create_if_missing = true, remove_empty = true, permissions = "0600" }
+"~/.config/codestral/env" = { mode = "template", create_if_missing = true, permissions = "0600" }
+
+[bootstrap.secrets.codestral_api_key]
+env = "CODESTRAL_API_KEY"
+description = "Codestral API key"
+allow_empty = true
 
 [bootstrap.services.proton-pass-ssh-agent]
 scope = "user"
@@ -19,24 +24,3 @@ description = "Proton Pass SSH agent"
 command = "~/.local/bin/proton-pass-ssh-agent"
 restart = "always"
 environment = { PROTON_PASS_LINUX_KEYRING = "dbus" }
-
-[bootstrap.hooks]
-pre-dotfiles = "mise run dotfiles:proton-login"
-
-[tasks."dotfiles:proton-login"]
-description = "Install pass-cli and log in to Proton Pass"
-run = """
-set -eu
-pass="$HOME/.local/bin/pass-cli"
-if [ ! -x "$pass" ]; then
-  curl -fsSL https://proton.me/download/pass-cli/install.sh | mise exec jq@latest -- bash
-fi
-if "$pass" info >/dev/null 2>&1; then
-  exit 0
-fi
-if [ -t 0 ]; then
-  "$pass" login
-else
-  echo "pass-cli is not logged in; run 'pass-cli login', then 'mise bootstrap'" >&2
-fi
-"""
