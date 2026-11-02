@@ -75,8 +75,12 @@ run_in() {
         -v "dotfiles-test-mise-$arch-$slug:/home/tester/.local/share/mise" "$@"
 }
 
+tracked_files() {
+    jj file list 2>/dev/null || git ls-files --cached --others --exclude-standard
+}
+
 inputs_hash() {
-    jj file list | grep -vxE 'test/(e2e|run)\.sh|README\.md|mise\.toml|docs/.*' | sort | while IFS= read -r f; do
+    tracked_files | grep -vxE 'test/(e2e|run)\.sh|README\.md|mise\.toml|docs/.*' | sort | while IFS= read -r f; do
         [ -f "$f" ] && shasum "$f"
     done | shasum | cut -c1-16
 }
