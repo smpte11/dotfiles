@@ -44,19 +44,6 @@ const small = {
   W: ["10001", "10001", "10101", "11011", "10001"],
 };
 
-const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
-
-const mix = (a, b, amount) => {
-  const [from, to] = [rgb(a), rgb(b)];
-  return `#${from.map((value, i) => Math.round(value + (to[i] - value) * amount).toString(16).padStart(2, "0")).join("")}`;
-};
-
-const steps = (stops, amount) => {
-  const position = Math.min(amount, 0.9999) * (stops.length - 1);
-  const index = Math.floor(position);
-  return mix(stops[index], stops[index + 1], position - index);
-};
-
 const rect = (x, y, w, h, fill) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}"/>`;
 
 const textWidth = (font, value, scale) => [...value].reduce((sum, char) => sum + (font[char][0].length + 1) * scale, -scale);
@@ -80,4 +67,4 @@ const svg = (width, height, body) =>
 
 const pad = (value) => String(value).padStart(2, "0");
 
-module.exports = { large, small, mix, steps, rect, text, textWidth, svg, pad };
+module.exports = { large, small, rect, text, textWidth, svg, pad };

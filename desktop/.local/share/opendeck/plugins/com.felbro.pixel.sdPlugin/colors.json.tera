@@ -1,17 +1,18 @@
 {%- set themes = read_toml(path=mise_config_dir ~ "/themes.toml") -%}
 {%- set t = themes[vars.theme] -%}
-{%- set p = t.palette -%}
+{%- set palette = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "silver", "bright_black", "bright_red", "bright_green", "bright_yellow", "bright_blue", "bright_magenta", "bright_cyan", "white"] -%}
+{%- set base = ["b00", "b01", "b02", "b03", "b04", "b05", "b06", "b07"] -%}
 {
   "background": "{{ t.background }}",
   "foreground": "{{ t.foreground }}",
   "palette": {
-    "blue": "{{ p.blue }}",
-    "bright_magenta": "{{ p.bright_magenta }}",
-    "cyan": "{{ p.cyan }}",
-    "green": "{{ p.green }}",
-    "magenta": "{{ p.magenta }}",
-    "red": "{{ p.red }}",
-    "white": "{{ p.white }}",
-    "yellow": "{{ p.yellow }}"
+{%- for name in palette %}
+    "{{ name }}": "{{ t.palette[name] }}"{% if not loop.last %},{% endif %}
+{%- endfor %}
+  },
+  "base": {
+{%- for name in base %}
+    "{{ name }}": "{{ t.base[name] }}"{% if not loop.last %},{% endif %}
+{%- endfor %}
   }
 }

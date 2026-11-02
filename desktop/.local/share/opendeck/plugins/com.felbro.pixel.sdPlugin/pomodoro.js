@@ -1,4 +1,4 @@
-const { large, small, mix, rect, text, textWidth, svg, pad } = require("./pixel");
+const { large, small, rect, text, textWidth, svg, pad } = require("./pixel");
 
 const size = 144;
 const pixel = 4;
@@ -68,27 +68,29 @@ const timer = (settings, saved) => {
 const render = (theme) => {
   const phaseColors = { work: theme.palette.red, shortBreak: theme.palette.green, longBreak: theme.palette.cyan };
   const background = theme.background;
-  const ink = theme.palette.white;
+  const track = theme.base.b02;
+  const shadow = theme.base.b01;
+  const muted = theme.palette.silver;
   return (view) => {
-    const color = view.running ? phaseColors[view.phase] : mix(phaseColors[view.phase], background, 0.45);
-    const dim = mix(phaseColors[view.phase], background, 0.75);
+    const color = phaseColors[view.phase];
+    const fill = view.running ? color : muted;
+    const ink = view.running ? theme.foreground : muted;
     const seconds = Math.ceil(view.remaining / 1000);
     const time = `${pad(Math.floor(seconds / 60))}:${pad(seconds % 60)}`;
     const label = labels[view.phase];
     const parts = [rect(0, 0, size, size, background)];
-    parts.push(rect(0, 0, size, pixel, color), rect(0, size - pixel, size, pixel, color), rect(0, 0, pixel, size, color), rect(size - pixel, 0, pixel, size, color));
     parts.push(text(small, label, (size - textWidth(small, label, pixel)) / 2, 14, pixel, color));
     const timeX = (size - textWidth(large, time, pixel)) / 2;
-    parts.push(text(large, time, timeX + pixel / 2, 46 + pixel / 2, pixel, dim));
-    parts.push(text(large, time, timeX, 46, pixel, view.running ? ink : mix(ink, background, 0.45)));
+    parts.push(text(large, time, timeX + pixel / 2, 46 + pixel / 2, pixel, shadow));
+    parts.push(text(large, time, timeX, 46, pixel, ink));
     const barWidth = size - 32;
     const filled = Math.round((barWidth * view.progress) / pixel) * pixel;
-    parts.push(rect(16, 90, barWidth, 8, dim), rect(16, 90, filled, 8, color));
+    parts.push(rect(16, 90, barWidth, 8, track), rect(16, 90, filled, 8, fill));
     const dot = 12;
     const gap = 8;
     const dotsX = (size - (view.cycles * dot + (view.cycles - 1) * gap)) / 2;
     for (let i = 0; i < view.cycles; i++) {
-      parts.push(rect(dotsX + i * (dot + gap), 112, dot, dot, i < view.completed ? phaseColors.work : dim));
+      parts.push(rect(dotsX + i * (dot + gap), 112, dot, dot, i < view.completed ? phaseColors.work : track));
     }
     return svg(size, size, parts.join(""));
   };

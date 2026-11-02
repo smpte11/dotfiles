@@ -13,8 +13,8 @@ const opener = path.join(home, ".local/bin/journal-open");
 const colors = {
   background: "{{ t.background }}",
   foreground: "{{ t.foreground }}",
-  pending: "{{ t.ribbon_bg }}",
-  pendingText: "{{ t.ribbon_fg }}",
+  pending: "{{ t.palette.yellow }}",
+  pendingText: "{{ t.background }}",
 };
 
 const args = {};
