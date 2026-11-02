@@ -44,8 +44,12 @@ previous theme and renders the templates again.
 - `mise dot status` lists what is deployed. `mise dot apply` deploys new files.
 - `mise run dotfiles:history [path]` browses the saved checkpoints of the tracked files.
   It previews each change, restores a checkpoint and undoes an operation.
-- `mise run test:fresh` installs the repository in a Linux container and
-  checks it. `mise run test:clean` removes the image and its cache.
+- `mise run test:fresh` installs the repository in Linux containers with docker
+  or podman and checks it. Each install is saved as a checkpoint image and is
+  reused until a file outside the checks changes; `--fresh` installs again.
+  Each check group runs in its own container from the checkpoint, so
+  `mise run test:fresh personal --only theme,secrets` runs only those groups.
+  `mise run test:clean` removes the images, checkpoints and caches.
 
 ## Migrating a chezmoi machine
 
