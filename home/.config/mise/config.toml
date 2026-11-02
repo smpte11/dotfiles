@@ -46,6 +46,7 @@ zoxide = "latest"
 "github:fgrehm/crib" = "latest"
 "github:kunchenguid/no-mistakes" = "latest"
 "github:vjeantet/alerter" = { version = "latest", os = ["macos"] }
+"npm:@agentclientprotocol/claude-agent-acp" = "latest"
 "npm:chrome-devtools-axi" = "0.1.35"
 "npm:gh-axi" = "0.1.35"
 "npm:lavish-axi" = "0.1.79"
