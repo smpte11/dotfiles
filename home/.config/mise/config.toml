@@ -1,7 +1,7 @@
 [vars]
 profile = "personal"
 email = "felix@brouss.eu"
-theme = { default = "eldritch", prompt = "Theme" }
+theme = { default = "eldritch" }
 
 [env]
 FM_HARNESS = "pi"
@@ -38,7 +38,7 @@ zoxide = "latest"
 "aqua:nushell/nushell" = "latest"
 "aqua:zk-org/zk" = "latest"
 "aqua:tealdeer-rs/tealdeer" = "latest"
-"aqua:walles/moor" = "latest"
+"aqua:walles/moor" = { version = "latest", os = ["macos", "linux/x64"] }
 "github:fgrehm/crib" = "latest"
 "github:kunchenguid/no-mistakes" = "latest"
 "github:vjeantet/alerter" = { version = "latest", os = ["macos"] }

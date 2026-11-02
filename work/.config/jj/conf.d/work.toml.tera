@@ -1,5 +1,5 @@
 [user]
-email = "felix.brousseau-tremblay@kivra.com"
+email = "{{ vars.email }}"
 
 [signing]
 behavior = "own"

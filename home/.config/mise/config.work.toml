@@ -14,6 +14,7 @@ root = "work"
 
 [dotfile_groups.work.entries]
 "~/.ssh/config.d/agent" = { mode = "template" }
+"~/.config/jj/conf.d/work.toml" = { mode = "template" }
 "~/.config/k9s/skins/active-theme.yaml" = { mode = "template" }
 
 [dotfiles]
