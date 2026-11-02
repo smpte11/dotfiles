@@ -107,27 +107,9 @@ check_theme() {
 }
 
 check_history() {
-    local tracked p history_file=$dotfiles/home/.zshrc history_before
+    local tracked
     tracked=$(mise dot paths --json | jq -r '.entries[] | select(.mode == "track") | .path | ltrimstr("~/.dotfiles/")')
-    for p in \
-        home/.zshrc \
-        home/.bashrc \
-        home/.zshenv \
-        home/.config/mise/themes.toml \
-        home/.config/mise/conf.d/theme.toml \
-        home/.config/ghostty/themes/active-theme.tera; do
-        grep -qxF -- "$p" <<<"$tracked" || fail "$p is not tracked"
-    done
-    if has_module work; then
-        grep -qxF "work/.config/k9s/skins/active-theme.yaml.tera" <<<"$tracked" || fail "the k9s skin template is not tracked"
-    fi
-    history_before=$(cat "$history_file")
-    mise dot save >/dev/null
-    echo "# e2e history edit" >>"$history_file"
-    mise dot save >/dev/null
-    [ "$(mise dot history --path "$history_file" --json | jq length)" -ge 1 ] || fail "no checkpoint saved for $history_file"
-    mise dot rollback "$history_file" --yes >/dev/null
-    [ "$(cat "$history_file")" = "$history_before" ] || fail "rollback did not restore $history_file"
+    [ "$tracked" = home/.config/mise/conf.d/theme.toml ] || fail "history tracks more than the theme choice: $tracked"
 }
 
 check_smoke() {

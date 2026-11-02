@@ -68,21 +68,7 @@ exclude = [".config/mise"]
 "~/.pi/agent/settings.json/extensions" = { merge = true }
 
 [dotfiles]
-"~/.dotfiles/home/.bashrc" = { mode = "track" }
-"~/.dotfiles/home/.config/ghostty/themes/active-theme.tera" = { mode = "track" }
-"~/.dotfiles/home/.config/helix/languages.toml.tera" = { mode = "track" }
-"~/.dotfiles/home/.config/helix/themes/active-theme.toml.tera" = { mode = "track" }
 "~/.dotfiles/home/.config/mise/conf.d/theme.toml" = { mode = "track" }
-"~/.dotfiles/home/.config/mise/themes.toml" = { mode = "track" }
-"~/.dotfiles/home/.config/nvim/plugin/25_theme.lua.tera" = { mode = "track" }
-"~/.dotfiles/home/.config/television/themes/active-theme.toml.tera" = { mode = "track" }
-"~/.dotfiles/home/.config/tuios/config.toml.tera" = { mode = "track" }
-"~/.dotfiles/home/.local/share/claude-lsp/.claude-plugin/marketplace.json.tera" = { mode = "track" }
-"~/.dotfiles/home/.local/share/claude-lsp/plugins/elixir-lsp/.claude-plugin/plugin.json.tera" = { mode = "track" }
-"~/.dotfiles/home/.local/share/claude-lsp/plugins/erlang-lsp/.claude-plugin/plugin.json.tera" = { mode = "track" }
-"~/.dotfiles/home/.local/share/claude-lsp/plugins/scala-lsp/.claude-plugin/plugin.json.tera" = { mode = "track" }
-"~/.dotfiles/home/.zshenv" = { mode = "track" }
-"~/.dotfiles/home/.zshrc" = { mode = "track" }
 "~/.local/share/org.gnome.Ptyxis/palettes/Active Theme.palette" = { source = "~/.dotfiles/home/.local/share/org.gnome.Ptyxis/palettes/Active Theme.palette.tera", mode = "template" }
 "~/.local/state/firstmate/config/backend" = { content = "herdr\n" }
 

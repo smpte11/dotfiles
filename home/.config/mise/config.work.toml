@@ -16,6 +16,3 @@ root = "work"
 "~/.ssh/config.d/agent" = { mode = "template" }
 "~/.config/jj/conf.d/work.toml" = { mode = "template" }
 "~/.config/k9s/skins/active-theme.yaml" = { mode = "template" }
-
-[dotfiles]
-"~/.dotfiles/work/.config/k9s/skins/active-theme.yaml.tera" = { mode = "track" }
