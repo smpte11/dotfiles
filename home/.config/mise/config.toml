@@ -11,6 +11,7 @@ FM_HARNESS = "pi"
 
 [tools]
 usage = "latest"
+bat = "latest"
 carapace = "latest"
 delta = "latest"
 devcontainer-cli = "latest"
