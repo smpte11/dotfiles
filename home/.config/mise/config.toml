@@ -1,3 +1,6 @@
+[settings]
+dotfiles.root = "~/.dotfiles"
+
 [vars]
 profile = "personal"
 email = "felix@brouss.eu"
@@ -39,6 +42,7 @@ zoxide = "latest"
 "aqua:zk-org/zk" = "latest"
 "aqua:tealdeer-rs/tealdeer" = "latest"
 "aqua:walles/moor" = { version = "latest", os = ["macos", "linux/x64"] }
+"go:github.com/walles/moor/v2/cmd/moor" = { version = "latest", os = ["linux/arm64"] }
 "github:fgrehm/crib" = "latest"
 "github:kunchenguid/no-mistakes" = "latest"
 "github:vjeantet/alerter" = { version = "latest", os = ["macos"] }

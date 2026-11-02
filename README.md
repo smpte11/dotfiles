@@ -42,6 +42,10 @@ previous theme and renders the templates again.
 
 - `mise run dotfiles:update` pulls the checkout and bootstraps again.
 - `mise dot status` lists what is deployed. `mise dot apply` deploys new files.
+- `mise dot status --missing` exits with 1 when a file differs from the config.
+  `mise dot diff` shows what `mise dot apply` would change.
+- `mise dot edit <target>` opens the source of a deployed file, such as the
+  `.tera` template of a rendered file.
 - `mise run dotfiles:history [path]` browses the saved checkpoints of the tracked files.
   It previews each change, restores a checkpoint and undoes an operation.
 - `mise run test:fresh` installs the repository in Linux containers with docker

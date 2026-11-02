@@ -118,6 +118,7 @@ check_smoke() {
     reshim_err=$(mise reshim 2>&1 >/dev/null) || true
     [ -z "$reshim_err" ] || fail "mise reshim warns about unusable tool executables: $reshim_err"
     pi --version >/dev/null 2>&1 || fail "pi is not runnable through its mise shim"
+    moor --version >/dev/null 2>&1 || fail "moor, the jj pager, is not runnable through its mise shim"
     login_jq=$(env -i HOME="$HOME" PATH=/usr/bin:/bin zsh -l -c 'command -v jq') || fail "a zsh login shell does not find jq"
     [ "$login_jq" = "$HOME/.local/share/mise/shims/jq" ] || fail "a zsh login shell does not use the mise shims: $login_jq"
     tv list-channels | grep -qx alias || fail "television does not load the cable channels"
