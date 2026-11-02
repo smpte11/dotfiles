@@ -1,0 +1,36 @@
+{
+  "Name": "Pixel",
+  "Version": "1.0.0.0",
+  "Author": "Felix Brousseau-Tremblay",
+  "Description": "Pixel art clock and focus timer in the colours of the mise theme.",
+  "UUID": "com.felbro.pixel",
+  "Icon": "imgs/clock",
+  "Category": "Pixel",
+  "CategoryIcon": "imgs/clock",
+  "CodePath": "plugin.js",
+  "SDKVersion": 2,
+  "Software": { "MinimumVersion": "6.5" },
+  "OS": [
+    { "Platform": "mac", "MinimumVersion": "12" },
+    { "Platform": "linux", "MinimumVersion": "0" }
+  ],
+  "Nodejs": { "Version": "24" },
+  "Actions": [
+    {
+      "Name": "Clock",
+      "UUID": "com.felbro.pixel.clock",
+      "Icon": "imgs/clock",
+      "Tooltip": "Show the time and date on the Neo info bar",
+      "Controllers": ["Infobar"],
+      "States": [{ "Image": "imgs/clock", "ShowTitle": false }]
+    },
+    {
+      "Name": "Focus timer",
+      "UUID": "com.felbro.pixel.pomodoro",
+      "Icon": "imgs/pomodoro",
+      "Tooltip": "Work and break cycles. Press to start or pause, hold to reset.",
+      "Controllers": ["Keypad"],
+      "States": [{ "Image": "imgs/pomodoro", "ShowTitle": false }]
+    }
+  ]
+}

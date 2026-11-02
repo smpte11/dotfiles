@@ -1,0 +1,17 @@
+{%- set themes = read_toml(path=mise_config_dir ~ "/themes.toml") -%}
+{%- set t = themes[vars.theme] -%}
+{%- set p = t.palette -%}
+{
+  "background": "{{ t.background }}",
+  "foreground": "{{ t.foreground }}",
+  "palette": {
+    "blue": "{{ p.blue }}",
+    "bright_magenta": "{{ p.bright_magenta }}",
+    "cyan": "{{ p.cyan }}",
+    "green": "{{ p.green }}",
+    "magenta": "{{ p.magenta }}",
+    "red": "{{ p.red }}",
+    "white": "{{ p.white }}",
+    "yellow": "{{ p.yellow }}"
+  }
+}

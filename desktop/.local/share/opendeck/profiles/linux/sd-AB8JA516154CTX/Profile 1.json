@@ -7,9 +7,9 @@
         ],
         "disable_automatic_states": false,
         "encoder": null,
-        "icon": "plugins/com.felbro.clock.sdPlugin/imgs/clock.svg",
+        "icon": "plugins/com.felbro.pixel.sdPlugin/imgs/clock.svg",
         "name": "Clock",
-        "plugin": "com.felbro.clock.sdPlugin",
+        "plugin": "com.felbro.pixel.sdPlugin",
         "property_inspector": "",
         "states": [
           {
@@ -17,7 +17,7 @@
             "background_colour": "#000000",
             "colour": "#FFFFFF",
             "family": "Liberation Sans",
-            "image": "plugins/com.felbro.clock.sdPlugin/imgs/clock.svg",
+            "image": "plugins/com.felbro.pixel.sdPlugin/imgs/clock.svg",
             "image_override": null,
             "image_scale": 100,
             "name": "",
@@ -32,8 +32,8 @@
           }
         ],
         "supported_in_multi_actions": true,
-        "tooltip": "Show the time and date",
-        "uuid": "com.felbro.clock.time",
+        "tooltip": "Show the time and date on the Neo info bar",
+        "uuid": "com.felbro.pixel.clock",
         "visible_in_action_list": true
       },
       "children": null,
@@ -258,7 +258,72 @@
         }
       ]
     },
-    null,
+    {
+      "action": {
+        "controllers": [
+          "Keypad"
+        ],
+        "disable_automatic_states": false,
+        "encoder": null,
+        "icon": "plugins/com.felbro.pixel.sdPlugin/imgs/pomodoro.svg",
+        "name": "Focus timer",
+        "plugin": "com.felbro.pixel.sdPlugin",
+        "property_inspector": "",
+        "states": [
+          {
+            "alignment": "middle",
+            "background_colour": "#000000",
+            "colour": "#FFFFFF",
+            "family": "Liberation Sans",
+            "image": "plugins/com.felbro.pixel.sdPlugin/imgs/pomodoro.svg",
+            "image_override": null,
+            "image_scale": 100,
+            "name": "",
+            "show": false,
+            "size": 16,
+            "stroke_colour": "#000000",
+            "stroke_size": 3,
+            "style": "Regular",
+            "text": "",
+            "text_override": null,
+            "underline": false
+          }
+        ],
+        "supported_in_multi_actions": true,
+        "tooltip": "Work and break cycles. Press to start or pause, hold to reset.",
+        "uuid": "com.felbro.pixel.pomodoro",
+        "visible_in_action_list": true
+      },
+      "children": null,
+      "context": "Keypad.6.0",
+      "current_state": 0,
+      "settings": {
+        "longBreakMinutes": 15,
+        "shortBreakMinutes": 5,
+        "totalCycles": 4,
+        "workMinutes": 25
+      },
+      "states": [
+        {
+          "alignment": "middle",
+          "background_colour": "#000000",
+          "colour": "#FFFFFF",
+          "family": "Liberation Sans",
+          "image": "0.svg",
+          "image_override": null,
+          "image_scale": 100,
+          "name": "",
+          "show": false,
+          "size": 16,
+          "stroke_colour": "#000000",
+          "stroke_size": 3,
+          "style": "Regular",
+          "text": "",
+          "text_override": null,
+          "underline": false
+        }
+      ]
+    },
     null,
     {
       "action": {

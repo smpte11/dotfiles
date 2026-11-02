@@ -7,9 +7,9 @@
         ],
         "disable_automatic_states": false,
         "encoder": null,
-        "icon": "plugins/com.felbro.clock.sdPlugin/imgs/clock.svg",
+        "icon": "plugins/com.felbro.pixel.sdPlugin/imgs/clock.svg",
         "name": "Clock",
-        "plugin": "com.felbro.clock.sdPlugin",
+        "plugin": "com.felbro.pixel.sdPlugin",
         "property_inspector": "",
         "states": [
           {
@@ -17,7 +17,7 @@
             "background_colour": "#000000",
             "colour": "#FFFFFF",
             "family": "Liberation Sans",
-            "image": "plugins/com.felbro.clock.sdPlugin/imgs/clock.svg",
+            "image": "plugins/com.felbro.pixel.sdPlugin/imgs/clock.svg",
             "image_override": null,
             "image_scale": 100,
             "name": "",
@@ -32,8 +32,8 @@
           }
         ],
         "supported_in_multi_actions": true,
-        "tooltip": "Show the time and date",
-        "uuid": "com.felbro.clock.time",
+        "tooltip": "Show the time and date on the Neo info bar",
+        "uuid": "com.felbro.pixel.clock",
         "visible_in_action_list": true
       },
       "children": null,

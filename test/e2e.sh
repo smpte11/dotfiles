@@ -179,9 +179,9 @@ check_identity() {
         [ "$(readlink "$deck/Default.json")" = "$dotfiles/desktop/.local/share/opendeck/profiles/linux/sd-AB8JA516154CTX/Default.json" ] || fail "the opendeck default profile is not the linux profile"
         image=$HOME/.config/opendeck/images/sd-AB8JA516154CTX/Default/Keypad.0.0/0-user.png
         [ -f "$image" ] && [ ! -L "$image" ] || fail "the opendeck key images are not copied"
-        clock_js=$HOME/.config/opendeck/plugins/com.felbro.clock.sdPlugin/plugin.js
-        [ -f "$clock_js" ] || fail "the opendeck clock plugin is missing"
-        if grep -qE '\{\{|\{%' "$clock_js"; then fail "$clock_js has unrendered template syntax"; fi
+        pixel=$HOME/.config/opendeck/plugins/com.felbro.pixel.sdPlugin
+        [ -f "$pixel/plugin.js" ] || fail "the opendeck pixel plugin is missing"
+        jq -e '.palette.magenta' "$pixel/colors.json" >/dev/null || fail "the pixel plugin colors are not rendered from the theme"
     fi
 }
 

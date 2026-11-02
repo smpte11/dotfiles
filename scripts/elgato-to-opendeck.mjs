@@ -12,7 +12,7 @@ const { values: args } = parseArgs({
     plugins: {
       type: "string",
       multiple: true,
-      default: [path.join(repo, "desktop/.local/share/journal-deck/com.felbro.journal.sdPlugin"), path.join(repo, "desktop/.local/share/opendeck/plugins/com.felbro.clock.sdPlugin")],
+      default: [path.join(repo, "desktop/.local/share/journal-deck/com.felbro.journal.sdPlugin"), path.join(repo, "desktop/.local/share/opendeck/plugins/com.felbro.pixel.sdPlugin")],
     },
     out: { type: "string", default: path.join(repo, "desktop/.local/share/opendeck") },
   },
@@ -21,8 +21,9 @@ const { values: args } = parseArgs({
 const targets = ["macos", "linux"];
 const models = { "20GBJ9901": { columns: 4, rows: 2, touchpoints: 2, infobars: 1 } };
 const elgatoDevice = /^@\(1\)\[\d+\/\d+\/(\w+)\]$/;
-const selfRendering = new Set(["com.felbro.journal.sdPlugin", "com.felbro.clock.sdPlugin"]);
-const infobarActions = { "com.elgato.streamdeck.system.digitaltime": "com.felbro.clock.time" };
+const selfRendering = new Set(["com.felbro.journal.sdPlugin", "com.felbro.pixel.sdPlugin"]);
+const infobarActions = { "com.elgato.streamdeck.system.digitaltime": "com.felbro.pixel.clock" };
+const timerSettings = ["workMinutes", "shortBreakMinutes", "longBreakMinutes", "totalCycles"];
 
 const defaultState = {
   alignment: "middle",
@@ -230,6 +231,8 @@ const convertAction = (elgato, target, folders) => {
       return switchTo(folders.child(settings.ProfileUUID, elgato.States?.[0]?.Title));
     case "com.elgato.streamdeck.profile.backtoparent":
       return switchTo(folders.parent, "Back");
+    case "com.oreosparkman.productivity-timer.timer":
+      return { action: actions["com.felbro.pixel.pomodoro"], settings: Object.fromEntries(timerSettings.filter((key) => key in settings).map((key) => [key, settings[key]])) };
     default:
       if (appleMusic[elgato.UUID]) return mediaKey(appleMusic[elgato.UUID]);
       if (actions[elgato.UUID]) return { action: actions[elgato.UUID], settings };
