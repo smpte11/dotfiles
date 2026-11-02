@@ -58,6 +58,21 @@ owned_by_mise() {
     grep -qxF "$1" "$work/mise-targets"
 }
 
+make_forks() {
+    local forks=$work/forks
+    git init --quiet --bare "$forks/firstmate.git"
+    git init --quiet --bare "$forks/tuios.git"
+    git init --quiet "$work/tuios-src"
+    mkdir -p "$work/tuios-src/cmd/tuios"
+    printf 'module example.com/tuios\n\ngo 1.22\n' >"$work/tuios-src/go.mod"
+    printf 'package main\n\nimport "fmt"\n\nvar version string\n\nfunc main() { fmt.Println(version) }\n' >"$work/tuios-src/cmd/tuios/main.go"
+    git -C "$work/tuios-src" add -A
+    git -C "$work/tuios-src" -c user.name=test -c user.email=test@example.com commit --quiet -m fork
+    git -C "$work/tuios-src" push --quiet "$forks/tuios.git" HEAD:main HEAD:fm-combined
+    git -C "$work/tuios-src" push --quiet "$forks/firstmate.git" HEAD:main
+    export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0="url.$forks/.insteadOf" GIT_CONFIG_VALUE_0="https://github.com/smpte11/"
+}
+
 stub_systemd() {
     mkdir -p "$work/stubs" "$work/runtime/systemd"
     cat >"$work/stubs/systemctl" <<'STUB'
@@ -266,6 +281,16 @@ if has_module work; then
     [ "$(jj config get signing.backends.ssh.program)" = /opt/1Password/op-ssh-sign ] || fail "jj does not sign with op-ssh-sign"
     [ -s "$HOME/.config/k9s/skins/active-theme.yaml" ] || fail "k9s skin is missing"
     [ -L "$HOME/.claude/keybindings.json" ] || fail "claude keybindings are missing"
+fi
+
+if has_module ssh || has_module personal || has_module work; then
+    step "tuios fork"
+    (
+        make_forks
+        mise bootstrap --only task --yes >"$work/task.log" 2>&1 || fail "the bootstrap task fails: $(cat "$work/task.log")"
+    )
+    "$HOME/.local/bin/tuios" | grep -q '^fork-' || fail "the bootstrap task did not build the tuios fork"
+    jj -R "$HOME/src/tuios" git remote list | grep -qx 'origin personalgit:smpte11/tuios.git' || fail "the tuios fork does not push over ssh"
 fi
 
 if [ "$scenario" = fresh ] && has_module personal; then

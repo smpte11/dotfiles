@@ -19,7 +19,8 @@ clone() {
   local name=$1 upstream=$2
   [ -d "$SRC/$name/.jj" ] && return 0
   mkdir -p "$SRC"
-  jj git clone --colocate --remote origin "personalgit:smpte11/$name.git" "$SRC/$name"
+  jj --config signing.behavior=drop git clone --colocate --remote origin "https://github.com/smpte11/$name.git" "$SRC/$name"
+  jj -R "$SRC/$name" git remote set-url origin "personalgit:smpte11/$name.git"
   jj -R "$SRC/$name" git remote add upstream "git@github.com:$upstream/$name.git"
 }
 
@@ -60,7 +61,7 @@ sync_firstmate() {
 
 build() {
   local commit tree
-  commit=$(jj -R "$TUIOS" log --no-graph -r "$TUIOS_COMBINED" -T 'commit_id')
+  commit=$(jj -R "$TUIOS" --ignore-working-copy log --no-graph -r "$TUIOS_COMBINED" -T 'commit_id')
   tree=$(mktemp -d)
   trap 'rm -rf "$tree"' RETURN
   git -C "$TUIOS" archive "$commit" | tar -x -C "$tree"
