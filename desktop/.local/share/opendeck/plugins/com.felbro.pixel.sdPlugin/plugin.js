@@ -1,5 +1,7 @@
 const { execFile } = require("node:child_process");
+const fs = require("node:fs");
 const os = require("node:os");
+const path = require("node:path");
 const theme = require("./colors.json");
 const { clock } = require("./clock");
 const pomodoro = require("./pomodoro");
@@ -31,7 +33,28 @@ const tickClocks = () => {
   setTimeout(tickClocks, 60_000 - (Date.now() % 60_000));
 };
 
+const stateFile = path.join(process.env.XDG_STATE_HOME || path.join(os.homedir(), ".local/state"), "opendeck-pixel", "timers.json");
+const today = () => new Date().toDateString();
+
+const loadSaved = () => {
+  try {
+    const saved = JSON.parse(fs.readFileSync(stateFile, "utf8"));
+    return saved.day === today() ? saved.timers : {};
+  } catch {
+    return {};
+  }
+};
+
+const saved = loadSaved();
 const timers = new Map();
+
+const save = () => {
+  const snapshot = { day: today(), timers: { ...saved } };
+  for (const [context, entry] of timers) snapshot.timers[context] = entry.timer.snapshot();
+  fs.mkdirSync(path.dirname(stateFile), { recursive: true });
+  fs.writeFileSync(stateFile, JSON.stringify(snapshot));
+};
+
 const drawTimer = pomodoro.render(theme);
 const renderTimer = (context) => {
   const entry = timers.get(context);
@@ -42,6 +65,7 @@ setInterval(() => {
     if (entry.timer.tick(Date.now())) {
       chime();
       send("showOk", context);
+      save();
     }
     if (entry.timer.running()) renderTimer(context);
   }
@@ -59,7 +83,7 @@ const actions = {
   },
   "com.felbro.pixel.pomodoro": {
     willAppear(context, payload) {
-      if (!timers.has(context)) timers.set(context, { timer: pomodoro.timer(payload?.settings), hold: null });
+      if (!timers.has(context)) timers.set(context, { timer: pomodoro.timer(payload?.settings, saved[context]), hold: null });
       renderTimer(context);
     },
     willDisappear() {},
@@ -68,6 +92,7 @@ const actions = {
       entry.hold = setTimeout(() => {
         entry.hold = null;
         entry.timer.reset();
+        save();
         renderTimer(context);
       }, holdToReset);
     },
@@ -77,6 +102,7 @@ const actions = {
       clearTimeout(entry.hold);
       entry.hold = null;
       entry.timer.toggle(Date.now());
+      save();
       renderTimer(context);
     },
   },

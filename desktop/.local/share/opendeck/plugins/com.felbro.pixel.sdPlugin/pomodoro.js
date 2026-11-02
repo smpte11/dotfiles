@@ -11,9 +11,9 @@ const config = (settings = {}) => ({
   cycles: settings.totalCycles ?? 4,
 });
 
-const timer = (settings) => {
+const timer = (settings, saved) => {
   const durations = config(settings);
-  const state = { phase: "work", completed: 0, remaining: durations.work, endsAt: null };
+  const state = saved && saved.phase in labels ? { ...saved } : { phase: "work", completed: 0, remaining: durations.work, endsAt: null };
 
   const remaining = (now) => (state.endsAt === null ? state.remaining : Math.max(0, state.endsAt - now));
 
@@ -31,6 +31,7 @@ const timer = (settings) => {
 
   return {
     running: () => state.endsAt !== null,
+    snapshot: () => ({ ...state }),
     toggle(now) {
       if (state.endsAt === null) {
         state.endsAt = now + state.remaining;
