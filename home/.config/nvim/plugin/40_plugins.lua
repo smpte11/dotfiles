@@ -129,6 +129,53 @@ now_if_args(function()
 	})
 end)
 
+-- Debug Adapter Protocol ====================================================
+
+later(function()
+	add({ "https://github.com/mfussenegger/nvim-dap" })
+
+	require("dap").adapters.python = {
+		type = "executable",
+		command = "python",
+		args = { "-m", "debugpy.adapter" },
+	}
+end)
+
+-- Scala ======================================================================
+
+later(function()
+	add({ "https://github.com/scalameta/nvim-metals" })
+
+	local metals = require("metals")
+	local metals_config = metals.bare_config()
+	metals_config.settings = {
+		showImplicitArguments = true,
+		showImplicitConversionsAndClasses = true,
+		showInferredType = true,
+	}
+	metals_config.init_options = {
+		statusBarProvider = "off",
+		isHttpEnabled = true,
+	}
+	metals_config.on_attach = function(client, bufnr)
+		metals.setup_dap()
+	end
+
+	vim.api.nvim_create_autocmd("FileType", {
+		pattern = { "scala", "sbt" },
+		callback = function(args)
+			local bin_dir = vim.fs.find(".bin", { upward = true, path = vim.fs.dirname(args.file), type = "directory" })[1]
+			if bin_dir then
+				local binary = vim.fs.joinpath(bin_dir, "metals")
+				if vim.uv.fs_stat(binary) then
+					metals_config.settings.metalsBinaryPath = binary
+				end
+			end
+			metals.initialize_or_attach(metals_config)
+		end,
+	})
+end)
+
 -- Formatting =================================================================
 
 -- Programs dedicated to text formatting (a.k.a. formatters) are very useful.
