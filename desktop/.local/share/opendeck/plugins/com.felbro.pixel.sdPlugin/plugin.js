@@ -33,42 +33,40 @@ const tickClocks = () => {
   setTimeout(tickClocks, 60_000 - (Date.now() % 60_000));
 };
 
-const stateFile = path.join(process.env.XDG_STATE_HOME || path.join(os.homedir(), ".local/state"), "opendeck-pixel", "timers.json");
+const stateFile = path.join(process.env.XDG_STATE_HOME || path.join(os.homedir(), ".local/state"), "opendeck-pixel", "timer.json");
 const today = () => new Date().toDateString();
 
 const loadSaved = () => {
   try {
     const saved = JSON.parse(fs.readFileSync(stateFile, "utf8"));
-    return saved.day === today() ? saved.timers : {};
+    return saved.day === today() ? saved.timer : undefined;
   } catch {
-    return {};
+    return undefined;
   }
 };
 
-const saved = loadSaved();
-const timers = new Map();
+let focus = null;
+const keys = new Map();
 
 const save = () => {
-  const snapshot = { day: today(), timers: { ...saved } };
-  for (const [context, entry] of timers) snapshot.timers[context] = entry.timer.snapshot();
   fs.mkdirSync(path.dirname(stateFile), { recursive: true });
-  fs.writeFileSync(stateFile, JSON.stringify(snapshot));
+  fs.writeFileSync(stateFile, JSON.stringify({ day: today(), timer: focus.snapshot() }));
 };
 
 const drawTimer = pomodoro.render(theme);
-const renderTimer = (context) => {
-  const entry = timers.get(context);
-  if (entry) send("setImage", context, { image: drawTimer(entry.timer.view(Date.now())), target: 0 });
+const renderTimers = () => {
+  if (focus === null) return;
+  const image = drawTimer(focus.view(Date.now()));
+  for (const context of keys.keys()) send("setImage", context, { image, target: 0 });
 };
 setInterval(() => {
-  for (const [context, entry] of timers) {
-    if (entry.timer.tick(Date.now())) {
-      chime();
-      send("showOk", context);
-      save();
-    }
-    if (entry.timer.running()) renderTimer(context);
+  if (focus === null) return;
+  if (focus.tick(Date.now())) {
+    chime();
+    for (const context of keys.keys()) send("showOk", context);
+    save();
   }
+  if (focus.running()) renderTimers();
 }, 1000);
 
 const actions = {
@@ -83,27 +81,31 @@ const actions = {
   },
   "com.felbro.pixel.pomodoro": {
     willAppear(context, payload) {
-      if (!timers.has(context)) timers.set(context, { timer: pomodoro.timer(payload?.settings, saved[context]), hold: null });
-      renderTimer(context);
+      focus ??= pomodoro.timer(payload?.settings, loadSaved());
+      keys.set(context, { hold: null });
+      renderTimers();
     },
-    willDisappear() {},
+    willDisappear(context) {
+      clearTimeout(keys.get(context)?.hold);
+      keys.delete(context);
+    },
     keyDown(context) {
-      const entry = timers.get(context);
-      entry.hold = setTimeout(() => {
-        entry.hold = null;
-        entry.timer.reset();
+      const key = keys.get(context);
+      key.hold = setTimeout(() => {
+        key.hold = null;
+        focus.reset();
         save();
-        renderTimer(context);
+        renderTimers();
       }, holdToReset);
     },
     keyUp(context) {
-      const entry = timers.get(context);
-      if (entry.hold === null) return;
-      clearTimeout(entry.hold);
-      entry.hold = null;
-      entry.timer.toggle(Date.now());
+      const key = keys.get(context);
+      if (key.hold === null) return;
+      clearTimeout(key.hold);
+      key.hold = null;
+      focus.toggle(Date.now());
       save();
-      renderTimer(context);
+      renderTimers();
     },
   },
 };
