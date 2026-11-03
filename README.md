@@ -27,7 +27,7 @@ the key, remove `~/.config/codestral/env` and run `mise run dotfiles:update`.
 | `ssh/` | `ssh` | `~/.ssh/config`; the module also builds the tuios fork |
 | `personal/` | `personal` | Proton Pass agent, personal signing key, Codestral key |
 | `work/` | `work` | 1Password agent, work identity, k9s skin, Claude keybindings |
-| `desktop/` | `desktop` | Journal reminder, OpenDeck journal and pixel clock and timer plugins, OpenDeck profiles |
+| `desktop/` | `desktop` | Journal reminder and check-ins, OpenDeck journal and pixel clock and timer plugins, OpenDeck profiles |
 | `home/.config/mise/config.toml` | always | Tools, groups, templates, repos |
 | `home/.config/mise/config.<module>.toml` | per module | The module's vars, env, groups, services and hooks |
 | `home/.config/mise/themes.toml` | | Theme palettes for the `*.tera` templates |

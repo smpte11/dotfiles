@@ -1,0 +1,36 @@
+#!/bin/sh
+set -eu
+
+export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+kind="$(mise vars profile)"
+state="${XDG_STATE_HOME:-$HOME/.local/state}/journal"
+
+note="$(zk daily "$kind" --print-path)"
+open="$(grep -c '^[[:space:]]*[-*] \[ \]' "$note" || true)"
+
+[ "$open" -gt 0 ] || exit 0
+
+mkdir -p "$state"
+touch "$state/pending"
+
+message="$open open items in today's journal."
+[ "$open" -eq 1 ] && message="1 open item in today's journal."
+
+case "$(uname -s)" in
+Darwin)
+  result="$(alerter --title "Journal check-in" --message "$message" \
+    --actions Open --timeout 1800 --json)" || exit 0
+  echo "$(date '+%F %T') $(echo "$result" | jq -c .)"
+  case "$(echo "$result" | jq -r .activationType)" in
+    contentsClicked | actionClicked) exec journal-open ;;
+  esac
+  ;;
+*)
+  choice="$(notify-send --app-name Journal --wait --action=open=Open \
+    "Journal check-in" "$message" 2>/dev/null)" || exit 0
+  case "$choice" in
+    open) exec journal-open ;;
+  esac
+  ;;
+esac

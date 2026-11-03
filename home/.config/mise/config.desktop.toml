@@ -34,6 +34,28 @@ start_calendar_interval = [
 stdout_path = "~/Library/Logs/journal.log"
 stderr_path = "~/Library/Logs/journal.log"
 
+[bootstrap.macos.launchd.agents.journal-checkin]
+program = "~/.local/bin/journal-checkin"
+start_calendar_interval = [
+  { weekday = 1, hour = 11, minute = 0 },
+  { weekday = 1, hour = 14, minute = 0 },
+  { weekday = 1, hour = 16, minute = 30 },
+  { weekday = 2, hour = 11, minute = 0 },
+  { weekday = 2, hour = 14, minute = 0 },
+  { weekday = 2, hour = 16, minute = 30 },
+  { weekday = 3, hour = 11, minute = 0 },
+  { weekday = 3, hour = 14, minute = 0 },
+  { weekday = 3, hour = 16, minute = 30 },
+  { weekday = 4, hour = 11, minute = 0 },
+  { weekday = 4, hour = 14, minute = 0 },
+  { weekday = 4, hour = 16, minute = 30 },
+  { weekday = 5, hour = 11, minute = 0 },
+  { weekday = 5, hour = 14, minute = 0 },
+  { weekday = 5, hour = 16, minute = 30 },
+]
+stdout_path = "~/Library/Logs/journal.log"
+stderr_path = "~/Library/Logs/journal.log"
+
 [bootstrap.linux.systemd.units.journal-reminder]
 description = "Evening journal reminder"
 type = "oneshot"
