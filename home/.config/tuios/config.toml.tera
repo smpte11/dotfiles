@@ -13,6 +13,9 @@ git_dirty = false
 master_ratio = 70
 border_focused_color = '{{ p.bright_green }}'
 border_unfocused_color = '{{ p.bright_black }}'
+window_title_style = 'plain'
+dock_pill_caps = false
+dock_prefix_indicator = 'badge'
 
 [appearance.selection]
 bg = '{{ t.selection_bg }}'
@@ -27,7 +30,7 @@ cursor_fg = '{{ bg }}'
 [appearance.sidebar]
 width = 32
 density = 'roomy'
-header_style = 'pill'
+header_style = 'plain'
 header_case = 'uppercase'
 sections = 'agents:45,sessions:20,files:25,terminals'
 subagent_rows = 'tree'
@@ -42,6 +45,9 @@ tokens = ['need', 'harness', 'name', 'elapsed', 'context', 'subagents', 'now']
 [[appearance.sidebar.agent_row.elapsed.rule]]
 gt = 30
 fg = 'warning'
+
+[dock.tabs]
+style = 'flat'
 
 [keybindings]
 leader_key = 'ctrl+space'
