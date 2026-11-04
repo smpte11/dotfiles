@@ -70,5 +70,5 @@ unit = "journal-reminder"
 
 [bootstrap.hooks]
 post-dotfiles = [
-  "if [ \"$(uname -s)\" = Linux ]; then flatpak override --user --filesystem={{ env.HOME }}/.dotfiles/desktop/.local/share/opendeck me.amankhanna.opendeck; fi",
+  "if command -v flatpak >/dev/null; then flatpak override --user --filesystem={{ env.HOME }}/.dotfiles/desktop/.local/share/opendeck me.amankhanna.opendeck; fi",
 ]
