@@ -52,6 +52,61 @@ style = 'flat'
 [keybindings]
 leader_key = 'ctrl+space'
 
+[keybindings.global]
+command_palette = ['opt+p']
+
+[keybindings.prefix_mode]
+prefix_prev_window = ['shift+tab']
+launcher = []
+'open_menu:pane' = ['p']
+'open_menu:agents' = ['a']
+
+[keybindings.workspace_prefix]
+new_workspace = ['n']
+last_workspace = ['l']
+next_workspace = [']']
+prev_workspace = ['[']
+close_workspace = ['x']
+prefix_workspace_switcher = ['w']
+
+[keybindings.menus.pane]
+title = 'Pane'
+
+[keybindings.menus.pane.keys]
+prefix_split_vertical = ['v']
+prefix_split_horizontal = ['s']
+prefix_close_window = ['x']
+prefix_fullscreen = ['z']
+prefix_rename_window = ['r']
+prefix_equalize_splits = ['=']
+prefix_rotate_split = ['o']
+mark_pane = ['m']
+break_pane = ['b']
+'open_menu:resize' = ['R']
+
+[keybindings.menus.resize]
+title = 'Resize'
+sticky = true
+
+[keybindings.menus.resize.keys]
+resize_pane_left_5 = ['h']
+resize_pane_down_5 = ['j']
+resize_pane_up_5 = ['k']
+resize_pane_right_5 = ['l']
+
+[keybindings.menus.agents]
+title = 'Agents'
+
+[keybindings.menus.agents.keys]
+prefix_inbox = ['i']
+prefix_mail = ['m']
+prefix_next_attention = ['o']
+prefix_next_finished = ['f']
+prefix_jump_notif = ['j']
+prefix_last_message = ['n']
+prefix_review = ['v']
+prefix_agents_settings = ['s']
+
 [keybindings.terminal_mode]
 terminal_next_window = ['opt+tab']
 terminal_prev_window = ['opt+shift+tab']
