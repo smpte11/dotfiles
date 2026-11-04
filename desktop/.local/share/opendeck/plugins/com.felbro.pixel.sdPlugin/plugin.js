@@ -46,6 +46,7 @@ const loadSaved = () => {
 };
 
 let focus = null;
+let focusSettings = null;
 const keys = new Map();
 
 const save = () => {
@@ -81,8 +82,22 @@ const actions = {
   },
   "com.felbro.pixel.pomodoro": {
     willAppear(context, payload) {
-      focus ??= pomodoro.timer(payload?.settings, loadSaved());
+      if (focus === null) {
+        focusSettings = payload?.settings ?? {};
+        focus = pomodoro.timer(focusSettings, loadSaved());
+      } else if (!pomodoro.sameSettings(payload?.settings, focusSettings)) {
+        send("setSettings", context, focusSettings);
+      }
       keys.set(context, { hold: null });
+      renderTimers();
+    },
+    didReceiveSettings(context, payload) {
+      const settings = payload?.settings ?? {};
+      if (pomodoro.sameSettings(settings, focusSettings)) return;
+      focusSettings = settings;
+      focus.configure(focusSettings);
+      for (const other of keys.keys()) if (other !== context) send("setSettings", other, focusSettings);
+      save();
       renderTimers();
     },
     willDisappear(context) {

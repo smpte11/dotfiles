@@ -268,7 +268,7 @@
         "icon": "plugins/com.felbro.pixel.sdPlugin/imgs/pomodoro.svg",
         "name": "Focus timer",
         "plugin": "com.felbro.pixel.sdPlugin",
-        "property_inspector": "",
+        "property_inspector": "plugins/com.felbro.pixel.sdPlugin/pomodoro.html",
         "states": [
           {
             "alignment": "middle",

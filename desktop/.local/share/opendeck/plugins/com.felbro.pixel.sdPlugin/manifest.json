@@ -29,6 +29,7 @@
       "UUID": "com.felbro.pixel.pomodoro",
       "Icon": "imgs/pomodoro",
       "Tooltip": "Work and break cycles. Press to start or pause, hold to reset.",
+      "PropertyInspectorPath": "pomodoro.html",
       "Controllers": ["Keypad"],
       "States": [{ "Image": "imgs/pomodoro", "ShowTitle": false }]
     }

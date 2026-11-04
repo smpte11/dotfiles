@@ -181,6 +181,7 @@ check_identity() {
         [ -f "$image" ] && [ ! -L "$image" ] || fail "the opendeck key images are not copied"
         pixel=$HOME/.config/opendeck/plugins/com.felbro.pixel.sdPlugin
         [ -f "$pixel/plugin.js" ] || fail "the opendeck pixel plugin is missing"
+        [ -f "$pixel/pomodoro.html" ] || fail "the focus timer settings page is missing"
         jq -e '.palette.magenta' "$pixel/colors.json" >/dev/null || fail "the pixel plugin colors are not rendered from the theme"
     fi
 }

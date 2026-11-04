@@ -9,27 +9,29 @@ const config = (settings = {}) => ({
   shortBreak: (settings.shortBreakMinutes ?? 5) * 60_000,
   longBreak: (settings.longBreakMinutes ?? 15) * 60_000,
   cycles: settings.totalCycles ?? 4,
+  autoAdvance: settings.autoAdvance ?? false,
 });
 
+const sameSettings = (a, b) => JSON.stringify(config(a)) === JSON.stringify(config(b));
+
 const timer = (settings, saved) => {
-  const durations = config(settings);
-  const autoAdvance = settings?.autoAdvance ?? false;
+  let options = config(settings);
   const state =
     saved && saved.phase in labels
       ? { awaitingAck: false, ...saved }
-      : { phase: "work", completed: 0, remaining: durations.work, endsAt: null, awaitingAck: false };
+      : { phase: "work", completed: 0, remaining: options.work, endsAt: null, awaitingAck: false };
 
   const remaining = (now) => (state.endsAt === null ? state.remaining : Math.max(0, state.endsAt - now));
 
   const advance = () => {
     if (state.phase === "work") {
       state.completed += 1;
-      state.phase = state.completed % durations.cycles === 0 ? "longBreak" : "shortBreak";
+      state.phase = state.completed % options.cycles === 0 ? "longBreak" : "shortBreak";
     } else {
       if (state.phase === "longBreak") state.completed = 0;
       state.phase = "work";
     }
-    state.remaining = durations[state.phase];
+    state.remaining = options[state.phase];
     state.endsAt = null;
   };
 
@@ -46,17 +48,24 @@ const timer = (settings, saved) => {
         state.endsAt = null;
       }
     },
+    configure(settings) {
+      const next = config(settings);
+      const shift = next[state.phase] - options[state.phase];
+      options = next;
+      if (state.endsAt === null) state.remaining = Math.max(0, state.remaining + shift);
+      else state.endsAt += shift;
+    },
     reset() {
       state.phase = "work";
       state.completed = 0;
-      state.remaining = durations.work;
+      state.remaining = options.work;
       state.endsAt = null;
       state.awaitingAck = false;
     },
     tick(now) {
       if (state.endsAt === null || remaining(now) > 0) return false;
       advance();
-      if (autoAdvance) state.endsAt = now + state.remaining;
+      if (options.autoAdvance) state.endsAt = now + state.remaining;
       else state.awaitingAck = true;
       return true;
     },
@@ -67,9 +76,9 @@ const timer = (settings, saved) => {
         running: state.endsAt !== null,
         flash: state.awaitingAck && Math.floor(now / 1000) % 2 === 0,
         remaining: left,
-        progress: 1 - left / durations[state.phase],
-        completed: state.phase === "longBreak" ? durations.cycles : state.completed % durations.cycles,
-        cycles: durations.cycles,
+        progress: 1 - left / options[state.phase],
+        completed: state.phase === "longBreak" ? options.cycles : state.completed % options.cycles,
+        cycles: options.cycles,
       };
     },
   };
@@ -108,4 +117,4 @@ const render = (theme) => {
   };
 };
 
-module.exports = { timer, render };
+module.exports = { timer, render, sameSettings };
