@@ -58,11 +58,3 @@ previous theme and renders the templates again.
   Each check group runs in its own container from the checkpoint, so
   `mise run test:fresh personal --only theme,secrets` runs only those groups.
   `mise run test:clean` removes the images, checkpoints and caches.
-
-## Migrating a chezmoi machine
-
-Update the chezmoi checkout to this layout, then run
-`~/.local/share/chezmoi/migrate-from-chezmoi.sh`. It moves the checkout to
-`~/.dotfiles`, keeps the machine's profile, bootstraps with mise and removes
-what chezmoi left behind. `mise run test:migrate <chezmoi-revision>` tests it
-in a container.

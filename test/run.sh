@@ -6,8 +6,7 @@ cd "$(dirname "$0")/.."
 usage() {
     cat >&2 <<EOF
 usage: test/run.sh fresh [modules...] [--only group,...] [--fresh]
-       test/run.sh migrate <chezmoi-ref> [profiles...] [--only group,...] [--fresh]
-       test/run.sh shell [fresh|migrate] [modules]
+       test/run.sh shell [modules]
        test/run.sh clean
 groups: $(bash test/e2e.sh groups | paste -sd, -)
 EOF
@@ -51,7 +50,6 @@ if [ "$scenario" = clean ]; then
 fi
 
 default_platform=$native
-[ "$scenario" = migrate ] && default_platform=linux/amd64
 platform=${DOTFILES_TEST_PLATFORM:-$default_platform}
 arch=${platform##*/}
 image=dotfiles-test-$arch
@@ -64,7 +62,6 @@ work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
 
 mounts=(-v "$PWD:/src:ro")
-base_id=""
 
 slug_of() { printf '%s-%s' "$scenario" "${1:-none}" | tr , -; }
 
@@ -87,7 +84,7 @@ inputs_hash() {
 
 checkpoint_of() {
     local key
-    key=$(printf '%s %s %s %s %s\n' "$files_hash" "$platform" "$1" "$base_id" "$(mise --version | cut -d' ' -f1)" | shasum | cut -c1-16)
+    key=$(printf '%s %s %s %s\n' "$files_hash" "$platform" "$1" "$(mise --version | cut -d' ' -f1)" | shasum | cut -c1-16)
     printf 'dotfiles-test-ckpt-%s-%s:%s' "$arch" "$1" "$key"
 }
 
@@ -140,7 +137,7 @@ spawn() {
 
 case "$scenario" in
 shell)
-    scenario=${1:-fresh}
+    scenario=fresh
     target=$image
     if [ $# -gt 0 ]; then
         files_hash=$(inputs_hash)
@@ -152,15 +149,6 @@ shell)
     ;;
 fresh)
     [ $# -gt 0 ] || set -- none personal work,ssh,desktop
-    ;;
-migrate)
-    [ $# -gt 0 ] || usage
-    base_id=$(git rev-parse "$1^{commit}")
-    mkdir "$work/base"
-    git archive "$base_id" | tar -x -C "$work/base"
-    mounts+=(-v "$work/base:/base:ro")
-    shift
-    [ $# -gt 0 ] || set -- personal work
     ;;
 *)
     usage

@@ -2,10 +2,6 @@
 description = "Install the dotfiles in Linux containers and check them (usage: mise run test:fresh [modules...] [--only group,...] [--fresh])"
 run = "test/run.sh fresh"
 
-[tasks."test:migrate"]
-description = "Migrate Linux containers from a chezmoi revision and check them (usage: mise run test:migrate <ref> [profiles...] [--only group,...] [--fresh])"
-run = "test/run.sh migrate"
-
 [tasks."test:shell"]
 description = "Open a shell in the test container"
 run = "test/run.sh shell"

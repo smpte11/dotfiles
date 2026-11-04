@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-groups=(local-files chezmoi idempotent services secrets theme history smoke identity tuios switch)
+groups=(local-files idempotent services secrets theme history smoke identity tuios switch)
 if [ "${1:-}" = groups ]; then
     printf '%s\n' "${groups[@]}"
     exit 0
@@ -8,12 +8,6 @@ fi
 . "$(dirname "$0")/lib.sh"
 group=$3
 skip=77
-
-owned_by_mise() {
-    case "$(readlink "$1" 2>/dev/null)" in "$dotfiles"/*) return 0 ;; esac
-    case "$(realpath "$1" 2>/dev/null)" in "$dotfiles"/*) return 0 ;; esac
-    grep -qxF "$1" "$work/mise-targets"
-}
 
 make_forks() {
     local forks=$work/forks
@@ -33,28 +27,6 @@ make_forks() {
 check_local_files() {
     for f in "${local_files[@]}"; do
         [ "$(cat "$HOME/$f" 2>/dev/null)" = "-- local $f" ] || fail "$HOME/$f was changed or removed"
-    done
-}
-
-check_chezmoi() {
-    [ "$scenario" = migrate ] || return $skip
-    step "no chezmoi leftovers"
-    local leftovers="" path f
-    while IFS= read -r path; do
-        [ "$path" = "$HOME/.local/bin/mise" ] && continue
-        [ -f "$path" ] || [ -L "$path" ] || continue
-        owned_by_mise "$path" || leftovers+="$path"$'\n'
-    done < <(jq -r '.entryState | to_entries[] | select(.value.type == "file") | .key' "$work/chezmoi-state.json")
-    while IFS= read -r path; do
-        [ -L "$path" ] || continue
-        owned_by_mise "$path" || leftovers+="$path"$'\n'
-    done < <(jq -r '.entryState | to_entries[] | select(.value.type == "symlink") | .key' "$work/chezmoi-state.json")
-    [ -z "$leftovers" ] || fail "left behind by chezmoi: $leftovers"
-
-    step "templates render like chezmoi did"
-    for f in "${parity_targets[@]}"; do
-        [ -f "$work/parity/$f" ] || continue
-        cmp -s "$work/parity/$f" "$HOME/$f" || fail "$f differs from the chezmoi render: $(diff "$work/parity/$f" "$HOME/$f")"
     done
 }
 

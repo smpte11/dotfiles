@@ -14,16 +14,6 @@ local_files=(
     .config/nvim/plugin/42_local.lua
     .config/zk/templates/local-journal.md
 )
-parity_targets=(
-    .config/ghostty/themes/active-theme
-    .config/helix/languages.toml
-    .config/helix/themes/active-theme.toml
-    .config/television/themes/active-theme.toml
-    .config/tuios/config.toml
-    .config/k9s/skins/active-theme.yaml
-    .local/share/claude-lsp/.claude-plugin/marketplace.json
-    .local/share/claude-lsp/plugins/elixir-lsp/.claude-plugin/plugin.json
-)
 
 fail() { echo "FAIL: $*" >&2; exit 1; }
 step() { echo "--- $*"; }
