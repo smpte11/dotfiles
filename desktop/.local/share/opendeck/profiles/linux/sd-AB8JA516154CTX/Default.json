@@ -295,6 +295,7 @@
       "context": "Keypad.3.0",
       "current_state": 0,
       "settings": {
+        "autoAdvance": false,
         "longBreakMinutes": 15,
         "shortBreakMinutes": 5,
         "totalCycles": 4,

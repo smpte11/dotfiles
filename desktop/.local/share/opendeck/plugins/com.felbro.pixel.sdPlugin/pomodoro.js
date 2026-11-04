@@ -13,7 +13,11 @@ const config = (settings = {}) => ({
 
 const timer = (settings, saved) => {
   const durations = config(settings);
-  const state = saved && saved.phase in labels ? { ...saved } : { phase: "work", completed: 0, remaining: durations.work, endsAt: null };
+  const autoAdvance = settings?.autoAdvance ?? false;
+  const state =
+    saved && saved.phase in labels
+      ? { awaitingAck: false, ...saved }
+      : { phase: "work", completed: 0, remaining: durations.work, endsAt: null, awaitingAck: false };
 
   const remaining = (now) => (state.endsAt === null ? state.remaining : Math.max(0, state.endsAt - now));
 
@@ -31,8 +35,10 @@ const timer = (settings, saved) => {
 
   return {
     running: () => state.endsAt !== null,
+    awaitingAck: () => state.awaitingAck,
     snapshot: () => ({ ...state }),
     toggle(now) {
+      state.awaitingAck = false;
       if (state.endsAt === null) {
         state.endsAt = now + state.remaining;
       } else {
@@ -45,10 +51,13 @@ const timer = (settings, saved) => {
       state.completed = 0;
       state.remaining = durations.work;
       state.endsAt = null;
+      state.awaitingAck = false;
     },
     tick(now) {
       if (state.endsAt === null || remaining(now) > 0) return false;
       advance();
+      if (autoAdvance) state.endsAt = now + state.remaining;
+      else state.awaitingAck = true;
       return true;
     },
     view(now) {
@@ -56,6 +65,7 @@ const timer = (settings, saved) => {
       return {
         phase: state.phase,
         running: state.endsAt !== null,
+        flash: state.awaitingAck && Math.floor(now / 1000) % 2 === 0,
         remaining: left,
         progress: 1 - left / durations[state.phase],
         completed: state.phase === "longBreak" ? durations.cycles : state.completed % durations.cycles,
@@ -72,13 +82,14 @@ const render = (theme) => {
   const shadow = theme.base.b01;
   const muted = theme.palette.silver;
   return (view) => {
-    const color = phaseColors[view.phase];
+    const phase = phaseColors[view.phase];
+    const color = view.flash ? background : phase;
     const fill = view.running ? color : muted;
-    const ink = view.running ? theme.foreground : muted;
+    const ink = view.flash ? background : view.running ? theme.foreground : muted;
     const seconds = Math.ceil(view.remaining / 1000);
     const time = `${pad(Math.floor(seconds / 60))}:${pad(seconds % 60)}`;
     const label = labels[view.phase];
-    const parts = [rect(0, 0, size, size, background)];
+    const parts = [rect(0, 0, size, size, view.flash ? phase : background)];
     parts.push(text(small, label, (size - textWidth(small, label, pixel)) / 2, 14, pixel, color));
     const timeX = (size - textWidth(large, time, pixel)) / 2;
     parts.push(text(large, time, timeX + pixel / 2, 46 + pixel / 2, pixel, shadow));
@@ -86,11 +97,12 @@ const render = (theme) => {
     const barWidth = size - 32;
     const filled = Math.round((barWidth * view.progress) / pixel) * pixel;
     parts.push(rect(16, 90, barWidth, 8, track), rect(16, 90, filled, 8, fill));
+    const done = view.flash ? theme.foreground : phaseColors.work;
     const dot = 12;
     const gap = 8;
     const dotsX = (size - (view.cycles * dot + (view.cycles - 1) * gap)) / 2;
     for (let i = 0; i < view.cycles; i++) {
-      parts.push(rect(dotsX + i * (dot + gap), 112, dot, dot, i < view.completed ? phaseColors.work : track));
+      parts.push(rect(dotsX + i * (dot + gap), 112, dot, dot, i < view.completed ? done : track));
     }
     return svg(size, size, parts.join(""));
   };

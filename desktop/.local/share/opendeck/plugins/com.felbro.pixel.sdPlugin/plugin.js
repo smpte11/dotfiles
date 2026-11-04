@@ -66,7 +66,7 @@ setInterval(() => {
     for (const context of keys.keys()) send("showOk", context);
     save();
   }
-  if (focus.running()) renderTimers();
+  if (focus.running() || focus.awaitingAck()) renderTimers();
 }, 1000);
 
 const actions = {
