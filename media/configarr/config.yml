@@ -1,0 +1,154 @@
+sonarr:
+  main:
+    base_url: http://localhost:8989
+    api_key: !env SONARR_API_KEY
+    quality_definition:
+      type: series
+    include:
+      - template: 72dae194fc92bf828f32cde7744e51a1
+        source: TRASH
+    root_folders:
+      - /data/media/tv
+    download_clients:
+      data:
+        - name: qBittorrent
+          type: qbittorrent
+          enable: true
+          priority: 1
+          remove_completed_downloads: true
+          remove_failed_downloads: true
+          fields:
+            host: localhost
+            port: 8081
+            use_ssl: false
+            username: !env QBIT_USERNAME
+            password: !env QBIT_PASSWORD
+            tv_category: sonarr
+      update_password: true
+      delete_unmanaged:
+        enabled: false
+
+radarr:
+  main:
+    base_url: http://localhost:7878
+    api_key: !env RADARR_API_KEY
+    quality_definition:
+      type: movie
+    include:
+      - template: radarr-quality-definition-movie
+      - template: radarr-quality-profile-hd-bluray-web
+      - template: radarr-custom-formats-hd-bluray-web
+    root_folders:
+      - /data/media/movies
+    download_clients:
+      data:
+        - name: qBittorrent
+          type: qbittorrent
+          enable: true
+          priority: 1
+          remove_completed_downloads: true
+          remove_failed_downloads: true
+          fields:
+            host: localhost
+            port: 8081
+            use_ssl: false
+            username: !env QBIT_USERNAME
+            password: !env QBIT_PASSWORD
+            movie_category: radarr
+      update_password: true
+      delete_unmanaged:
+        enabled: false
+
+prowlarr:
+  main:
+    base_url: http://localhost:9696
+    api_key: !env PROWLARR_API_KEY
+    tags:
+      - netfelix
+    delete_unmanaged_tags:
+      enabled: false
+    sync_profiles:
+      data:
+        - name: netfelix
+          enable_rss: true
+          enable_automatic_search: true
+          enable_interactive_search: true
+          minimum_seeders: 1
+      delete_unmanaged:
+        enabled: false
+    indexer_proxies:
+      data:
+        - name: flaresolverr
+          type: FlareSolverr
+          fields:
+            host: http://localhost:8191/
+          tags:
+            - netfelix
+      delete_unmanaged:
+        enabled: false
+    indexers:
+      data:
+        - name: Knaben
+          definition: Knaben
+          enable: true
+          priority: 25
+          sync_profile: netfelix
+          tags:
+            - netfelix
+        - name: LimeTorrents
+          definition: limetorrents
+          enable: true
+          priority: 25
+          sync_profile: netfelix
+          tags:
+            - netfelix
+        - name: Torrent9
+          definition: torrent9
+          enable: true
+          priority: 25
+          sync_profile: netfelix
+          tags:
+            - netfelix
+        - name: TorrentDownload
+          definition: torrentdownload
+          enable: true
+          priority: 25
+          sync_profile: netfelix
+          tags:
+            - netfelix
+        - name: YTS
+          definition: yts
+          enable: true
+          priority: 25
+          sync_profile: netfelix
+          tags:
+            - netfelix
+          fields:
+            apiurl: !env YTS_API_URL
+      delete_unmanaged:
+        enabled: false
+    applications:
+      data:
+        - name: Sonarr
+          type: Sonarr
+          sync_level: fullSync
+          fields:
+            prowlarrUrl: http://localhost:9696
+            baseUrl: http://localhost:8989
+            apiKey: !env SONARR_API_KEY
+            syncCategories: [5000, 5010, 5020, 5030, 5040, 5045, 5050]
+          tags:
+            - netfelix
+        - name: Radarr
+          type: Radarr
+          sync_level: fullSync
+          fields:
+            prowlarrUrl: http://localhost:9696
+            baseUrl: http://localhost:7878
+            apiKey: !env RADARR_API_KEY
+            syncCategories: [2000, 2010, 2020, 2030, 2040, 2045, 2050, 2060]
+          tags:
+            - netfelix
+      delete_unmanaged:
+        enabled: false
+      sync_indexers: true

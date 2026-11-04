@@ -10,13 +10,18 @@ in_container() {
     [ -n "${CODESPACES:-}${REMOTE_CONTAINERS:-}${container:-}" ] || [ -f /.dockerenv ] || [ -f /run/.containerenv ]
 }
 
+available_modules() {
+    local f b
+    for f in "$dotfiles/$config_dir"/config.*.toml; do
+        b=$(basename "$f" .toml)
+        b=${b#config.}
+        [ "$b" = ssh ] && continue
+        printf '%s\n' "$b"
+    done | sort
+}
+
 choose_modules() {
-    identity="$(mise exec gum@latest -- gum choose --header "Identity for this machine" personal work)"
-    if mise exec gum@latest -- gum confirm "Desktop machine (journal reminders, OpenDeck plugins and profiles)?"; then
-        echo "$identity,ssh,desktop"
-    else
-        echo "$identity,ssh"
-    fi
+    mise exec gum@latest -- gum choose --no-limit --header "Modules for this machine" $(available_modules) | paste -sd, -
 }
 
 read_modules() {
@@ -69,12 +74,38 @@ proton_login() {
     fi
 }
 
-export_secrets() {
-    read_modules | grep -qx personal || return 0
+media_secret() {
+    local var=$1 item=$2 fallback=$3 val
+    val="$("$pass" item view "$item" 2>/dev/null || true)"
+    if [ -z "$val" ] && [ -n "$fallback" ] && [ -f "$fallback" ]; then
+        val="$(sed -n 's/.*<ApiKey>\([^<]*\)<\/ApiKey>.*/\1/p' "$fallback")"
+    fi
+    if [ -z "$val" ]; then
+        eval "val=\${$var:-}"
+    fi
+    export "$var=$val"
+    return 0
+}
+
+export_media_secrets() {
+    read_modules | grep -qx media || return 0
     proton_login
-    key="$("$pass" item view 'pass://Personal/Codestral/API Key' 2>/dev/null || true)"
-    CODESTRAL_API_KEY="${key:-${CODESTRAL_API_KEY:-}}"
-    export CODESTRAL_API_KEY
+    media_secret SONARR_API_KEY 'pass://Media/Netfelix/SONARR_API_KEY' "$HOME/.config/sonarr/config.xml"
+    media_secret RADARR_API_KEY 'pass://Media/Netfelix/RADARR_API_KEY' "$HOME/.config/radarr/config.xml"
+    media_secret PROWLARR_API_KEY 'pass://Media/Netfelix/PROWLARR_API_KEY' "$HOME/.config/prowlarr/config.xml"
+    media_secret QBIT_USERNAME 'pass://Media/Netfelix/QBIT_USERNAME' ""
+    media_secret QBIT_PASSWORD 'pass://Media/Netfelix/QBIT_PASSWORD' ""
+    media_secret YTS_API_URL 'pass://Media/Netfelix/YTS_API_URL' ""
+}
+
+export_secrets() {
+    if read_modules | grep -qx personal; then
+        proton_login
+        key="$("$pass" item view 'pass://Personal/Codestral/API Key' 2>/dev/null || true)"
+        CODESTRAL_API_KEY="${key:-${CODESTRAL_API_KEY:-}}"
+        export CODESTRAL_API_KEY
+    fi
+    export_media_secrets
 }
 
 if [ "${1:-}" = update ]; then

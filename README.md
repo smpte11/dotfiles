@@ -11,13 +11,19 @@ curl -fsSL https://raw.githubusercontent.com/smpte11/dotfiles/main/install.sh | 
 ```
 
 The script installs mise, clones the repository to `~/.dotfiles` and runs
-`dotfiles-setup`. `dotfiles-setup` asks for the machine's modules, writes them
-to `home/.config/mise/miserc.local.toml` (not committed) and runs
+`dotfiles-setup`. `dotfiles-setup` opens a multi-select picker listing every
+module found as `home/.config/mise/config.<module>.toml`, writes the choice to
+`home/.config/mise/miserc.local.toml` (not committed) and runs
 `mise bootstrap`. Set `DOTFILES_ENV=work,desktop` to skip the questions.
 `dotfiles-setup` adds `ssh` to every machine that has an identity module.
 On a `personal` machine it also logs in to Proton Pass and gives the Codestral
 key to `mise bootstrap` as the `CODESTRAL_API_KEY` bootstrap secret. To change
 the key, remove `~/.config/codestral/env` and run `mise run dotfiles:update`.
+On a `media` machine it reads the `pass://Media/Netfelix/*` items from Proton
+Pass and gives them to `mise bootstrap` as the matching bootstrap secrets
+(`SONARR_API_KEY`, `RADARR_API_KEY`, `PROWLARR_API_KEY`, `QBIT_USERNAME`,
+`QBIT_PASSWORD`, `YTS_API_URL`), falling back to the API keys already deployed
+in the `config.xml` files.
 
 ## Layout
 
@@ -28,6 +34,7 @@ the key, remove `~/.config/codestral/env` and run `mise run dotfiles:update`.
 | `personal/` | `personal` | Proton Pass agent, personal signing key, Codestral key |
 | `work/` | `work` | 1Password agent, work identity, k9s skin, Claude keybindings |
 | `desktop/` | `desktop` | Journal reminder and check-ins, OpenDeck journal and pixel clock and timer plugins, OpenDeck profiles |
+| `media/` | `media` | netfelix quadlets, Configarr config, *arr seed configs, media drive guard for agents |
 | `home/.config/mise/config.toml` | always | Tools, groups, templates, repos |
 | `home/.config/mise/config.<module>.toml` | per module | The module's vars, env, groups, services and hooks |
 | `home/.config/mise/themes.toml` | | Theme palettes for the `*.tera` templates |
@@ -37,6 +44,20 @@ palette of `mise vars theme` from `themes.toml`. `switch-theme` runs `mise run t
 and changes the theme for this machine by writing `home/.config/mise/conf.d/theme.toml` (git-ignored,
 tracked by mise history). Without a name it opens a picker. `mise dot rollback` of that file restores the
 previous theme and renders the templates again.
+
+## Media server (`media` module)
+
+The `media` module targets the media player. It deploys the netfelix quadlets
+to `~/.config/containers/systemd/netfelix/`, the Configarr config to
+`~/.config/media/configarr/config.yml`, and seed `config.xml` files (only when
+missing, so existing installs keep their keys) that pin each *arr API key. A
+oneshot `configarr.container` plus a daily `configarr.timer` apply the
+declarative settings through the *arr APIs. Secrets reach the container as
+podman secrets (created by a post-dotfiles hook) injected as environment
+variables that `config.yml` reads with `!env`. The module also deploys
+`~/.agents/machine/protect-media-drives.md`, which forbids agents from touching
+the mounted media pool; `~/.agents/machine/` files are read before anything else
+on machines that have them.
 
 ## Everyday commands
 

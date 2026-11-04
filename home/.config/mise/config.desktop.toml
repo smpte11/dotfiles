@@ -1,3 +1,8 @@
+[tools]
+"aqua:nushell/nushell" = "latest"
+helix = "latest"
+"github:kunchenguid/no-mistakes" = "latest"
+
 [dotfile_groups.desktop]
 root = "desktop"
 exclude = [".local/share/opendeck"]

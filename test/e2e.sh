@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-groups=(local-files idempotent services secrets theme history smoke identity tuios switch)
+groups=(local-files idempotent services secrets theme history smoke tools media identity tuios switch)
 if [ "${1:-}" = groups ]; then
     printf '%s\n' "${groups[@]}"
     exit 0
@@ -94,7 +94,9 @@ check_smoke() {
     login_jq=$(env -i HOME="$HOME" PATH=/usr/bin:/bin zsh -l -c 'command -v jq') || fail "a zsh login shell does not find jq"
     [ "$login_jq" = "$HOME/.local/share/mise/shims/jq" ] || fail "a zsh login shell does not use the mise shims: $login_jq"
     tv list-channels | grep -qx alias || fail "television does not load the cable channels"
-    hx --health 2>&1 | grep -q "Config file: $HOME/.config/helix/config.toml" || fail "helix does not find its config"
+    if has_module desktop; then
+        hx --health 2>&1 | grep -q "Config file: $HOME/.config/helix/config.toml" || fail "helix does not find its config"
+    fi
     nvim --headless +qa >/dev/null 2>&1 || fail "nvim fails to install its plugins"
     nvim_errors=$(nvim --headless +qa 2>&1 >/dev/null) || fail "nvim exits with an error: $nvim_errors"
     [ -z "$nvim_errors" ] || fail "nvim reports errors: $nvim_errors"
@@ -182,6 +184,71 @@ check_switch() {
     [ -L "$HOME/.ssh/config" ] || fail "the ssh config was pruned by the switch"
     [ "$(stat -c %a "$HOME/.ssh")" = 700 ] || fail "$HOME/.ssh is not 0700 after the switch"
     grep -qx 'env = \["work","ssh"\]' "$dotfiles/home/.config/mise/miserc.local.toml" || fail "the modules are not work and ssh after the switch"
+}
+
+check_tools() {
+    local j
+    j=$(mise ls --current --json)
+    expect_tool() {
+        local t=$1 want=$2
+        if [ "$want" = present ]; then
+            jq -e --arg t "$t" 'has($t)' <<<"$j" >/dev/null || fail "$t is not installed"
+        else
+            jq -e --arg t "$t" 'has($t) | not' <<<"$j" >/dev/null || fail "$t is installed but should not be"
+        fi
+    }
+    if has_module desktop; then
+        expect_tool helix present
+        expect_tool aqua:nushell/nushell present
+    else
+        expect_tool helix absent
+        expect_tool aqua:nushell/nushell absent
+    fi
+    if has_module gamebox; then
+        expect_tool ollama present
+        expect_tool devcontainer-cli present
+        expect_tool github:fgrehm/crib present
+    else
+        expect_tool ollama absent
+        expect_tool devcontainer-cli absent
+        expect_tool github:fgrehm/crib absent
+    fi
+    if has_module desktop || has_module work || has_module gamebox; then
+        expect_tool github:kunchenguid/no-mistakes present
+    else
+        expect_tool github:kunchenguid/no-mistakes absent
+    fi
+    expect_tool npm:@agentclientprotocol/claude-agent-acp absent
+}
+
+check_media() {
+    local f app
+    if ! has_module media; then
+        [ ! -e "$HOME/.config/containers/systemd/netfelix" ] || fail "netfelix quadlets deployed without the media module"
+        [ ! -e "$HOME/.agents/machine/protect-media-drives.md" ] || fail "the media drive guard is deployed without the media module"
+        return $skip
+    fi
+    for f in netfelix.pod sonarr.container radarr.container prowlarr.container jellyfin.container seerr.container flaresolverr.container configarr.container; do
+        [ -f "$HOME/.config/containers/systemd/netfelix/$f" ] || fail "quadlet $f is not deployed"
+        if grep -qE '\{\{|\{%' "$HOME/.config/containers/systemd/netfelix/$f"; then
+            fail "$f has unrendered template syntax"
+        fi
+    done
+    [ -f "$HOME/.config/systemd/user/configarr.timer" ] || fail "the configarr timer is not deployed"
+    grep -q 'Unit=configarr.service' "$HOME/.config/systemd/user/configarr.timer" || fail "the configarr timer does not target the configarr quadlet service"
+    [ -f "$HOME/.config/media/configarr/config.yml" ] || fail "the configarr config is not deployed"
+    [ "$(stat -c %a "$HOME/.config/media/configarr/config.yml")" = 600 ] || fail "the configarr config is not 0600"
+    grep -q 'api_key: !env SONARR_API_KEY' "$HOME/.config/media/configarr/config.yml" || fail "the configarr config does not read the sonarr key from the environment"
+    grep -q 'Secret=sonarr_api_key,type=env,target=SONARR_API_KEY' "$HOME/.config/containers/systemd/netfelix/configarr.container" || fail "the configarr quadlet does not inject the sonarr key secret"
+    for app in sonarr radarr prowlarr; do
+        [ -f "$HOME/.config/$app/config.xml" ] || fail "the $app seed config is not deployed"
+        [ "$(stat -c %a "$HOME/.config/$app/config.xml")" = 600 ] || fail "the $app seed config is not 0600"
+        if grep -qE '\{\{|\{%' "$HOME/.config/$app/config.xml"; then
+            fail "the $app seed config has unrendered template syntax"
+        fi
+    done
+    [ -e "$HOME/.agents/machine/protect-media-drives.md" ] || fail "the media drive guard is not deployed"
+    grep -q '/run/media/system/media' "$HOME/.agents/machine/protect-media-drives.md" || fail "the media drive guard does not name the media mount"
 }
 
 case " ${groups[*]} " in

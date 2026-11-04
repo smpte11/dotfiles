@@ -1,0 +1,26 @@
+[Container]
+ContainerName=configarr
+Image=ghcr.io/raydak-labs/configarr:1.39.0
+Network=host
+Environment=TZ=Europe/Stockholm
+Volume={{ env.HOME }}/.config/media/configarr:/app/config:Z
+Volume=configarr-repos:/app/repos
+Secret=sonarr_api_key,type=env,target=SONARR_API_KEY
+Secret=radarr_api_key,type=env,target=RADARR_API_KEY
+Secret=prowlarr_api_key,type=env,target=PROWLARR_API_KEY
+Secret=qbit_username,type=env,target=QBIT_USERNAME
+Secret=qbit_password,type=env,target=QBIT_PASSWORD
+Secret=yts_api_url,type=env,target=YTS_API_URL
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sh -c "until wget -q -O /dev/null http://localhost:8989/ping && wget -q -O /dev/null http://localhost:7878/ping && wget -q -O /dev/null http://localhost:9696/ping; do sleep 2; done"
+Restart=on-failure
+RestartSec=30
+
+[Unit]
+After=sonarr.service radarr.service prowlarr.service
+Wants=sonarr.service radarr.service prowlarr.service
+
+[Install]
+WantedBy=default.target

@@ -8,6 +8,7 @@ The followings are the instructions for using Felix's agents. Please read them c
 - Avoid writing `.md` files and other unnecessary artifacts. This covers READMEs for new or scaffolded projects and scratch files used to stage text for another tool; write one only when the user asks for it.
 - Do not leave unnecessary artifacts in the repository.
 If an artifact is required, for example as an output of a task or an E2E test, yet not necessary, cleanup afterwards.
+- If `~/.agents/machine/` exists, read every file in it before doing anything else; each machine keeps its own rules there.
 
 ### Writing
 - Never use em dashes "—" in anything you write: chat responses, explanations, code, commit messages, PR bodies. Use hyphens "-" instead. This holds for every task type; a coding, review or debugging task does not exempt your own prose.

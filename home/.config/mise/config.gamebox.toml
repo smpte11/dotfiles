@@ -1,0 +1,5 @@
+[tools]
+devcontainer-cli = "latest"
+ollama = "latest"
+"github:fgrehm/crib" = "latest"
+"github:kunchenguid/no-mistakes" = "latest"

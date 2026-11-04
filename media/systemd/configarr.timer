@@ -1,0 +1,10 @@
+[Unit]
+Description=Apply the declarative configarr settings to the netfelix stack
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+Unit=configarr.service
+
+[Install]
+WantedBy=timers.target

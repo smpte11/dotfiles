@@ -1,0 +1,9 @@
+[Unit]
+Description=My home Netflix
+
+[Pod]
+PodName=netfelix
+Network=host
+
+[Install]
+WantedBy=default.target

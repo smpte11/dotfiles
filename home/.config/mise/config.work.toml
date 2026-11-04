@@ -6,6 +6,9 @@ email = "felix.brousseau-tremblay@kivra.com"
 FM_HARNESS = "claude"
 SSH_AUTH_SOCK = "{% if os() == 'macos' %}{{ env.HOME }}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock{% else %}{{ env.HOME }}/.1password/agent.sock{% endif %}"
 
+[tools]
+"github:kunchenguid/no-mistakes" = "latest"
+
 [bootstrap.packages]
 "brew-cask:1password-cli" = { os = "macos" }
 

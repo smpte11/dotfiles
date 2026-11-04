@@ -1,0 +1,6 @@
+<Config>
+{%- set key = secret(name="prowlarr_api_key") | trim %}
+{%- if key %}
+  <ApiKey>{{ key }}</ApiKey>
+{%- endif %}
+</Config>
