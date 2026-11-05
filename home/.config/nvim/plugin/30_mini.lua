@@ -497,6 +497,7 @@ later(function()
       -- Wrapped in a function so it's resolved at clue-window render time,
       -- after the zk-nvim later() block has run.
       function() return Config.zk_clues or {} end,
+      function() return Config.dap_clues or {} end,
       miniclue.gen_clues.builtin_completion(),
       miniclue.gen_clues.g(),
       miniclue.gen_clues.marks(),

@@ -1,0 +1,34 @@
+#!/bin/sh
+#MISE description="Add the toolchain, language server and debug adapter of one or more languages to the mise.toml of this project"
+#MISE raw=true
+#MISE dir="{{cwd}}"
+#USAGE arg "<lang>..." help="Languages to set up" {
+#USAGE   choices "elixir" "erlang" "go" "python" "rust" "scala"
+#USAGE }
+set -eu
+
+for lang in "$@"; do
+    case "$lang" in
+    elixir) mise use erlang elixir expert elixir-ls ;;
+    erlang)
+        mise use erlang rebar github:WhatsApp/erlang-language-platform github:WhatsApp/edb
+        profile='{profiles, [{test, [{erl_opts, [debug_info, beam_debug_info, beam_debug_stack]}]}]}.'
+        if [ ! -f rebar.config ] || grep -q beam_debug_info rebar.config; then
+            :
+        elif grep -q '{profiles' rebar.config; then
+            echo "Add debug_info, beam_debug_info and beam_debug_stack to erl_opts of the test profile in rebar.config" >&2
+        else
+            printf '%s\n' "$profile" >>rebar.config
+            echo "Added the edb debug profile to rebar.config"
+        fi
+        ;;
+    go) mise use go go:golang.org/x/tools/gopls go:github.com/go-delve/delve/cmd/dlv ;;
+    python) mise use python uv ty pipx:debugpy ;;
+    rust) mise use rust rust-analyzer ;;
+    scala) mise use java sbt coursier ;;
+    *)
+        echo "Unknown language: $lang" >&2
+        exit 1
+        ;;
+    esac
+done

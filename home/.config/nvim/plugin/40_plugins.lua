@@ -123,22 +123,11 @@ now_if_args(function()
 		"elp",
 		"nushell",
 		"gopls",
+		"ty",
 		"expert",
     "yamlls",
 		"ocamllsp",
 	})
-end)
-
--- Debug Adapter Protocol ====================================================
-
-later(function()
-	add({ "https://github.com/mfussenegger/nvim-dap" })
-
-	require("dap").adapters.python = {
-		type = "executable",
-		command = "python",
-		args = { "-m", "debugpy.adapter" },
-	}
 end)
 
 -- Scala ======================================================================
@@ -584,10 +573,15 @@ Config.now(function()
 	end
 end)
 
-later(function()
-  add({
-    { src = 'https://github.com/mrcjkb/rustaceanvim', version = vim.version.range('^9') }
-  })
+now_if_args(function()
+	vim.g.rustaceanvim = {
+		dap = {
+			adapter = function() return require("rust_dap_adapter")() end,
+		},
+	}
+	add({
+		{ src = "https://github.com/mrcjkb/rustaceanvim", version = vim.version.range("^9") },
+	})
 end)
 
 later(function()
