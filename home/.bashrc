@@ -64,6 +64,7 @@ eval "$(tv init bash)"
 eval "$(oh-my-posh init bash --config ~/.config/ohmyposh/.minischeme.omp.toml)"
 
 source <(carapace _carapace bash)
+eval "$(fzf --bash)"
 
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 

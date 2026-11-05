@@ -81,15 +81,12 @@ dap.configurations.scala = {
 	{
 		type = "scala",
 		request = "launch",
-		name = "Run or test file",
-		metals = { runType = "runOrTestFile" },
+		name = "Run Main",
+		metals = { mainClass = "Main" },
 	},
 	{
 		type = "scala",
-		request = "launch",
-		name = "Test target",
-		metals = { runType = "testTarget" },
-	},
+		request = "attach",
 	{
 		type = "scala",
 		request = "attach",
@@ -101,11 +98,9 @@ dap.configurations.scala = {
 	{
 		type = "scala",
 		request = "attach",
-		name = "Attach to JVM",
-		hostName = function() return vim.fn.input("Host: ", "localhost") end,
-		port = function() return tonumber(vim.fn.input("Port: ", "5005")) end,
-		buildTarget = function()
-			return pick_build_target(function() return true end)
-		end,
+		name = "Attach to test (JDWP 5005)",
+		hostName = "localhost",
+		port = 5005,
+	},
 	},
 }
