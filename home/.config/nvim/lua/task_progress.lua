@@ -66,7 +66,7 @@ local timers = {}
 local function schedule(bufnr, delay)
   local t = timers[bufnr]
   if t then t:stop(); t:close() end
-  t = vim.uv.new_timer()
+  t = assert(vim.uv.new_timer())
   timers[bufnr] = t
   t:start(delay or 60, 0, vim.schedule_wrap(function()
     if timers[bufnr] then timers[bufnr]:close(); timers[bufnr] = nil end

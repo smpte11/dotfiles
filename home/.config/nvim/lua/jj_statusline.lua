@@ -47,7 +47,7 @@ end
 
 function M.find_root(bufnr)
 	local f = vim.api.nvim_buf_get_name(bufnr or 0)
-	local start = f ~= "" and vim.fs.dirname(f) or vim.uv.cwd()
+	local start = f ~= "" and vim.fs.dirname(f) or vim.fn.getcwd()
 	return vim.fs.root(start, ".jj")
 end
 

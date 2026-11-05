@@ -28,9 +28,9 @@ local function is_test_target(name)
 end
 
 local function free_port()
-	local tcp = vim.uv.new_tcp()
+	local tcp = assert(vim.uv.new_tcp())
 	tcp:bind("127.0.0.1", 0)
-	local port = tcp:getsockname().port
+	local port = assert(tcp:getsockname()).port
 	tcp:close()
 	return port
 end
