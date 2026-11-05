@@ -132,7 +132,7 @@ end)
 
 -- Scala ======================================================================
 
-later(function()
+now_if_args(function()
 	add({ "https://github.com/scalameta/nvim-metals" })
 
 	local metals = require("metals")
@@ -146,23 +146,24 @@ later(function()
 		statusBarProvider = "off",
 		isHttpEnabled = true,
 	}
-	metals_config.on_attach = function(client, bufnr)
+	metals_config.on_attach = function()
 		metals.setup_dap()
 	end
 
-	vim.api.nvim_create_autocmd("FileType", {
-		pattern = { "scala", "sbt" },
-		callback = function(args)
-			local bin_dir = vim.fs.find(".bin", { upward = true, path = vim.fs.dirname(args.file), type = "directory" })[1]
-			if bin_dir then
-				local binary = vim.fs.joinpath(bin_dir, "metals")
-				if vim.uv.fs_stat(binary) then
-					metals_config.settings.metalsBinaryPath = binary
-				end
-			end
-			metals.initialize_or_attach(metals_config)
-		end,
-	})
+	local attach = function(buf)
+		local path = vim.api.nvim_buf_get_name(buf)
+		local bin_dir = vim.fs.find(".bin", { upward = true, path = vim.fs.dirname(path), type = "directory" })[1]
+		local binary = bin_dir and vim.fs.joinpath(bin_dir, "metals")
+		if binary and vim.uv.fs_stat(binary) then metals_config.settings.metalsBinaryPath = binary end
+		vim.api.nvim_buf_call(buf, function() metals.initialize_or_attach(metals_config) end)
+	end
+
+	Config.new_autocmd("FileType", { "scala", "sbt" }, function(ev) attach(ev.buf) end, "Attach Metals")
+	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+		if vim.api.nvim_buf_is_loaded(buf) and vim.tbl_contains({ "scala", "sbt" }, vim.bo[buf].filetype) then
+			attach(buf)
+		end
+	end
 end)
 
 -- Formatting =================================================================

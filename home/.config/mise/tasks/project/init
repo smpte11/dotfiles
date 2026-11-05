@@ -25,7 +25,27 @@ for lang in "$@"; do
     go) mise use go go:golang.org/x/tools/gopls go:github.com/go-delve/delve/cmd/dlv ;;
     python) mise use python uv ty pipx:debugpy ;;
     rust) mise use rust rust-analyzer ;;
-    scala) mise use java sbt coursier ;;
+    scala)
+        mise use java sbt coursier
+        if grep -q '\.bin/metals' mise.toml; then
+            :
+        elif grep -q -e '^\[env\]' -e '^\[hooks\]' mise.toml; then
+            echo 'Add _.path = ["{{config_root}}/.bin"] to [env] and a postinstall hook that runs cs install --install-dir .bin metals to [hooks] in mise.toml' >&2
+        else
+            cat >>mise.toml <<'EOF'
+
+[env]
+_.path = ["{{config_root}}/.bin"]
+
+[hooks]
+postinstall = '[ -x "{{config_root}}/.bin/metals" ] || cs install --install-dir "{{config_root}}/.bin" metals'
+EOF
+        fi
+        if ! grep -qx '\.bin/' .gitignore 2>/dev/null; then
+            echo '.bin/' >>.gitignore
+        fi
+        mise install
+        ;;
     *)
         echo "Unknown language: $lang" >&2
         exit 1
