@@ -3,7 +3,7 @@
 #MISE raw=true
 #MISE dir="{{cwd}}"
 #USAGE arg "<lang>..." help="Languages to set up" {
-#USAGE   choices "elixir" "erlang" "go" "python" "rust" "scala"
+#USAGE   choices "elixir" "erlang" "go" "ocaml" "python" "rust" "scala"
 #USAGE }
 set -eu
 
@@ -20,6 +20,33 @@ for lang in "$@"; do
         else
             printf '%s\n' "$profile" >>rebar.config
             echo "Added the edb debug profile to rebar.config"
+        fi
+        ;;
+    ocaml)
+        mise use opam
+        if ! mise x -- opam switch list >/dev/null 2>&1; then
+            mise x -- opam init --bare --no-setup --yes
+        fi
+        if [ ! -d _opam ]; then
+            mise x -- opam switch create . --empty --yes
+        fi
+        mise x -- opam install --switch=. --yes ocaml dune ocaml-lsp-server ocamlformat earlybird
+        if grep -q '_opam/bin' mise.toml; then
+            :
+        elif grep -q '^\[env\]' mise.toml; then
+            echo 'Add _.path = ["{{config_root}}/_opam/bin"] to [env] in mise.toml' >&2
+        else
+            printf '\n[env]\n_.path = ["{{config_root}}/_opam/bin"]\n' >>mise.toml
+        fi
+        if [ -f dune-project ] && ! grep -q map_workspace_root dune-project; then
+            major=$(sed -n 's/^(lang dune \([0-9]*\)\..*/\1/p' dune-project)
+            minor=$(sed -n 's/^(lang dune [0-9]*\.\([0-9]*\)).*/\1/p' dune-project)
+            if [ "${major:-99}" -gt 3 ] || { [ "${major:-99}" -eq 3 ] && [ "${minor:-99}" -ge 7 ]; }; then
+                printf '%s\n' '(map_workspace_root false)' >>dune-project
+                echo "Disabled map_workspace_root in dune-project so earlybird can map bytecode to sources"
+            else
+                echo "Set (lang dune 3.7) or newer in dune-project, then add (map_workspace_root false) so earlybird can map bytecode to sources" >&2
+            fi
         fi
         ;;
     go) mise use go go:golang.org/x/tools/gopls go:github.com/go-delve/delve/cmd/dlv ;;
