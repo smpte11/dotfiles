@@ -1,0 +1,20 @@
+[[actions]]
+name = "alias.fetch"
+desc = "jj fetch"
+lua = 'jj_async("fetch") revisions.refresh()'
+seq = ["w", "f"]
+scope = "revisions"
+
+[[actions]]
+name = "alias.lift"
+desc = "jj lift"
+lua = 'jj_async("lift") revisions.refresh()'
+seq = ["w", "l"]
+scope = "revisions"
+
+[[actions]]
+name = "alias.tug"
+desc = "jj tug"
+lua = 'jj_async("tug") revisions.refresh()'
+seq = ["w", "t"]
+scope = "revisions"
