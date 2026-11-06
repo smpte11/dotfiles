@@ -578,6 +578,16 @@ now_if_args(function()
 	vim.g.rustaceanvim = {
 		dap = {
 			adapter = function() return require("rust_dap_adapter")() end,
+			configuration = function()
+				local adapter = require("rust_dap_adapter")()
+				if not adapter then return false end
+				return {
+					name = "Rust debug client",
+					type = adapter.type == "server" and "codelldb" or "lldb",
+					request = "launch",
+					stopOnEntry = false,
+				}
+			end,
 		},
 	}
 	add({
