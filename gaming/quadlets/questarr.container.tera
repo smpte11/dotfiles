@@ -3,7 +3,7 @@ ContainerName=questarr
 Image=ghcr.io/doezer/questarr:latest
 Label=io.containers.autoupdate=registry
 PublishPort=5000:5000
-Environment=TZ=Europe/Stockholm
+Environment=PUID=0 PGID=0 TZ=Europe/Stockholm
 Volume={{ env.HOME }}/.config/questarr:/app/data:Z
 Network=host
 
