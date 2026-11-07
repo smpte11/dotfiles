@@ -78,12 +78,13 @@ media_secret() {
     return 0
 }
 
-export_media_secrets() {
-    read_modules | grep -qx media || return 0
+export_netfelix_secrets() {
+    read_modules | grep -qxE 'media|gaming' || return 0
     proton_login
     media_secret SONARR_API_KEY 'pass://Media/Netfelix/SONARR_API_KEY' "$HOME/.config/sonarr/config.xml"
     media_secret RADARR_API_KEY 'pass://Media/Netfelix/RADARR_API_KEY' "$HOME/.config/radarr/config.xml"
     media_secret PROWLARR_API_KEY 'pass://Media/Netfelix/PROWLARR_API_KEY' "$HOME/.config/prowlarr/config.xml"
+    media_secret QUESTARR_API_KEY 'pass://Media/Netfelix/QUESTARR_API_KEY' ""
     media_secret QBIT_USERNAME 'pass://Media/Netfelix/QBIT_USERNAME' ""
     media_secret QBIT_PASSWORD 'pass://Media/Netfelix/QBIT_PASSWORD' ""
     media_secret YTS_API_URL 'pass://Media/Netfelix/YTS_API_URL' ""
@@ -96,7 +97,7 @@ export_secrets() {
         CODESTRAL_API_KEY="${key:-${CODESTRAL_API_KEY:-}}"
         export CODESTRAL_API_KEY
     fi
-    export_media_secrets
+    export_netfelix_secrets
     if read_modules | grep -qx proton-pass; then
         proton_login
     fi

@@ -15,7 +15,7 @@ description = "desktop extras with OpenDeck plugins and reminders"
 modules = ["desktop"]
 
 [module.gaming]
-description = "questarr game manager for the games library"
+description = "questarr game manager with qbit and prowlarr secrets"
 modules = ["gaming"]
 
 [module.proton-pass]
