@@ -51,6 +51,7 @@ with_ssh() {
 }
 
 write_modules() {
+    export_secrets
     modules="$(with_ssh "$(printf '%s' "$1" | tr -d ' ' | sed 's/,*$//')")"
     unapply_removed_modules "$(read_modules | paste -sd' ' -)" ",$modules,"
     list="$(printf '%s' "$modules" | tr ',' '\n' | sed '/^$/d; s/.*/"&"/' | paste -sd, -)"
