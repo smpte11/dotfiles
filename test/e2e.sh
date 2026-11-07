@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-groups=(local-files idempotent services secrets theme history smoke tools media identity tuios switch)
+groups=(local-files idempotent services secrets theme history smoke tools media identity tuios switch picker)
 if [ "${1:-}" = groups ]; then
     printf '%s\n' "${groups[@]}"
     exit 0
@@ -249,6 +249,48 @@ check_media() {
     done
     [ -e "$HOME/.agents/machine/protect-media-drives.md" ] || fail "the media drive guard is not deployed"
     grep -q '/run/media/system/media' "$HOME/.agents/machine/protect-media-drives.md" || fail "the media drive guard does not name the media mount"
+}
+
+check_picker() {
+    local stub=$work/gum-stub out before after
+    cat >"$stub" <<'STUB'
+#!/bin/bash
+sel=
+prev=
+for a in "$@"; do
+    if [ "$prev" = --selected ]; then sel=$a; fi
+    prev=$a
+done
+case "$1" in
+confirm) exit 0 ;;
+choose)
+    if [ -n "$sel" ]; then
+        printf '%s\n' "$sel" | tr ',' '\n'
+    else
+        printf 'media - pick one\ngamebox - pick two\n'
+    fi
+    ;;
+esac
+STUB
+    chmod +x "$stub"
+    out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "")
+    [ "$out" = "media,gamebox" ] || fail "the picker did not resolve labels to modules: $out"
+    out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "gamebox,ssh")
+    [ "$out" = "gamebox" ] || fail "the picker did not pre-select the deployed modules: $out"
+    if has_module personal || has_module media || has_module proton-pass; then
+        [ -x "$HOME/.local/bin/pass-cli" ] || fail "pass-cli is not installed although a proton module is active"
+    else
+        [ ! -e "$HOME/.local/bin/pass-cli" ] || fail "pass-cli is installed without a proton module"
+    fi
+    if has_module proton-pass; then
+        grep -qx 'env = \["proton-pass"\]' "$dotfiles/home/.config/mise/miserc.local.toml" || fail "miserc.local.toml does not list proton-pass"
+    fi
+    if [ "$scenario" = fresh ]; then
+        before=$(cat "$dotfiles/home/.config/mise/miserc.local.toml")
+        DOTFILES_ENV=$modules "$HOME/.local/bin/dotfiles-setup" update "${bootstrap_args[@]}" >/dev/null 2>&1 || fail "re-running setup with the same modules failed"
+        after=$(cat "$dotfiles/home/.config/mise/miserc.local.toml")
+        [ "$before" = "$after" ] || fail "re-running setup with the same modules rewrote miserc.local.toml"
+    fi
 }
 
 case " ${groups[*]} " in
