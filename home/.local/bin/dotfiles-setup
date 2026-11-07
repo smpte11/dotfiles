@@ -10,18 +10,8 @@ in_container() {
     [ -n "${CODESPACES:-}${REMOTE_CONTAINERS:-}${container:-}" ] || [ -f /.dockerenv ] || [ -f /run/.containerenv ]
 }
 
-available_modules() {
-    local f b
-    for f in "$dotfiles/$config_dir"/config.*.toml; do
-        b=$(basename "$f" .toml)
-        b=${b#config.}
-        [ "$b" = ssh ] && continue
-        printf '%s\n' "$b"
-    done | sort
-}
-
 choose_modules() {
-    mise exec gum@latest -- gum choose --no-limit --header "Modules for this machine" $(available_modules) | paste -sd, -
+    "$dotfiles/home/.local/bin/dotfiles-choose" "$(read_modules | paste -sd, -)"
 }
 
 read_modules() {
@@ -107,19 +97,22 @@ export_secrets() {
         export CODESTRAL_API_KEY
     fi
     export_media_secrets
+    if read_modules | grep -qx proton-pass; then
+        proton_login
+    fi
 }
+
+if [ -n "${DOTFILES_ENV+set}" ]; then
+    write_modules "$DOTFILES_ENV"
+elif [ -t 0 ] && ! in_container; then
+    write_modules "$(choose_modules)"
+fi
 
 if [ "${1:-}" = update ]; then
     shift
     ensure_ssh_module
     export_secrets
     exec mise bootstrap --update --prune-dotfiles --yes "$@"
-fi
-
-if [ -n "${DOTFILES_ENV+set}" ]; then
-    write_modules "$DOTFILES_ENV"
-elif [ -t 0 ] && ! in_container; then
-    write_modules "$(choose_modules)"
 fi
 
 ensure_ssh_module

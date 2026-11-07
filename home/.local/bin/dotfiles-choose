@@ -1,0 +1,103 @@
+#!/bin/sh
+set -eu
+
+dotfiles="$HOME/.dotfiles"
+manifest="$dotfiles/profiles.toml"
+
+[ -f "$manifest" ] || { echo "missing $manifest" >&2; exit 1; }
+
+gum() {
+    if [ -n "${DOTFILES_GUM:-}" ]; then
+        $DOTFILES_GUM "$@"
+    else
+        mise exec gum@latest -- gum "$@"
+    fi
+}
+
+manifest_rows() {
+    awk '
+        /^\[profile\.[A-Za-z0-9_-]+\]$/ {
+            name = $0
+            sub(/^\[profile\./, "", name)
+            sub(/\]$/, "", name)
+            order[++count] = name
+        }
+        /^description = "/ {
+            line = $0
+            sub(/^description = "/, "", line)
+            sub(/"$/, "", line)
+            desc[name] = line
+        }
+        /^modules = \[/ {
+            line = $0
+            sub(/^modules = \[/, "", line)
+            sub(/\].*$/, "", line)
+            gsub(/[" ]/, "", line)
+            mods[name] = line
+        }
+        END {
+            for (i = 1; i <= count; i++) {
+                name = order[i]
+                print name "\t" desc[name] "\t" mods[name]
+            }
+        }
+    ' "$manifest"
+}
+
+picker_options() {
+    tab=$(printf '\t')
+    manifest_rows | while IFS="$tab" read -r name desc mods; do
+        printf '%s - %s\n' "$name" "$desc"
+    done
+}
+
+label_for_module() {
+    manifest_rows | awk -F'\t' -v m="$1" '$3 ~ ("(^|,)" m "(,|$)") { print $1 " - " $2; exit }'
+}
+
+modules_for_labels() {
+    printf '%s\n' "$1" | while read -r label; do
+        if [ -n "$label" ]; then
+            name=${label%% - *}
+            manifest_rows | awk -F'\t' -v n="$name" '$1 == n { print $3; exit }'
+        fi
+    done | paste -sd, -
+}
+
+main() {
+    current=${1:-}
+    selected=
+    for m in $(printf '%s' "$current" | tr ',' ' '); do
+        if [ "$m" = ssh ]; then
+            continue
+        fi
+        label=$(label_for_module "$m")
+        if [ -n "$label" ]; then
+            selected=${selected:+$selected,}$label
+        fi
+    done
+
+    set --
+    if [ -n "$selected" ]; then
+        set -- --selected "$selected"
+    fi
+
+    if ! chosen=$(picker_options | gum choose --no-limit --header "Profiles for this machine" "$@"); then
+        echo "setup aborted" >&2
+        exit 1
+    fi
+
+    modules=$(modules_for_labels "$chosen")
+    if [ -n "$modules" ]; then
+        prompt="Bootstrap this machine with profiles: $modules?"
+    else
+        prompt="Bootstrap this machine with no extra profiles?"
+    fi
+    if ! gum confirm "$prompt"; then
+        echo "setup aborted" >&2
+        exit 1
+    fi
+    printf '%s\n' "$modules"
+}
+
+main "$@"

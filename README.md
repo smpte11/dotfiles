@@ -11,13 +11,19 @@ curl -fsSL https://raw.githubusercontent.com/smpte11/dotfiles/main/install.sh | 
 ```
 
 The script installs mise, clones the repository to `~/.dotfiles` and runs
-`dotfiles-setup`. `dotfiles-setup` opens a multi-select picker listing every
-module found as `home/.config/mise/config.<module>.toml`, writes the choice to
-`home/.config/mise/miserc.local.toml` (not committed) and runs
-`mise bootstrap`. Set `DOTFILES_ENV=work,desktop` to skip the questions.
-`dotfiles-setup` adds `ssh` to every machine that has an identity module.
-On a `personal` machine it also logs in to Proton Pass and gives the Codestral
-key to `mise bootstrap` as the `CODESTRAL_API_KEY` bootstrap secret. To change
+`dotfiles-setup`. On an interactive terminal `dotfiles-setup` opens the gum
+picker `home/.local/bin/dotfiles-choose`, which lists the profiles declared in
+`profiles.toml` with a one-line description of what each adds. The modules
+already recorded in `home/.config/mise/miserc.local.toml` are pre-selected, so
+re-running the installer or `mise run dotfiles:update` lets you add or remove
+profiles, and picking the same set again changes nothing. The choice is
+written to `home/.config/mise/miserc.local.toml` (not committed) and
+`mise bootstrap` runs. Set `DOTFILES_ENV=work,desktop` to skip the questions.
+To add a profile, add a `config.<name>.toml` module and a `[profile.<name>]`
+entry in `profiles.toml`. `dotfiles-setup` adds `ssh` to every machine that has
+an identity module. The `proton-pass` profile installs `pass-cli` and logs in
+on any machine. On a `personal` machine it also gives the Codestral key to
+`mise bootstrap` as the `CODESTRAL_API_KEY` bootstrap secret. To change
 the key, remove `~/.config/codestral/env` and run `mise run dotfiles:update`.
 On a `media` machine it reads the `pass://Media/Netfelix/*` items from Proton
 Pass and gives them to `mise bootstrap` as the matching bootstrap secrets
@@ -37,6 +43,7 @@ in the `config.xml` files.
 | `media/` | `media` | netfelix quadlets, Configarr config, *arr seed configs, media drive guard for agents |
 | `home/.config/mise/config.toml` | always | Tools, groups, templates, repos |
 | `home/.config/mise/config.<module>.toml` | per module | The module's vars, env, groups, services and hooks |
+| `profiles.toml` | no | Profile catalog shown by the setup picker |
 | `home/.config/mise/themes.toml` | | Theme palettes for the `*.tera` templates |
 
 Files ending in `.tera` are templates. They read `vars` from the config and the
