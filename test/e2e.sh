@@ -204,16 +204,19 @@ check_tools() {
         expect_tool helix absent
         expect_tool aqua:nushell/nushell absent
     fi
-    if has_module gamebox; then
+    if has_module gaming; then
         expect_tool ollama present
+    else
+        expect_tool ollama absent
+    fi
+    if has_module dev; then
         expect_tool devcontainer-cli present
         expect_tool github:fgrehm/crib present
     else
-        expect_tool ollama absent
         expect_tool devcontainer-cli absent
         expect_tool github:fgrehm/crib absent
     fi
-    if has_module desktop || has_module work || has_module gamebox; then
+    if has_module desktop || has_module work || has_module gaming; then
         expect_tool github:kunchenguid/no-mistakes present
     else
         expect_tool github:kunchenguid/no-mistakes absent
@@ -267,16 +270,16 @@ choose)
     if [ -n "$sel" ]; then
         printf '%s\n' "$sel" | tr ',' '\n'
     else
-        printf 'media - pick one\ngamebox - pick two\n'
+        printf 'media - pick one\ndev - pick two\n'
     fi
     ;;
 esac
 STUB
     chmod +x "$stub"
     out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "")
-    [ "$out" = "media,gamebox" ] || fail "the picker did not resolve labels to modules: $out"
-    out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "gamebox,ssh")
-    [ "$out" = "gamebox" ] || fail "the picker did not pre-select the deployed modules: $out"
+    [ "$out" = "media,dev" ] || fail "the picker did not resolve labels to modules: $out"
+    out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "gaming,ssh")
+    [ "$out" = "gaming" ] || fail "the picker did not pre-select the deployed modules: $out"
     if has_module personal || has_module media || has_module proton-pass; then
         [ -x "$HOME/.local/bin/pass-cli" ] || fail "pass-cli is not installed although a proton module is active"
     else
