@@ -83,4 +83,5 @@ on machines that have them.
   reused until a file outside the checks changes; `--fresh` installs again.
   Each check group runs in its own container from the checkpoint, so
   `mise run test:fresh personal --only theme,secrets` runs only those groups.
-  `mise run test:clean` removes the images, checkpoints and caches.
+  `mise run test:clean` removes the images, checkpoints and caches. Run it
+  locally before pushing a change.
