@@ -1,2 +1,3 @@
 home/.config/mise/*.local.toml
 home/.config/mise/conf.d/theme.toml
+__pycache__/
