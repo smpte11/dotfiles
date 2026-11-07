@@ -148,7 +148,7 @@ shell)
     exit 0
     ;;
 fresh)
-    [ $# -gt 0 ] || set -- none base,ssh,media,ssh-agent work,ssh,desktop base,ssh,desktop media,dev,gaming proton-pass
+    [ $# -gt 0 ] || set -- none base,ssh,media,ssh-agent,gaming work,ssh,desktop base,ssh,desktop dev,gaming proton-pass
     ;;
 *)
     usage

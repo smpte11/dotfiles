@@ -28,11 +28,11 @@ any machine; the `base` module includes it. The `ssh-agent` module is optional
 and adds the Proton Pass SSH agent. On a `base` machine the Codestral key is
 passed to `mise bootstrap` as the `CODESTRAL_API_KEY` bootstrap secret. To change
 the key, remove `~/.config/codestral/env` and run `mise run dotfiles:update`.
-On a `media` machine it reads the `pass://Media/Netfelix/*` items from Proton
-Pass and gives them to `mise bootstrap` as the matching bootstrap secrets
-(`SONARR_API_KEY`, `RADARR_API_KEY`, `PROWLARR_API_KEY`, `QBIT_USERNAME`,
-`QBIT_PASSWORD`, `YTS_API_URL`), falling back to the API keys already deployed
-in the `config.xml` files.
+On a `media` or `gaming` machine it reads the `pass://Media/Netfelix/*` items
+from Proton Pass and gives them to `mise bootstrap` as the matching bootstrap
+secrets (`SONARR_API_KEY`, `RADARR_API_KEY`, `PROWLARR_API_KEY`,
+`QUESTARR_API_KEY`, `QBIT_USERNAME`, `QBIT_PASSWORD`, `YTS_API_URL`), falling
+back to the API keys already deployed in the `config.xml` files.
 
 ## Layout
 
@@ -64,15 +64,20 @@ to `~/.config/containers/systemd/netfelix/`, the Configarr config to
 `~/.config/media/configarr/config.yml`, and seed `config.xml` files (only when
 missing, so existing installs keep their keys) that pin each *arr API key. A
 oneshot `configarr.container` plus a daily `configarr.timer` apply the
-declarative settings through the *arr APIs. The `gaming` module adds Questarr to
-the pod the same way: a oneshot `questarr-config.container` plus a daily
+declarative settings through the *arr APIs. The `gaming` module deploys Questarr
+the same way (a oneshot `questarr-config.container` plus a daily
 `questarr-config.timer` apply `gaming/questarr/config.json` through Questarr's
-admin-scope API. One-time setup: create an `admin` API key in Questarr
-(Settings -> API keys) and store it as `pass://Media/Netfelix/QUESTARR_API_KEY`;
-the post-dotfiles hook of the `gaming` module turns it into the
-`questarr_api_key` podman secret. Secrets reach the container as
-podman secrets (created by a post-dotfiles hook) injected as environment
-variables that `config.yml` reads with `!env`. The module also deploys
+admin-scope API) but with `Network=host` instead of joining the netfelix pod, so
+it works with or without `media` on the same host. One-time setup: create an
+`admin` API key in Questarr (Settings -> API keys) and store it as
+`pass://Media/Netfelix/QUESTARR_API_KEY`. Secrets reach the containers as
+podman secrets injected as environment variables that `config.yml` reads with
+`!env`: a single post-dotfiles hook in `home/.config/mise/config.toml` creates
+each podman secret once from its environment variable when set, so modules that
+share a dependency (qbit for both `media` and `gaming`) use the same secret.
+Each module only declares the `[bootstrap.secrets.*]` entries its containers
+consume, and the hook enables whichever timer units are deployed. The `media`
+module also deploys
 `~/.agents/machine/protect-media-drives.md`, which forbids agents from touching
 the mounted media pool; `~/.agents/machine/` files are read before anything else
 on machines that have them.

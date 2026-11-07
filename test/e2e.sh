@@ -183,6 +183,10 @@ check_switch() {
     [ ! -e "$HOME/.config/systemd/user/dev.mise.proton-pass-ssh-agent.service" ] || fail "the proton unit remains after the switch"
     [ ! -e "$HOME/.local/bin/proton-pass-ssh-agent" ] || fail "the proton wrapper remains after the switch"
     [ ! -e "$HOME/.config/codestral/env" ] || fail "the codestral key remains after the switch"
+    if has_module gaming; then
+        [ ! -e "$HOME/.config/containers/systemd/netfelix/questarr.container" ] || fail "the questarr quadlet remains after the switch"
+        [ ! -e "$HOME/.config/media/questarr" ] || fail "the questarr config remains after the switch"
+    fi
     [ -L "$HOME/.ssh/config" ] || fail "the ssh config was pruned by the switch"
     [ "$(stat -c %a "$HOME/.ssh")" = 700 ] || fail "$HOME/.ssh is not 0700 after the switch"
     grep -qx 'env = \["work","ssh"\]' "$dotfiles/home/.config/mise/miserc.local.toml" || fail "the modules are not work and ssh after the switch"
@@ -296,7 +300,7 @@ STUB
     [ "$out" = "gaming" ] || fail "the picker did not pre-select the deployed modules: $out"
     out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "base,proton-pass,ssh")
     [ "$out" = "base,proton-pass" ] || fail "the picker did not expand a module group: $out"
-    if has_module base || has_module media || has_module proton-pass; then
+    if has_module base || has_module media || has_module gaming || has_module proton-pass; then
         [ -x "$HOME/.local/bin/pass-cli" ] || fail "pass-cli is not installed although a proton module is active"
     else
         [ ! -e "$HOME/.local/bin/pass-cli" ] || fail "pass-cli is installed without a proton module"
