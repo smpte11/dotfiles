@@ -1,9 +1,9 @@
-[module.personal]
-description = "base config with Proton Pass agent and signing key"
-modules = ["personal"]
+[module.base]
+description = "base config with signing key and Codestral key"
+modules = ["base", "proton-pass"]
 
 [module.dev]
-description = "dev tools: devcontainers and project containers"
+description = "dev tools: devcontainers and local models"
 modules = ["dev"]
 
 [module.media]
@@ -15,9 +15,13 @@ description = "desktop extras with OpenDeck plugins and reminders"
 modules = ["desktop"]
 
 [module.gaming]
-description = "gaming with ollama"
+description = "questarr game manager for the games library"
 modules = ["gaming"]
 
 [module.proton-pass]
 description = "Proton Pass CLI (pass-cli) on any machine"
 modules = ["proton-pass"]
+
+[module.ssh-agent]
+description = "Proton Pass SSH agent for git signing"
+modules = ["ssh-agent"]

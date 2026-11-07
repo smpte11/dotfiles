@@ -52,7 +52,11 @@ picker_options() {
 }
 
 label_for_module() {
-    manifest_rows | awk -F'\t' -v m="$1" '$3 ~ ("(^|,)" m "(,|$)") { print $1 " - " $2; exit }'
+    manifest_rows | awk -F'\t' -v m="$1" '
+        $1 == m { exact = $1 " - " $2 }
+        $3 ~ ("(^|,)" m "(,|$)") && listed == "" { listed = $1 " - " $2 }
+        END { if (exact != "") print exact; else print listed }
+    '
 }
 
 modules_for_labels() {
@@ -61,7 +65,7 @@ modules_for_labels() {
             name=${label%% - *}
             manifest_rows | awk -F'\t' -v n="$name" '$1 == n { print $3; exit }'
         fi
-    done | paste -sd, -
+    done | tr ',' '\n' | awk 'NF && !seen[$0]++' | paste -sd, -
 }
 
 main() {

@@ -35,7 +35,7 @@ unapply_removed_modules() {
 with_ssh() {
     case ",$1," in
     *,ssh,*) echo "$1" ;;
-    *,personal,* | *,work,*) echo "$1,ssh" ;;
+    *,base,* | *,work,*) echo "$1,ssh" ;;
     *) echo "$1" ;;
     esac
 }
@@ -90,7 +90,7 @@ export_media_secrets() {
 }
 
 export_secrets() {
-    if read_modules | grep -qx personal; then
+    if read_modules | grep -qx base; then
         proton_login
         key="$("$pass" item view 'pass://Personal/Codestral/API Key' 2>/dev/null || true)"
         CODESTRAL_API_KEY="${key:-${CODESTRAL_API_KEY:-}}"

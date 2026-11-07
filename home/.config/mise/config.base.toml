@@ -1,0 +1,17 @@
+[env]
+NVIM_AI_PROVIDER = "codestral"
+_.file = { path = "{{ env.HOME }}/.config/codestral/env", redact = true }
+
+[tools]
+"github:floatpane/matcha" = "latest"
+
+[dotfile_groups.base]
+root = "base"
+
+[dotfile_groups.base.entries]
+"~/.config/codestral/env" = { mode = "template", create_if_missing = true, permissions = "0600" }
+
+[bootstrap.secrets.codestral_api_key]
+env = "CODESTRAL_API_KEY"
+description = "Codestral API key"
+allow_empty = true

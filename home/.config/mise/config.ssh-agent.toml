@@ -1,0 +1,12 @@
+[env]
+SSH_AUTH_SOCK = "{{ env.HOME }}/.ssh/proton-pass-agent.sock"
+
+[dotfile_groups.ssh-agent]
+root = "ssh-agent"
+
+[bootstrap.services.proton-pass-ssh-agent]
+scope = "user"
+description = "Proton Pass SSH agent"
+command = "~/.local/bin/proton-pass-ssh-agent"
+restart = "always"
+environment = { PROTON_PASS_LINUX_KEYRING = "dbus" }
