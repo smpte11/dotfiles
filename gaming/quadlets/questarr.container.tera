@@ -5,6 +5,7 @@ Label=io.containers.autoupdate=registry
 PublishPort=5000:5000
 Environment=PUID=0 PGID=0 TZ=Europe/Stockholm
 Volume={{ env.HOME }}/.config/questarr:/app/data:Z
+Volume=/run/media/system/media/media/games:/data:z
 Network=host
 
 [Service]
