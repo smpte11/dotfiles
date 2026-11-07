@@ -7,6 +7,7 @@ exclude = ["quadlets", "configarr", "seed", "systemd"]
 "~/.config/containers/systemd/netfelix/sonarr.container" = { mode = "template", source = "quadlets/netfelix/sonarr.container.tera" }
 "~/.config/containers/systemd/netfelix/radarr.container" = { mode = "template", source = "quadlets/netfelix/radarr.container.tera" }
 "~/.config/containers/systemd/netfelix/prowlarr.container" = { mode = "template", source = "quadlets/netfelix/prowlarr.container.tera" }
+"~/.config/containers/systemd/netfelix/questarr.container" = { mode = "template", source = "quadlets/netfelix/questarr.container.tera" }
 "~/.config/containers/systemd/netfelix/jellyfin.container" = { mode = "template", source = "quadlets/netfelix/jellyfin.container.tera" }
 "~/.config/containers/systemd/netfelix/seerr.container" = { mode = "template", source = "quadlets/netfelix/seerr.container.tera" }
 "~/.config/containers/systemd/netfelix/flaresolverr.container" = { mode = "template", source = "quadlets/netfelix/flaresolverr.container.tera" }
