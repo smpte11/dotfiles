@@ -14,7 +14,17 @@ env = "QUESTARR_API_KEY"
 description = "Questarr admin-scope API key (pass://Media/Netfelix/QUESTARR_API_KEY)"
 allow_empty = true
 
-[bootstrap.hooks]
-post-dotfiles = [
-  'if command -v podman >/dev/null 2>&1; then if [ -n "$(printenv QUESTARR_API_KEY)" ]; then if podman secret exists questarr_api_key >/dev/null 2>&1; then podman secret rm questarr_api_key >/dev/null 2>&1; fi; printf %s "$(printenv QUESTARR_API_KEY)" | podman secret create questarr_api_key - >/dev/null; fi; fi; if command -v systemctl >/dev/null 2>&1; then systemctl --user daemon-reload; systemctl --user enable --now questarr-config.timer; fi',
-]
+[bootstrap.secrets.prowlarr_api_key]
+env = "PROWLARR_API_KEY"
+description = "Prowlarr API key (pass://Media/Netfelix/PROWLARR_API_KEY)"
+allow_empty = true
+
+[bootstrap.secrets.qbit_username]
+env = "QBIT_USERNAME"
+description = "qBittorrent username (pass://Media/Netfelix/QBIT_USERNAME)"
+allow_empty = true
+
+[bootstrap.secrets.qbit_password]
+env = "QBIT_PASSWORD"
+description = "qBittorrent password (pass://Media/Netfelix/QBIT_PASSWORD)"
+allow_empty = true
