@@ -1,0 +1,24 @@
+[Container]
+ContainerName=questarr-config
+Image=docker.io/python:3.13-alpine
+Exec=/usr/local/bin/python3 /config/apply.py
+Network=host
+Environment=TZ=Europe/Stockholm QUESTARR_URL=http://localhost:5000 CONFIG_PATH=/config/config.json
+Volume={{ env.HOME }}/.config/media/questarr:/config:Z
+Secret=questarr_api_key,type=env,target=QUESTARR_API_KEY
+Secret=prowlarr_api_key,type=env,target=PROWLARR_API_KEY
+Secret=qbit_username,type=env,target=QBIT_USERNAME
+Secret=qbit_password,type=env,target=QBIT_PASSWORD
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sh -c "until wget -q -O /dev/null http://localhost:5000/api/ready; do sleep 2; done"
+Restart=on-failure
+RestartSec=30
+
+[Unit]
+After=questarr.service
+Wants=questarr.service
+
+[Install]
+WantedBy=default.target

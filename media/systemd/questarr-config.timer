@@ -1,0 +1,10 @@
+[Unit]
+Description=Apply the declarative questarr settings to the netfelix stack
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+Unit=questarr-config.service
+
+[Install]
+WantedBy=timers.target

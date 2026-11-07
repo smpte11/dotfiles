@@ -52,7 +52,12 @@ to `~/.config/containers/systemd/netfelix/`, the Configarr config to
 `~/.config/media/configarr/config.yml`, and seed `config.xml` files (only when
 missing, so existing installs keep their keys) that pin each *arr API key. A
 oneshot `configarr.container` plus a daily `configarr.timer` apply the
-declarative settings through the *arr APIs. Secrets reach the container as
+declarative settings through the *arr APIs. Questarr is configured the same
+way: a oneshot `questarr-config.container` plus a daily `questarr-config.timer`
+apply `media/questarr/config.json` through Questarr's admin-scope API. One-time
+setup: create an `admin` API key in Questarr (Settings -> API keys) and store it
+as `pass://Media/Netfelix/QUESTARR_API_KEY`; the post-dotfiles hook turns it into
+the `questarr_api_key` podman secret. Secrets reach the container as
 podman secrets (created by a post-dotfiles hook) injected as environment
 variables that `config.yml` reads with `!env`. The module also deploys
 `~/.agents/machine/protect-media-drives.md`, which forbids agents from touching

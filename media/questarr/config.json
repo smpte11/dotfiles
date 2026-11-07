@@ -1,0 +1,18 @@
+{
+  "prowlarr": {
+    "url": "http://localhost:9696",
+    "apiKey": "$PROWLARR_API_KEY",
+    "allowInsecureLan": true
+  },
+  "downloaders": [
+    {
+      "name": "qBittorrent",
+      "type": "qbittorrent",
+      "url": "http://localhost:8081",
+      "username": "$QBIT_USERNAME",
+      "password": "$QBIT_PASSWORD",
+      "category": "questarr",
+      "enabled": true
+    }
+  ]
+}
