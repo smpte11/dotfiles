@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-groups=(local-files idempotent services secrets theme history smoke tools media identity tuios switch picker)
+groups=(local-files idempotent services secrets theme history smoke tools media identity tuios switch picker teardown)
 if [ "${1:-}" = groups ]; then
     printf '%s\n' "${groups[@]}"
     exit 0
@@ -287,6 +287,35 @@ check_media() {
     grep -q '/run/media/system/media' "$HOME/.agents/machine/protect-media-drives.md" || fail "the media drive guard does not name the media mount"
 }
 
+check_teardown() {
+    local stub=$work/gum-stub
+    cat >"$stub" <<'STUB'
+#!/bin/sh
+case "$1" in
+confirm) exit 1 ;;
+esac
+STUB
+    chmod +x "$stub"
+    if DOTFILES_GUM=$stub "$HOME/.local/bin/dotfiles-teardown" >/dev/null 2>&1; then
+        fail "teardown must abort when the confirmation is declined"
+    fi
+    [ -e "$HOME/.zshrc" ] || fail "the aborted teardown removed dotfiles"
+    if "$HOME/.local/bin/dotfiles-teardown" </dev/null >/dev/null 2>&1; then
+        fail "teardown without --yes must abort without a terminal"
+    fi
+    [ -e "$HOME/.zshrc" ] || fail "the non-interactive teardown removed dotfiles"
+    "$HOME/.local/bin/dotfiles-teardown" --yes >/dev/null 2>&1 || fail "teardown --yes failed"
+    [ ! -e "$dotfiles" ] || fail "the checkout remains after teardown"
+    [ ! -e "$HOME/.local/bin/mise" ] || fail "mise remains after teardown"
+    [ ! -e "$HOME/.local/share/mise" ] || fail "the mise data dir remains after teardown"
+    [ ! -L "$HOME/.config/mise" ] || fail "the mise config link remains after teardown"
+    [ ! -e "$HOME/.zshrc" ] || fail "~/.zshrc remains after teardown"
+    [ ! -e "$HOME/.local/bin/dotfiles-teardown" ] || fail "the teardown script link remains after teardown"
+    if has_identity; then
+        [ ! -e "$HOME/.ssh/config" ] || fail "~/.ssh/config remains after teardown"
+    fi
+}
+
 check_picker() {
     local stub=$work/gum-stub out before after
     cat >"$stub" <<'STUB'
@@ -328,6 +357,33 @@ STUB
         DOTFILES_ENV=$modules "$HOME/.local/bin/dotfiles-setup" update "${bootstrap_args[@]}" >/dev/null 2>&1 || fail "re-running setup with the same modules failed"
         after=$(cat "$dotfiles/home/.config/mise/miserc.local.toml")
         [ "$before" = "$after" ] || fail "re-running setup with the same modules rewrote miserc.local.toml"
+    fi
+}
+    local stub=$work/gum-stub
+    cat >"$stub" <<'STUB'
+#!/bin/sh
+case "$1" in
+confirm) exit 1 ;;
+esac
+STUB
+    chmod +x "$stub"
+    if DOTFILES_GUM=$stub "$HOME/.local/bin/dotfiles-teardown" >/dev/null 2>&1; then
+        fail "teardown must abort when the confirmation is declined"
+    fi
+    [ -e "$HOME/.zshrc" ] || fail "the aborted teardown removed dotfiles"
+    if "$HOME/.local/bin/dotfiles-teardown" </dev/null >/dev/null 2>&1; then
+        fail "teardown without --yes must abort without a terminal"
+    fi
+    [ -e "$HOME/.zshrc" ] || fail "the non-interactive teardown removed dotfiles"
+    "$HOME/.local/bin/dotfiles-teardown" --yes >/dev/null 2>&1 || fail "teardown --yes failed"
+    [ ! -e "$dotfiles" ] || fail "the checkout remains after teardown"
+    [ ! -e "$HOME/.local/bin/mise" ] || fail "mise remains after teardown"
+    [ ! -e "$HOME/.local/share/mise" ] || fail "the mise data dir remains after teardown"
+    [ ! -L "$HOME/.config/mise" ] || fail "the mise config link remains after teardown"
+    [ ! -e "$HOME/.zshrc" ] || fail "~/.zshrc remains after teardown"
+    [ ! -e "$HOME/.local/bin/dotfiles-teardown" ] || fail "the teardown script link remains after teardown"
+    if has_identity; then
+        [ ! -e "$HOME/.ssh/config" ] || fail "~/.ssh/config remains after teardown"
     fi
 }
 
