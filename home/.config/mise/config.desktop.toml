@@ -3,6 +3,11 @@
 helix = "latest"
 "github:kunchenguid/no-mistakes" = "latest"
 
+[bootstrap.packages]
+"flatpak-user:me.amankhanna.opendeck" = { os = "linux" }
+"macos-app:OpenDeck" = { version = "2.14.2", os = "macos/arm64", url = "https://github.com/nekename/OpenDeck/releases/download/v2.14.2/OpenDeck_aarch64.app.tar.gz", sha256 = "e1df9ade9e7a28183697dc58345cd9bf67e85ad9a8b2a94a59ff2e3524a2939b", artifact = "OpenDeck.app" }
+"macos-app:OpenDeck-x64" = { version = "2.14.2", os = "macos/x64", url = "https://github.com/nekename/OpenDeck/releases/download/v2.14.2/OpenDeck_x64.app.tar.gz", sha256 = "61c6948bf8b61630d6d4055d0a9cea833a4f5ce65bb646c6d41eb5cb01e494b2", artifact = "OpenDeck.app" }
+
 [dotfile_groups.desktop]
 root = "desktop"
 exclude = [".local/share/opendeck"]
@@ -74,6 +79,9 @@ on_calendar = "*-*-* 20:30"
 unit = "journal-reminder"
 
 [bootstrap.hooks]
+pre-packages = [
+  "if command -v flatpak >/dev/null; then flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo; fi",
+]
 post-dotfiles = [
   "if command -v flatpak >/dev/null; then flatpak override --user --filesystem={{ env.HOME }}/.dotfiles/desktop/.local/share/opendeck me.amankhanna.opendeck; fi",
 ]
