@@ -1,0 +1,3 @@
+[tools]
+ollama = "latest"
+"github:kunchenguid/no-mistakes" = "latest"

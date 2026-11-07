@@ -2,7 +2,7 @@
 set -eu
 
 dotfiles="$HOME/.dotfiles"
-manifest="$dotfiles/profiles.toml"
+manifest="$dotfiles/modules.toml"
 
 [ -f "$manifest" ] || { echo "missing $manifest" >&2; exit 1; }
 
@@ -16,9 +16,9 @@ gum() {
 
 manifest_rows() {
     awk '
-        /^\[profile\.[A-Za-z0-9_-]+\]$/ {
+        /^\[module\.[A-Za-z0-9_-]+\]$/ {
             name = $0
-            sub(/^\[profile\./, "", name)
+            sub(/^\[module\./, "", name)
             sub(/\]$/, "", name)
             order[++count] = name
         }
@@ -82,16 +82,16 @@ main() {
         set -- --selected "$selected"
     fi
 
-    if ! chosen=$(picker_options | gum choose --no-limit --header "Profiles for this machine" "$@"); then
+    if ! chosen=$(picker_options | gum choose --no-limit --header "Modules for this machine" "$@"); then
         echo "setup aborted" >&2
         exit 1
     fi
 
     modules=$(modules_for_labels "$chosen")
     if [ -n "$modules" ]; then
-        prompt="Bootstrap this machine with profiles: $modules?"
+        prompt="Bootstrap this machine with modules: $modules?"
     else
-        prompt="Bootstrap this machine with no extra profiles?"
+        prompt="Bootstrap this machine with no extra modules?"
     fi
     if ! gum confirm "$prompt"; then
         echo "setup aborted" >&2
