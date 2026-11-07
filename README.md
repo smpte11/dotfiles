@@ -19,13 +19,14 @@ freely on one host. The modules already recorded in
 installer or `mise run dotfiles:update` lets you add or remove modules, and
 picking the same set again changes nothing. The choice is written to
 `home/.config/mise/miserc.local.toml` (not committed) and `mise bootstrap`
-runs. Set `DOTFILES_ENV=personal,dev` to skip the questions. To add a module,
+runs. Set `DOTFILES_ENV=base,dev` to skip the questions. To add a module,
 add a `config.<name>.toml` and a `[module.<name>]` entry in `modules.toml`. The
 `work` module is no longer offered by the picker but still works through
 `DOTFILES_ENV=work`. `dotfiles-setup` adds `ssh` to every machine that has an
 identity module. The `proton-pass` module installs `pass-cli` and logs in on
-any machine. On a `personal` machine it also gives the Codestral key to
-`mise bootstrap` as the `CODESTRAL_API_KEY` bootstrap secret. To change
+any machine; the `base` module includes it. The `ssh-agent` module is optional
+and adds the Proton Pass SSH agent. On a `base` machine the Codestral key is
+passed to `mise bootstrap` as the `CODESTRAL_API_KEY` bootstrap secret. To change
 the key, remove `~/.config/codestral/env` and run `mise run dotfiles:update`.
 On a `media` machine it reads the `pass://Media/Netfelix/*` items from Proton
 Pass and gives them to `mise bootstrap` as the matching bootstrap secrets
@@ -39,10 +40,12 @@ in the `config.xml` files.
 | --- | --- | --- |
 | `home/` | always | Shared files, linked file by file into `~` |
 | `ssh/` | `ssh` | `~/.ssh/config`; the module also builds the tuios fork |
-| `personal/` | `personal` | Proton Pass agent, personal signing key, Codestral key |
+| `base/` | `base` | Personal signing key, Codestral key |
+| `ssh-agent/` | `ssh-agent` | Proton Pass SSH agent wrapper and `~/.ssh/config.d/agent` |
 | `work/` | `work` | 1Password agent, work identity, k9s skin, Claude keybindings |
 | `desktop/` | `desktop` | Journal reminder and check-ins, OpenDeck journal and pixel clock and timer plugins, OpenDeck profiles |
 | `media/` | `media` | netfelix quadlets, Configarr config, *arr seed configs, media drive guard for agents |
+| `gaming/` | `gaming` | Questarr quadlets, config and timer for the games library |
 | `home/.config/mise/config.toml` | always | Tools, groups, templates, repos |
 | `home/.config/mise/config.<module>.toml` | per module | The module's vars, env, groups, services and hooks |
 | `modules.toml` | no | Module catalog shown by the setup picker |
@@ -54,19 +57,20 @@ and changes the theme for this machine by writing `home/.config/mise/conf.d/them
 tracked by mise history). Without a name it opens a picker. `mise dot rollback` of that file restores the
 previous theme and renders the templates again.
 
-## Media server (`media` module)
+## Media server (`media` and `gaming` modules)
 
 The `media` module targets the media player. It deploys the netfelix quadlets
 to `~/.config/containers/systemd/netfelix/`, the Configarr config to
 `~/.config/media/configarr/config.yml`, and seed `config.xml` files (only when
 missing, so existing installs keep their keys) that pin each *arr API key. A
 oneshot `configarr.container` plus a daily `configarr.timer` apply the
-declarative settings through the *arr APIs. Questarr is configured the same
-way: a oneshot `questarr-config.container` plus a daily `questarr-config.timer`
-apply `media/questarr/config.json` through Questarr's admin-scope API. One-time
-setup: create an `admin` API key in Questarr (Settings -> API keys) and store it
-as `pass://Media/Netfelix/QUESTARR_API_KEY`; the post-dotfiles hook turns it into
-the `questarr_api_key` podman secret. Secrets reach the container as
+declarative settings through the *arr APIs. The `gaming` module adds Questarr to
+the pod the same way: a oneshot `questarr-config.container` plus a daily
+`questarr-config.timer` apply `gaming/questarr/config.json` through Questarr's
+admin-scope API. One-time setup: create an `admin` API key in Questarr
+(Settings -> API keys) and store it as `pass://Media/Netfelix/QUESTARR_API_KEY`;
+the post-dotfiles hook of the `gaming` module turns it into the
+`questarr_api_key` podman secret. Secrets reach the container as
 podman secrets (created by a post-dotfiles hook) injected as environment
 variables that `config.yml` reads with `!env`. The module also deploys
 `~/.agents/machine/protect-media-drives.md`, which forbids agents from touching
@@ -91,6 +95,6 @@ on machines that have them.
   or podman and checks it. Each install is saved as a checkpoint image and is
   reused until a file outside the checks changes; `--fresh` installs again.
   Each check group runs in its own container from the checkpoint, so
-  `mise run test:fresh personal --only theme,secrets` runs only those groups.
+  `mise run test:fresh base --only theme,secrets` runs only those groups.
   `mise run test:clean` removes the images, checkpoints and caches. Run it
   locally before pushing a change.

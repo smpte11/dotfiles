@@ -46,14 +46,14 @@ check_services() {
     if [ -d "$HOME/.config/systemd/user" ] && grep -rnE '\{\{|~/' "$HOME/.config/systemd/user"; then
         fail "unexpanded syntax in the systemd user units"
     fi
-    if has_module personal; then
+    if has_module ssh-agent; then
         [ -s "$HOME/.config/systemd/user/dev.mise.proton-pass-ssh-agent.service" ] || fail "the proton ssh agent unit is missing"
         [ -x "$HOME/.local/bin/proton-pass-ssh-agent" ] || fail "the proton ssh agent wrapper is not executable"
     fi
 }
 
 check_secrets() {
-    has_module personal || return $skip
+    has_module base || return $skip
     local codestral=$HOME/.config/codestral/env status_output
     [ -f "$codestral" ] && [ ! -s "$codestral" ] || fail "$codestral is not an empty file without a key"
     rm "$codestral"
@@ -130,11 +130,13 @@ check_identity() {
     if mise ls --current --json | jq -e 'has("github:Gaurav-Gosain/tuios")' >/dev/null; then
         fail "upstream tuios is installed as a mise tool and would shadow the fork"
     fi
-    if has_module personal; then
-        ssh -G personalgit | grep -qx "identityagent $HOME/.ssh/proton-pass-agent.sock" || fail "personal ssh agent is not proton"
+    if has_module base; then
         signing_key=$(jj config get signing.key)
         [ "${signing_key#\~/}" = .ssh/personal.pub ] || fail "jj does not sign with the personal key"
-        if ssh -G workgit | grep -qx 'hostname github.com'; then fail "workgit is configured on a personal machine"; fi
+        if ssh -G workgit | grep -qx 'hostname github.com'; then fail "workgit is configured on a base machine"; fi
+    fi
+    if has_module ssh-agent; then
+        ssh -G personalgit | grep -qx "identityagent $HOME/.ssh/proton-pass-agent.sock" || fail "personal ssh agent is not proton"
     fi
     if has_module work; then
         ssh -G workgit | grep -qx 'hostname github.com' || fail "ssh does not know workgit"
@@ -171,7 +173,7 @@ check_tuios() {
 }
 
 check_switch() {
-    [ "$scenario" = fresh ] && has_module personal || return $skip
+    [ "$scenario" = fresh ] && has_module base || return $skip
     (
         stub_systemd
         DOTFILES_ENV=work "$HOME/.local/bin/dotfiles-setup" "${bootstrap_args[@]}" >/dev/null
@@ -204,19 +206,16 @@ check_tools() {
         expect_tool helix absent
         expect_tool aqua:nushell/nushell absent
     fi
-    if has_module gaming; then
-        expect_tool ollama present
-    else
-        expect_tool ollama absent
-    fi
     if has_module dev; then
+        expect_tool ollama present
         expect_tool devcontainer-cli present
         expect_tool github:fgrehm/crib present
     else
+        expect_tool ollama absent
         expect_tool devcontainer-cli absent
         expect_tool github:fgrehm/crib absent
     fi
-    if has_module desktop || has_module work || has_module gaming; then
+    if has_module desktop || has_module work || has_module dev; then
         expect_tool github:kunchenguid/no-mistakes present
     else
         expect_tool github:kunchenguid/no-mistakes absent
@@ -226,8 +225,23 @@ check_tools() {
 
 check_media() {
     local f app
+    if has_module gaming; then
+        for f in questarr.container questarr-config.container; do
+            [ -f "$HOME/.config/containers/systemd/netfelix/$f" ] || fail "quadlet $f is not deployed"
+            if grep -qE '\{\{|\{%' "$HOME/.config/containers/systemd/netfelix/$f"; then
+                fail "$f has unrendered template syntax"
+            fi
+        done
+        [ -f "$HOME/.config/systemd/user/questarr-config.timer" ] || fail "the questarr-config timer is not deployed"
+        [ -f "$HOME/.config/media/questarr/config.json" ] || fail "the questarr config is not deployed"
+        [ "$(stat -c %a "$HOME/.config/media/questarr/config.json")" = 600 ] || fail "the questarr config is not 0600"
+        [ -f "$HOME/.config/media/questarr/apply.py" ] || fail "the questarr apply script is not deployed"
+    else
+        [ ! -e "$HOME/.config/containers/systemd/netfelix/questarr.container" ] || fail "a questarr quadlet is deployed without the gaming module"
+        [ ! -e "$HOME/.config/media/questarr" ] || fail "the questarr config is deployed without the gaming module"
+    fi
     if ! has_module media; then
-        [ ! -e "$HOME/.config/containers/systemd/netfelix" ] || fail "netfelix quadlets deployed without the media module"
+        [ ! -e "$HOME/.config/containers/systemd/netfelix/netfelix.pod" ] || fail "netfelix quadlets deployed without the media module"
         [ ! -e "$HOME/.agents/machine/protect-media-drives.md" ] || fail "the media drive guard is deployed without the media module"
         return $skip
     fi
@@ -280,7 +294,9 @@ STUB
     [ "$out" = "media,dev" ] || fail "the picker did not resolve labels to modules: $out"
     out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "gaming,ssh")
     [ "$out" = "gaming" ] || fail "the picker did not pre-select the deployed modules: $out"
-    if has_module personal || has_module media || has_module proton-pass; then
+    out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "base,proton-pass,ssh")
+    [ "$out" = "base,proton-pass" ] || fail "the picker did not expand a module group: $out"
+    if has_module base || has_module media || has_module proton-pass; then
         [ -x "$HOME/.local/bin/pass-cli" ] || fail "pass-cli is not installed although a proton module is active"
     else
         [ ! -e "$HOME/.local/bin/pass-cli" ] || fail "pass-cli is installed without a proton module"
