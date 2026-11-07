@@ -1,23 +1,18 @@
 [dotfile_groups.media]
 root = "media"
-exclude = ["quadlets", "configarr", "questarr", "seed", "systemd"]
+exclude = ["quadlets", "configarr", "seed", "systemd"]
 
 [dotfile_groups.media.entries]
 "~/.config/containers/systemd/netfelix/netfelix.pod" = { mode = "copy", source = "quadlets/netfelix/netfelix.pod" }
 "~/.config/containers/systemd/netfelix/sonarr.container" = { mode = "template", source = "quadlets/netfelix/sonarr.container.tera" }
 "~/.config/containers/systemd/netfelix/radarr.container" = { mode = "template", source = "quadlets/netfelix/radarr.container.tera" }
 "~/.config/containers/systemd/netfelix/prowlarr.container" = { mode = "template", source = "quadlets/netfelix/prowlarr.container.tera" }
-"~/.config/containers/systemd/netfelix/questarr.container" = { mode = "template", source = "quadlets/netfelix/questarr.container.tera" }
 "~/.config/containers/systemd/netfelix/jellyfin.container" = { mode = "template", source = "quadlets/netfelix/jellyfin.container.tera" }
 "~/.config/containers/systemd/netfelix/seerr.container" = { mode = "template", source = "quadlets/netfelix/seerr.container.tera" }
 "~/.config/containers/systemd/netfelix/flaresolverr.container" = { mode = "template", source = "quadlets/netfelix/flaresolverr.container.tera" }
 "~/.config/containers/systemd/netfelix/configarr.container" = { mode = "template", source = "quadlets/netfelix/configarr.container.tera" }
-"~/.config/containers/systemd/netfelix/questarr-config.container" = { mode = "template", source = "quadlets/netfelix/questarr-config.container.tera" }
 "~/.config/systemd/user/configarr.timer" = { mode = "copy", source = "systemd/configarr.timer" }
-"~/.config/systemd/user/questarr-config.timer" = { mode = "copy", source = "systemd/questarr-config.timer" }
 "~/.config/media/configarr/config.yml" = { mode = "copy", source = "configarr/config.yml", permissions = "0600" }
-"~/.config/media/questarr/apply.py" = { mode = "copy", source = "questarr/apply.py", permissions = "0755" }
-"~/.config/media/questarr/config.json" = { mode = "copy", source = "questarr/config.json", permissions = "0600" }
 "~/.config/sonarr/config.xml" = { mode = "template", source = "seed/sonarr.config.xml.tera", create_if_missing = true, permissions = "0600" }
 "~/.config/radarr/config.xml" = { mode = "template", source = "seed/radarr.config.xml.tera", create_if_missing = true, permissions = "0600" }
 "~/.config/prowlarr/config.xml" = { mode = "template", source = "seed/prowlarr.config.xml.tera", create_if_missing = true, permissions = "0600" }
@@ -37,11 +32,6 @@ env = "PROWLARR_API_KEY"
 description = "Prowlarr API key (pass://Media/Netfelix/PROWLARR_API_KEY)"
 allow_empty = true
 
-[bootstrap.secrets.questarr_api_key]
-env = "QUESTARR_API_KEY"
-description = "Questarr admin-scope API key (pass://Media/Netfelix/QUESTARR_API_KEY)"
-allow_empty = true
-
 [bootstrap.secrets.qbit_username]
 env = "QBIT_USERNAME"
 description = "qBittorrent username (pass://Media/Netfelix/QBIT_USERNAME)"
@@ -57,7 +47,3 @@ env = "YTS_API_URL"
 description = "YTS indexer apiurl including its key (pass://Media/Netfelix/YTS_API_URL)"
 allow_empty = true
 
-[bootstrap.hooks]
-post-dotfiles = [
-  'if command -v podman >/dev/null 2>&1; then for s in sonarr_api_key:SONARR_API_KEY radarr_api_key:RADARR_API_KEY prowlarr_api_key:PROWLARR_API_KEY questarr_api_key:QUESTARR_API_KEY qbit_username:QBIT_USERNAME qbit_password:QBIT_PASSWORD yts_api_url:YTS_API_URL; do n=${s%%:*}; v=${s##*:}; if [ -n "$(printenv "$v")" ]; then if podman secret exists "$n" >/dev/null 2>&1; then podman secret rm "$n" >/dev/null 2>&1; fi; printf %s "$(printenv "$v")" | podman secret create "$n" - >/dev/null; fi; done; fi; if command -v systemctl >/dev/null 2>&1; then systemctl --user daemon-reload; systemctl --user enable --now configarr.timer questarr-config.timer; fi',
-]

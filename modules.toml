@@ -1,0 +1,27 @@
+[module.base]
+description = "base config with signing key and Codestral key"
+modules = ["base", "proton-pass"]
+
+[module.dev]
+description = "dev tools: devcontainers and local models"
+modules = ["dev"]
+
+[module.media]
+description = "media player and server with the netfelix pod"
+modules = ["media"]
+
+[module.desktop]
+description = "desktop extras with OpenDeck plugins and reminders"
+modules = ["desktop"]
+
+[module.gaming]
+description = "questarr game manager with qbit and prowlarr secrets"
+modules = ["gaming"]
+
+[module.proton-pass]
+description = "Proton Pass CLI (pass-cli) on any machine"
+modules = ["proton-pass"]
+
+[module.ssh-agent]
+description = "Proton Pass SSH agent for git signing"
+modules = ["ssh-agent"]

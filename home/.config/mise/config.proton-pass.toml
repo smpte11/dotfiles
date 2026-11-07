@@ -1,0 +1,2 @@
+[env]
+PROTON_PASS_LINUX_KEYRING = "dbus"

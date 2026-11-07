@@ -6,7 +6,6 @@ PublishPort=5000:5000
 Environment=TZ=Europe/Stockholm
 Volume={{ env.HOME }}/.config/questarr:/app/data:Z
 Network=host
-Pod=netfelix.pod
 
 [Service]
 Restart=always

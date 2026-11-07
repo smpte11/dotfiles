@@ -85,6 +85,11 @@ zprofile = "shims"
 [bootstrap.services.mise-history]
 builtin = "history-watch"
 
+[bootstrap.hooks]
+post-dotfiles = [
+  'if command -v podman >/dev/null 2>&1; then for s in sonarr_api_key:SONARR_API_KEY radarr_api_key:RADARR_API_KEY prowlarr_api_key:PROWLARR_API_KEY questarr_api_key:QUESTARR_API_KEY qbit_username:QBIT_USERNAME qbit_password:QBIT_PASSWORD yts_api_url:YTS_API_URL; do n=${s%%:*}; v=${s##*:}; if [ -n "$(printenv "$v")" ]; then if podman secret exists "$n" >/dev/null 2>&1; then podman secret rm "$n" >/dev/null 2>&1; fi; printf %s "$(printenv "$v")" | podman secret create "$n" - >/dev/null; fi; done; fi; if command -v systemctl >/dev/null 2>&1; then systemctl --user daemon-reload; for t in configarr.timer questarr-config.timer; do if [ -f "$HOME/.config/systemd/user/$t" ]; then systemctl --user enable --now "$t"; fi; done; fi',
+]
+
 [tasks."dotfiles:update"]
 description = "Pull the dotfiles repository and bootstrap this machine again"
 dir = "{{ env.HOME }}/.dotfiles"
