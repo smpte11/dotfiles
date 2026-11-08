@@ -9,7 +9,7 @@ exclude = ["quadlets", "configarr", "seed", "systemd"]
 "~/.config/containers/systemd/netfelix/prowlarr.container" = { mode = "template", source = "quadlets/netfelix/prowlarr.container.tera" }
 "~/.config/containers/systemd/netfelix/jellyfin.container" = { mode = "template", source = "quadlets/netfelix/jellyfin.container.tera" }
 "~/.config/containers/systemd/netfelix/seerr.container" = { mode = "template", source = "quadlets/netfelix/seerr.container.tera" }
-"~/.config/containers/systemd/netfelix/flaresolverr.container" = { mode = "template", source = "quadlets/netfelix/flaresolverr.container.tera" }
+"~/.config/containers/systemd/netfelix/byparr.container" = { mode = "template", source = "quadlets/netfelix/byparr.container.tera" }
 "~/.config/containers/systemd/netfelix/configarr.container" = { mode = "template", source = "quadlets/netfelix/configarr.container.tera" }
 "~/.config/systemd/user/configarr.timer" = { mode = "copy", source = "systemd/configarr.timer" }
 "~/.config/media/configarr/config.yml" = { mode = "copy", source = "configarr/config.yml", permissions = "0600" }
