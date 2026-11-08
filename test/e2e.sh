@@ -246,15 +246,28 @@ check_media() {
     fi
     if ! has_module media; then
         [ ! -e "$HOME/.config/containers/systemd/netfelix/netfelix.pod" ] || fail "netfelix quadlets deployed without the media module"
+        [ ! -e "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" ] || fail "the qbittorrent quadlet is deployed without the media module"
+        [ ! -e "$HOME/.config/systemd/user/qbit-vpn-guard.service" ] || fail "the qbit-vpn-guard service is deployed without the media module"
+        [ ! -e "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is deployed without the media module"
         [ ! -e "$HOME/.agents/machine/protect-media-drives.md" ] || fail "the media drive guard is deployed without the media module"
         return $skip
     fi
-    for f in netfelix.pod sonarr.container radarr.container prowlarr.container jellyfin.container seerr.container flaresolverr.container configarr.container; do
+    for f in netfelix.pod sonarr.container radarr.container prowlarr.container jellyfin.container seerr.container flaresolverr.container configarr.container qbittorrent.container; do
         [ -f "$HOME/.config/containers/systemd/netfelix/$f" ] || fail "quadlet $f is not deployed"
         if grep -qE '\{\{|\{%' "$HOME/.config/containers/systemd/netfelix/$f"; then
             fail "$f has unrendered template syntax"
         fi
     done
+    grep -q 'Network=host' "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" || fail "the qbittorrent quadlet does not use host networking"
+    grep -q '/run/media/system/media/torrents' "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" || fail "the qbittorrent quadlet does not mount the torrents folder"
+    [ -f "$HOME/.config/systemd/user/qbit-vpn-guard.service" ] || fail "the qbit-vpn-guard service is not deployed"
+    [ -f "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is not deployed"
+    [ -x "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is not executable"
+    if grep -qE '\{\{|\{%' "$HOME/.config/systemd/user/qbit-vpn-guard.service" "$HOME/.config/media/qbit-vpn-guard.sh"; then
+        fail "the qbit-vpn-guard files have unrendered template syntax"
+    fi
+    grep -q 'proton0' "$HOME/.config/media/qbit-vpn-guard.sh" || fail "the qbit-vpn-guard script does not render the vpn interface"
+    grep -q 'qbittorrent.service' "$HOME/.config/media/qbit-vpn-guard.sh" || fail "the qbit-vpn-guard script does not manage the qbittorrent unit"
     [ -f "$HOME/.config/systemd/user/configarr.timer" ] || fail "the configarr timer is not deployed"
     grep -q 'Unit=configarr.service' "$HOME/.config/systemd/user/configarr.timer" || fail "the configarr timer does not target the configarr quadlet service"
     [ -f "$HOME/.config/media/configarr/config.yml" ] || fail "the configarr config is not deployed"
