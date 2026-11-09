@@ -78,14 +78,14 @@ prowlarr:
         enabled: false
     indexer_proxies:
       data:
-        - name: flaresolverr
+        - name: byparr
           type: FlareSolverr
           fields:
             host: http://localhost:8191/
           tags:
             - netfelix
       delete_unmanaged:
-        enabled: false
+        enabled: true
     indexers:
       data:
         - name: Knaben
