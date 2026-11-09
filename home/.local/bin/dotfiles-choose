@@ -68,7 +68,21 @@ modules_for_labels() {
     done | tr ',' '\n' | awk 'NF && !seen[$0]++' | paste -sd, -
 }
 
+edit_profile() {
+    miserc="$dotfiles/home/.config/mise/miserc.local.toml"
+    editor=${EDITOR:-vi}
+    if ! "$editor" "$miserc"; then
+        echo "setup aborted" >&2
+        exit 1
+    fi
+    sed -n 's/^env = \[\(.*\)\]$/\1/p' "$miserc" 2>/dev/null | tr -d '" ' | tr ',' '\n' | sed '/^$/d' | paste -sd, -
+}
+
 main() {
+    if [ "${1:-}" = --edit ]; then
+        edit_profile
+        return
+    fi
     current=${1:-}
     selected=
     for m in $(printf '%s' "$current" | tr ',' ' '); do
