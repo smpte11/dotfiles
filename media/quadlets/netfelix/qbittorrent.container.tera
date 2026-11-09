@@ -3,7 +3,7 @@ ContainerName=qbittorrent
 Image=lscr.io/linuxserver/qbittorrent:latest
 Label=io.containers.autoupdate=registry
 PublishPort=8081:8081
-Environment=PUID=0 PGID=0 TZ=Europe/Stockholm
+Environment=PUID=0 PGID=0 TZ=Europe/Stockholm WEBUI_PORT=8081
 Volume={{ env.HOME }}/.config/qBittorrent:/config:Z
 Volume=/run/media/system/media/torrents:/run/media/system/media/torrents:Z
 Network=host
