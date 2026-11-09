@@ -1,7 +1,7 @@
 #!/bin/bash
 set -u
 iface="{{ vars.vpn_interface }}"
-conf="$HOME/.config/qBittorrent/QBittorrent.conf"
+conf="$HOME/.config/qBittorrent/qBittorrent/qBittorrent.conf"
 while true; do
   if ip -4 addr show dev "$iface" 2>/dev/null | grep -q "inet "; then
     if [ -f "$conf" ]; then
