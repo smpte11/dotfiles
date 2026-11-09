@@ -1,0 +1,56 @@
+#!/bin/sh
+set -eu
+
+dotfiles="$HOME/.dotfiles"
+
+yes=0
+for arg in "$@"; do
+    case "$arg" in
+        --yes|-y) yes=1 ;;
+        *) echo "usage: dotfiles-teardown [--yes]" >&2; exit 2 ;;
+    esac
+done
+
+gum() {
+    if [ -n "${DOTFILES_GUM:-}" ]; then
+        $DOTFILES_GUM "$@"
+    else
+        mise exec gum@latest -- gum "$@"
+    fi
+}
+
+if [ "$yes" = 0 ]; then
+    if [ -t 0 ] || [ -n "${DOTFILES_GUM:-}" ]; then
+        if ! gum confirm "Remove the dotfiles checkout, mise and all deployed files from this machine?"; then
+            echo "teardown aborted" >&2
+            exit 1
+        fi
+    else
+        echo "teardown: pass --yes to run without a terminal" >&2
+        exit 1
+    fi
+fi
+
+# The script is normally a symlink inside the checkout; re-exec a copy so the
+# checkout can be deleted while we work.
+if [ "${DOTFILES_TEARDOWN_RUNNING:-}" != 1 ]; then
+    tmp=$(mktemp /tmp/dotfiles-teardown.XXXXXX)
+    cp "$0" "$tmp"
+    chmod +x "$tmp"
+    DOTFILES_TEARDOWN_RUNNING=1 exec "$tmp" --yes
+fi
+
+if command -v mise >/dev/null 2>&1 && [ -f "$dotfiles/home/.config/mise/miserc.local.toml" ]; then
+    modules=$(sed -n 's/^env = \[\(.*\)\]$/\1/p' "$dotfiles/home/.config/mise/miserc.local.toml" | tr -d '" ' | tr ',' '\n' | sed '/^$/d')
+    for m in $modules; do
+        mise bootstrap unapply "$m" --yes >/dev/null 2>&1 || true
+    done
+    mise dot unapply --yes >/dev/null 2>&1 || true
+fi
+
+find "$HOME" -maxdepth 4 -type l -lname "$dotfiles/*" -delete 2>/dev/null || true
+
+rm -rf "$HOME/.local/share/mise"
+rm -f "$HOME/.local/bin/mise"
+rm -rf "$dotfiles"
+rm -f "$0"

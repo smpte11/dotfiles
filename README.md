@@ -102,6 +102,7 @@ on machines that have them.
 ## Everyday commands
 
 - `mise run dotfiles:update` pulls the checkout and bootstraps again.
+- `dotfiles-teardown [--yes]` removes the checkout, mise and everything deployed (asks for confirmation without `--yes`).
 - `mise dot status` lists what is deployed. `mise dot apply` deploys new files.
 - `mise dot status --missing` exits with 1 when a file differs from the config.
   `mise dot diff` shows what `mise dot apply` would change.

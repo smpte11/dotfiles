@@ -115,7 +115,14 @@ install() {
 check() {
     local modules=$1 group=$2 slug
     slug=$(slug_of "$modules")
-    run_in "$slug" --rm -e MISE_FETCH_REMOTE_VERSIONS_CACHE=30d "$(checkpoint_of "$slug")" /src/test/e2e.sh "$scenario" "$modules" "$group"
+    if [ "$group" = teardown ]; then
+        # the teardown check removes ~/.local/share/mise, so it cannot be the
+        # shared tool-cache volume mount
+        "$engine" run --platform "$platform" --security-opt label=disable "${mounts[@]}" \
+            --rm -e MISE_FETCH_REMOTE_VERSIONS_CACHE=30d "$(checkpoint_of "$slug")" /src/test/e2e.sh "$scenario" "$modules" "$group"
+    else
+        run_in "$slug" --rm -e MISE_FETCH_REMOTE_VERSIONS_CACHE=30d "$(checkpoint_of "$slug")" /src/test/e2e.sh "$scenario" "$modules" "$group"
+    fi
 }
 
 jobs_max=${DOTFILES_TEST_JOBS:-6}
