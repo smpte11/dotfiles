@@ -18,7 +18,7 @@ sonarr:
           remove_completed_downloads: true
           remove_failed_downloads: true
           fields:
-            host: localhost
+            host: host.containers.internal
             port: 8081
             use_ssl: false
             username: !env QBIT_USERNAME
@@ -49,7 +49,7 @@ radarr:
           remove_completed_downloads: true
           remove_failed_downloads: true
           fields:
-            host: localhost
+            host: host.containers.internal
             port: 8081
             use_ssl: false
             username: !env QBIT_USERNAME
