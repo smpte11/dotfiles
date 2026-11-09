@@ -5,6 +5,14 @@ _.file = { path = "{{ env.HOME }}/.config/codestral/env", redact = true }
 [tools]
 "github:floatpane/matcha" = "latest"
 
+[bootstrap.packages]
+"flatpak-user:com.protonvpn.www" = { os = "linux" }
+
+[bootstrap.hooks]
+pre-packages = [
+  "if command -v flatpak >/dev/null; then flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo; fi",
+]
+
 [dotfile_groups.base]
 root = "base"
 
