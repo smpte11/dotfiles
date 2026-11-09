@@ -246,6 +246,9 @@ check_media() {
     fi
     if ! has_module media; then
         [ ! -e "$HOME/.config/containers/systemd/netfelix/netfelix.pod" ] || fail "netfelix quadlets deployed without the media module"
+        [ ! -e "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" ] || fail "the qbittorrent quadlet is deployed without the media module"
+        [ ! -e "$HOME/.config/systemd/user/qbit-vpn-guard.service" ] || fail "the qbit-vpn-guard service is deployed without the media module"
+        [ ! -e "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is deployed without the media module"
         [ ! -e "$HOME/.agents/machine/protect-media-drives.md" ] || fail "the media drive guard is deployed without the media module"
         return $skip
     fi
@@ -266,7 +269,7 @@ check_media() {
         fail "the qbit-vpn-guard files have unrendered template syntax"
     fi
     grep -q "proton0" "$HOME/.config/media/qbit-vpn-guard.sh" || fail "the qbit-vpn-guard script does not render the vpn interface"
-    grep -q "qbittorrent.service" "$HOME/.config/media/qbit-vpn-guard.sh" || fail "the qbit-vpn-guard script does not manage the qbittorrent unit
+    grep -q "qbittorrent.service" "$HOME/.config/media/qbit-vpn-guard.sh" || fail "the qbit-vpn-guard script does not manage the qbittorrent unit"
     [ -f "$HOME/.config/systemd/user/configarr.timer" ] || fail "the configarr timer is not deployed"
     grep -q 'Unit=configarr.service' "$HOME/.config/systemd/user/configarr.timer" || fail "the configarr timer does not target the configarr quadlet service"
     [ -f "$HOME/.config/media/configarr/config.yml" ] || fail "the configarr config is not deployed"

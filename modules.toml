@@ -7,7 +7,7 @@ description = "dev tools: devcontainers and local models"
 modules = ["dev"]
 
 [module.media]
-description = "media player and server with the netfelix pod"
+description = "media player and server with the netfelix pod and a VPN-gated qbittorrent"
 modules = ["media"]
 
 [module.desktop]

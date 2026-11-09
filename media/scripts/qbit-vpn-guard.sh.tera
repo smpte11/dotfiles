@@ -1,0 +1,22 @@
+#!/bin/bash
+set -u
+iface="{{ vars.vpn_interface }}"
+conf="$HOME/.config/qBittorrent/QBittorrent.conf"
+while true; do
+  if ip -4 addr show dev "$iface" 2>/dev/null | grep -q "inet "; then
+    if [ -f "$conf" ]; then
+      if grep -q "^NetworkInterface=" "$conf"; then
+        current="$(sed -n "s/^NetworkInterface=//p" "$conf")"
+        [ "$current" = "$iface" ] || sed -i "s/^NetworkInterface=.*/NetworkInterface=$iface/" "$conf"
+      elif grep -q "^\[Preferences\]$" "$conf"; then
+        sed -i "s/^\[Preferences\]$/[Preferences]\nNetworkInterface=$iface/" "$conf"
+      else
+        printf "[Preferences]\nNetworkInterface=%s\n" "$iface" >>"$conf"
+      fi
+    fi
+    systemctl --user start qbittorrent.service 2>/dev/null || true
+  else
+    systemctl --user stop qbittorrent.service 2>/dev/null || true
+  fi
+  sleep 5
+done
