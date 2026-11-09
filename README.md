@@ -35,7 +35,10 @@ On a `media` or `gaming` machine it reads the `pass://Media/Netfelix/*` items
 from Proton Pass and gives them to `mise bootstrap` as the matching bootstrap
 secrets (`SONARR_API_KEY`, `RADARR_API_KEY`, `PROWLARR_API_KEY`,
 `QUESTARR_API_KEY`, `QBIT_USERNAME`, `QBIT_PASSWORD`, `YTS_API_URL`), falling
-back to the API keys already deployed in the `config.xml` files.
+back to the API keys already deployed in the `config.xml` files. The WebUI
+logins of the media stack (qBittorrent, Radarr, Sonarr, Prowlarr, Jellyfin)
+live as their own login entries in the Media vault, e.g.
+`pass://Media/qbittorrent`; `QBIT_PASSWORD` is read from there.
 
 ## Layout
 
