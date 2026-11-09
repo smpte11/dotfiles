@@ -117,7 +117,7 @@ export_netfelix_secrets() {
     media_secret PROWLARR_API_KEY 'pass://Media/Netfelix/PROWLARR_API_KEY' "$HOME/.config/prowlarr/config.xml"
     media_secret QUESTARR_API_KEY 'pass://Media/Netfelix/QUESTARR_API_KEY' ""
     media_secret QBIT_USERNAME 'pass://Media/Netfelix/QBIT_USERNAME' ""
-    media_secret QBIT_PASSWORD 'pass://Personal/qbittorrent' ""
+    media_secret QBIT_PASSWORD 'pass://Media/qbittorrent' ""
     media_secret YTS_API_URL 'pass://Media/Netfelix/YTS_API_URL' ""
 }
 
