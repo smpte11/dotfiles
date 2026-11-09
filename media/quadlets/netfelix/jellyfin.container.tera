@@ -2,14 +2,9 @@
 ContainerName=jellyfin
 Image=docker.io/jellyfin/jellyfin:12
 Label=io.containers.autoupdate=registry
-PublishPort=8096:8096/tcp
-PublishPort=8920:8920/tcp
-PublishPort=7359:7359/udp
-PublishPort=1900:1900/udp
 Volume=jellyfin-config:/config:z
 Volume=jellyfin-cache:/cache:z
 Volume=/run/media/system/media:/data:z
-Network=host
 Pod=netfelix.pod
 AddDevice=nvidia.com/gpu=all
 SecurityLabelDisable=true

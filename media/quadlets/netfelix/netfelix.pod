@@ -3,7 +3,15 @@ Description=My home Netflix
 
 [Pod]
 PodName=netfelix
-Network=host
+PublishPort=8989:8989/tcp
+PublishPort=7878:7878/tcp
+PublishPort=9696:9696/tcp
+PublishPort=8096:8096/tcp
+PublishPort=8920:8920/tcp
+PublishPort=7359:7359/udp
+PublishPort=1900:1900/udp
+PublishPort=5055:5055/tcp
+PublishPort=8191:8191/tcp
 
 [Install]
 WantedBy=default.target

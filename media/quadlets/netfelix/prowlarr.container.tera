@@ -2,9 +2,7 @@
 ContainerName=prowlarr
 Environment=PUID=0 PGID=0 TZ=Europe/Stockholm
 Image=lscr.io/linuxserver/prowlarr:latest
-PublishPort=9696:9696
 Volume={{ env.HOME }}/.config/prowlarr:/config:Z
-Network=host
 Pod=netfelix.pod
 Label=io.containers.autoupdate=registry
 
