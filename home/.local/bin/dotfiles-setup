@@ -6,6 +6,11 @@ config_dir="home/.config/mise"
 miserc="$dotfiles/$config_dir/miserc.local.toml"
 pass="$HOME/.local/bin/pass-cli"
 
+machine_id="$(cat /etc/machine-id 2>/dev/null || true)"
+if [ -n "$machine_id" ]; then
+    export MACHINE_ID="$machine_id"
+fi
+
 in_container() {
     [ -n "${CODESPACES:-}${REMOTE_CONTAINERS:-}${container:-}" ] || [ -f /.dockerenv ] || [ -f /run/.containerenv ]
 }
@@ -17,6 +22,17 @@ choose_modules() {
 read_modules() {
     [ -f "$miserc" ] || return 0
     sed -n 's/^env = \[\(.*\)\]$/\1/p' "$miserc" | tr -d '" ' | tr ',' '\n' | sed '/^$/d'
+}
+
+check_machine_id() {
+    if in_container; then return 0; fi
+    [ -n "$machine_id" ] || return 0
+    local recorded
+    recorded="$(sed -n 's/^machine_id = "\(.*\)"$/\1/p' "$miserc" 2>/dev/null || true)"
+    if [ -n "$recorded" ] && [ "$recorded" != "$machine_id" ]; then
+        echo "refusing to bootstrap: $miserc records machine_id $recorded, but this machine is $machine_id" >&2
+        exit 1
+    fi
 }
 
 deployed_codestral_key() {
@@ -46,6 +62,9 @@ write_modules() {
     unapply_removed_modules "$(read_modules | paste -sd' ' -)" ",$modules,"
     list="$(printf '%s' "$modules" | tr ',' '\n' | sed '/^$/d; s/.*/"&"/' | paste -sd, -)"
     printf 'env = [%s]\n' "$list" >"$miserc"
+    if [ -n "$machine_id" ] && ! in_container; then
+        printf 'machine_id = "%s"\n' "$machine_id" >>"$miserc"
+    fi
 }
 
 ensure_ssh_module() {
@@ -102,6 +121,8 @@ export_secrets() {
         proton_login
     fi
 }
+
+check_machine_id
 
 if [ -n "${DOTFILES_ENV+set}" ]; then
     write_modules "$DOTFILES_ENV"

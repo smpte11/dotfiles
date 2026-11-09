@@ -16,6 +16,12 @@ export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/.ripgreprc"
 # back to the repo root as the home and create a second one there.
 export FM_HOME="$HOME/.local/state/firstmate"
 
+# Per-install machine identity (not the hostname); templates read it as
+# {{ env.MACHINE_ID }} and dotfiles-setup refuses a mismatched checkout.
+if [ -r /etc/machine-id ]; then
+    export MACHINE_ID="$(cat /etc/machine-id)"
+fi
+
 # ─── PATH ────────────────────────────────────────────────────────────
 # Each block prepends, later blocks win — mirrors nu's `path add` order.
 
