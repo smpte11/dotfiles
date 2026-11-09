@@ -64,7 +64,15 @@ to `~/.config/containers/systemd/netfelix/`, the Configarr config to
 `~/.config/media/configarr/config.yml`, and seed `config.xml` files (only when
 missing, so existing installs keep their keys) that pin each *arr API key. A
 oneshot `configarr.container` plus a daily `configarr.timer` apply the
-declarative settings through the *arr APIs. The `gaming` module deploys Questarr
+declarative settings through the *arr APIs. The module also deploys a headless
+qbittorrent quadlet on host networking (WebUI on port 8081, config migrated from
+`~/.config/qBittorrent`, downloads under `/run/media/system/media/torrents`), so
+the host qBittorrent must be stopped before the container takes over port 8081.
+A `qbit-vpn-guard.service` user unit runs qbittorrent only while the Proton VPN
+interface is up (`vars.vpn_interface`, `proton0`) and pins qBittorrent's
+`NetworkInterface` to that interface, so the client stays inactive and cannot
+leak traffic when the VPN is down; the post-dotfiles hook enables the guard
+alongside the timers. The `gaming` module deploys Questarr
 the same way (a oneshot `questarr-config.container` plus a daily
 `questarr-config.timer` apply `gaming/questarr/config.json` through Questarr's
 admin-scope API) but with `Network=host` instead of joining the netfelix pod, so

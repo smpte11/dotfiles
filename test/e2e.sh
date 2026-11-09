@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-groups=(local-files idempotent services secrets theme history smoke tools media identity tuios switch picker)
+groups=(local-files idempotent services secrets theme history smoke tools media identity tuios switch picker teardown)
 if [ "${1:-}" = groups ]; then
     printf '%s\n' "${groups[@]}"
     exit 0
@@ -246,15 +246,30 @@ check_media() {
     fi
     if ! has_module media; then
         [ ! -e "$HOME/.config/containers/systemd/netfelix/netfelix.pod" ] || fail "netfelix quadlets deployed without the media module"
+        [ ! -e "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" ] || fail "the qbittorrent quadlet is deployed without the media module"
+        [ ! -e "$HOME/.config/systemd/user/qbit-vpn-guard.service" ] || fail "the qbit-vpn-guard service is deployed without the media module"
+        [ ! -e "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is deployed without the media module"
         [ ! -e "$HOME/.agents/machine/protect-media-drives.md" ] || fail "the media drive guard is deployed without the media module"
         return $skip
     fi
-    for f in netfelix.pod sonarr.container radarr.container prowlarr.container jellyfin.container seerr.container flaresolverr.container configarr.container; do
+    for f in netfelix.pod sonarr.container radarr.container prowlarr.container jellyfin.container seerr.container byparr.container configarr.container qbittorrent.container; do
         [ -f "$HOME/.config/containers/systemd/netfelix/$f" ] || fail "quadlet $f is not deployed"
         if grep -qE '\{\{|\{%' "$HOME/.config/containers/systemd/netfelix/$f"; then
             fail "$f has unrendered template syntax"
         fi
     done
+    grep -q "ghcr.io/thephaseless/byparr" "$HOME/.config/containers/systemd/netfelix/byparr.container" || fail "the byparr quadlet does not use the byparr image"
+    [ ! -e "$HOME/.config/containers/systemd/netfelix/flaresolverr.container" ] || fail "the flaresolverr quadlet is still deployed"
+    grep -q "Network=host" "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" || fail "the qbittorrent quadlet does not use host networking"
+    grep -q "/run/media/system/media/torrents" "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" || fail "the qbittorrent quadlet does not mount the torrents folder"
+    [ -f "$HOME/.config/systemd/user/qbit-vpn-guard.service" ] || fail "the qbit-vpn-guard service is not deployed"
+    [ -f "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is not deployed"
+    [ -x "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is not executable"
+    if grep -qE "\{{|\{%" "$HOME/.config/systemd/user/qbit-vpn-guard.service" "$HOME/.config/media/qbit-vpn-guard.sh"; then
+        fail "the qbit-vpn-guard files have unrendered template syntax"
+    fi
+    grep -q "proton0" "$HOME/.config/media/qbit-vpn-guard.sh" || fail "the qbit-vpn-guard script does not render the vpn interface"
+    grep -q "qbittorrent.service" "$HOME/.config/media/qbit-vpn-guard.sh" || fail "the qbit-vpn-guard script does not manage the qbittorrent unit"
     [ -f "$HOME/.config/systemd/user/configarr.timer" ] || fail "the configarr timer is not deployed"
     grep -q 'Unit=configarr.service' "$HOME/.config/systemd/user/configarr.timer" || fail "the configarr timer does not target the configarr quadlet service"
     [ -f "$HOME/.config/media/configarr/config.yml" ] || fail "the configarr config is not deployed"
@@ -270,6 +285,35 @@ check_media() {
     done
     [ -e "$HOME/.agents/machine/protect-media-drives.md" ] || fail "the media drive guard is not deployed"
     grep -q '/run/media/system/media' "$HOME/.agents/machine/protect-media-drives.md" || fail "the media drive guard does not name the media mount"
+}
+
+check_teardown() {
+    local stub=$work/gum-stub
+    cat >"$stub" <<'STUB'
+#!/bin/sh
+case "$1" in
+confirm) exit 1 ;;
+esac
+STUB
+    chmod +x "$stub"
+    if DOTFILES_GUM=$stub "$HOME/.local/bin/dotfiles-teardown" >/dev/null 2>&1; then
+        fail "teardown must abort when the confirmation is declined"
+    fi
+    [ -e "$HOME/.zshrc" ] || fail "the aborted teardown removed dotfiles"
+    if "$HOME/.local/bin/dotfiles-teardown" </dev/null >/dev/null 2>&1; then
+        fail "teardown without --yes must abort without a terminal"
+    fi
+    [ -e "$HOME/.zshrc" ] || fail "the non-interactive teardown removed dotfiles"
+    "$HOME/.local/bin/dotfiles-teardown" --yes >/dev/null 2>&1 || fail "teardown --yes failed"
+    [ ! -e "$dotfiles" ] || fail "the checkout remains after teardown"
+    [ ! -e "$HOME/.local/bin/mise" ] || fail "mise remains after teardown"
+    [ ! -e "$HOME/.local/share/mise" ] || fail "the mise data dir remains after teardown"
+    [ ! -L "$HOME/.config/mise" ] || fail "the mise config link remains after teardown"
+    [ ! -e "$HOME/.zshrc" ] || fail "~/.zshrc remains after teardown"
+    [ ! -e "$HOME/.local/bin/dotfiles-teardown" ] || fail "the teardown script link remains after teardown"
+    if has_identity; then
+        [ ! -e "$HOME/.ssh/config" ] || fail "~/.ssh/config remains after teardown"
+    fi
 }
 
 check_picker() {
@@ -313,6 +357,33 @@ STUB
         DOTFILES_ENV=$modules "$HOME/.local/bin/dotfiles-setup" update "${bootstrap_args[@]}" >/dev/null 2>&1 || fail "re-running setup with the same modules failed"
         after=$(cat "$dotfiles/home/.config/mise/miserc.local.toml")
         [ "$before" = "$after" ] || fail "re-running setup with the same modules rewrote miserc.local.toml"
+    fi
+}
+    local stub=$work/gum-stub
+    cat >"$stub" <<'STUB'
+#!/bin/sh
+case "$1" in
+confirm) exit 1 ;;
+esac
+STUB
+    chmod +x "$stub"
+    if DOTFILES_GUM=$stub "$HOME/.local/bin/dotfiles-teardown" >/dev/null 2>&1; then
+        fail "teardown must abort when the confirmation is declined"
+    fi
+    [ -e "$HOME/.zshrc" ] || fail "the aborted teardown removed dotfiles"
+    if "$HOME/.local/bin/dotfiles-teardown" </dev/null >/dev/null 2>&1; then
+        fail "teardown without --yes must abort without a terminal"
+    fi
+    [ -e "$HOME/.zshrc" ] || fail "the non-interactive teardown removed dotfiles"
+    "$HOME/.local/bin/dotfiles-teardown" --yes >/dev/null 2>&1 || fail "teardown --yes failed"
+    [ ! -e "$dotfiles" ] || fail "the checkout remains after teardown"
+    [ ! -e "$HOME/.local/bin/mise" ] || fail "mise remains after teardown"
+    [ ! -e "$HOME/.local/share/mise" ] || fail "the mise data dir remains after teardown"
+    [ ! -L "$HOME/.config/mise" ] || fail "the mise config link remains after teardown"
+    [ ! -e "$HOME/.zshrc" ] || fail "~/.zshrc remains after teardown"
+    [ ! -e "$HOME/.local/bin/dotfiles-teardown" ] || fail "the teardown script link remains after teardown"
+    if has_identity; then
+        [ ! -e "$HOME/.ssh/config" ] || fail "~/.ssh/config remains after teardown"
     fi
 }
 

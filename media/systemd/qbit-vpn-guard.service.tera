@@ -1,0 +1,12 @@
+[Unit]
+Description=Run qbittorrent only while the Proton VPN interface is up
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart={{ env.HOME }}/.config/media/qbit-vpn-guard.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

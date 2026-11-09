@@ -1,0 +1,15 @@
+[Container]
+ContainerName=byparr
+Environment=TZ=Europe/Stockholm LOG_LEVEL=info
+Image=ghcr.io/thephaseless/byparr:v3.1.1
+Label=io.containers.autoupdate=registry
+PublishPort=8191:8191
+Network=host
+Pod=netfelix.pod
+ShmSize=512m
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

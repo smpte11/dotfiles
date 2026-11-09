@@ -1,6 +1,9 @@
+[vars]
+vpn_interface = "proton0"
+
 [dotfile_groups.media]
 root = "media"
-exclude = ["quadlets", "configarr", "seed", "systemd"]
+exclude = ["quadlets", "configarr", "seed", "systemd", "scripts"]
 
 [dotfile_groups.media.entries]
 "~/.config/containers/systemd/netfelix/netfelix.pod" = { mode = "copy", source = "quadlets/netfelix/netfelix.pod" }
@@ -9,9 +12,12 @@ exclude = ["quadlets", "configarr", "seed", "systemd"]
 "~/.config/containers/systemd/netfelix/prowlarr.container" = { mode = "template", source = "quadlets/netfelix/prowlarr.container.tera" }
 "~/.config/containers/systemd/netfelix/jellyfin.container" = { mode = "template", source = "quadlets/netfelix/jellyfin.container.tera" }
 "~/.config/containers/systemd/netfelix/seerr.container" = { mode = "template", source = "quadlets/netfelix/seerr.container.tera" }
-"~/.config/containers/systemd/netfelix/flaresolverr.container" = { mode = "template", source = "quadlets/netfelix/flaresolverr.container.tera" }
+"~/.config/containers/systemd/netfelix/byparr.container" = { mode = "template", source = "quadlets/netfelix/byparr.container.tera" }
 "~/.config/containers/systemd/netfelix/configarr.container" = { mode = "template", source = "quadlets/netfelix/configarr.container.tera" }
+"~/.config/containers/systemd/netfelix/qbittorrent.container" = { mode = "template", source = "quadlets/netfelix/qbittorrent.container.tera" }
 "~/.config/systemd/user/configarr.timer" = { mode = "copy", source = "systemd/configarr.timer" }
+"~/.config/systemd/user/qbit-vpn-guard.service" = { mode = "template", source = "systemd/qbit-vpn-guard.service.tera" }
+"~/.config/media/qbit-vpn-guard.sh" = { mode = "template", source = "scripts/qbit-vpn-guard.sh.tera", permissions = "0700" }
 "~/.config/media/configarr/config.yml" = { mode = "copy", source = "configarr/config.yml", permissions = "0600" }
 "~/.config/sonarr/config.xml" = { mode = "template", source = "seed/sonarr.config.xml.tera", create_if_missing = true, permissions = "0600" }
 "~/.config/radarr/config.xml" = { mode = "template", source = "seed/radarr.config.xml.tera", create_if_missing = true, permissions = "0600" }
