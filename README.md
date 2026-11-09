@@ -38,7 +38,10 @@ secrets (`SONARR_API_KEY`, `RADARR_API_KEY`, `PROWLARR_API_KEY`,
 back to the API keys already deployed in the `config.xml` files. The WebUI
 logins of the media stack (qBittorrent, Radarr, Sonarr, Prowlarr, Jellyfin)
 live as their own login entries in the Media vault, e.g.
-`pass://Media/qbittorrent`; `QBIT_PASSWORD` is read from there.
+`pass://Media/qbittorrent`; `QBIT_PASSWORD` is read from there. Each app's API
+key is also collocated as an `apiKey` extra field on its login entry (e.g.
+`pass://Media/sonarr`); the standalone `pass://Media/Netfelix/*_API_KEY`
+entries remain as the bootstrap source.
 
 ## Layout
 
