@@ -17,7 +17,10 @@ picker `home/.local/bin/dotfiles-choose`, which lists the modules declared in
 freely on one host. The modules already recorded in
 `home/.config/mise/miserc.local.toml` are pre-selected, so re-running the
 installer or `mise run dotfiles:update` lets you add or remove modules, and
-picking the same set again changes nothing. The choice is written to
+picking the same set again changes nothing. On an interactive run the setup
+first offers to edit the raw profile file in your editor instead of using the
+picker (`dotfiles-choose --edit` does the same standalone). The choice is
+written to
 `home/.config/mise/miserc.local.toml` (not committed) and `mise bootstrap`
 runs. Set `DOTFILES_ENV=base,dev` to skip the questions. To add a module,
 add a `config.<name>.toml` and a `[module.<name>]` entry in `modules.toml`. The

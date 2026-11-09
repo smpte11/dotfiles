@@ -317,7 +317,7 @@ STUB
 }
 
 check_picker() {
-    local stub=$work/gum-stub out before after
+    local stub=$work/gum-stub out before after miserc edstub
     cat >"$stub" <<'STUB'
 #!/bin/bash
 sel=
@@ -344,6 +344,17 @@ STUB
     [ "$out" = "gaming" ] || fail "the picker did not pre-select the deployed modules: $out"
     out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "base,proton-pass,ssh")
     [ "$out" = "base,proton-pass" ] || fail "the picker did not expand a module group: $out"
+    miserc="$dotfiles/home/.config/mise/miserc.local.toml"
+    edstub=$work/editor-stub
+    cat >"$edstub" <<'STUB'
+#!/bin/bash
+printf 'env = ["base","media"]\n' >"$1"
+STUB
+    chmod +x "$edstub"
+    cp "$miserc" "$work/miserc.bak"
+    out=$(EDITOR=$edstub "$dotfiles/home/.local/bin/dotfiles-choose" --edit)
+    [ "$out" = "base,media" ] || fail "profile edit did not read back the env list: $out"
+    cp "$work/miserc.bak" "$miserc"
     if has_module base || has_module media || has_module gaming || has_module proton-pass; then
         [ -x "$HOME/.local/bin/pass-cli" ] || fail "pass-cli is not installed although a proton module is active"
     else
