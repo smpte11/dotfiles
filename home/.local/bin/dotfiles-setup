@@ -5,6 +5,33 @@ dotfiles="$HOME/.dotfiles"
 config_dir="home/.config/mise"
 miserc="$dotfiles/$config_dir/miserc.local.toml"
 pass="$HOME/.local/bin/pass-cli"
+pass_real="$HOME/.local/share/proton-pass-cli/pass-cli"
+
+pass_cli() {
+    if [ -x "$pass" ]; then
+        "$pass" "$@"
+    else
+        "$pass_real" "$@"
+    fi
+}
+
+ensure_pass_cli() {
+    if [ -f "$pass" ] && [ ! -L "$pass" ]; then
+        mkdir -p "$(dirname "$pass_real")"
+        if [ -e "$pass_real" ]; then
+            rm -f "$pass"
+        else
+            mv -f "$pass" "$pass_real"
+        fi
+    fi
+    if [ ! -x "$pass_real" ]; then
+        export PROTON_PASS_CLI_INSTALL_DIR="$(dirname "$pass_real")"
+        curl -fsSL https://proton.me/download/pass-cli/install.sh | mise exec jq@latest -- bash
+    fi
+    if [ ! -e "$pass" ] && read_modules | grep -qx proton-pass; then
+        ln -s "$dotfiles/proton-pass/.local/bin/pass-cli" "$pass"
+    fi
+}
 
 machine_id="$(cat /etc/machine-id 2>/dev/null || true)"
 if [ -n "$machine_id" ]; then
@@ -81,12 +108,10 @@ ensure_ssh_module() {
 }
 
 proton_login() {
-    if [ ! -x "$pass" ]; then
-        curl -fsSL https://proton.me/download/pass-cli/install.sh | mise exec jq@latest -- bash
-    fi
-    "$pass" info >/dev/null 2>&1 && return 0
+    ensure_pass_cli
+    pass_cli info >/dev/null 2>&1 && return 0
     if [ -t 0 ]; then
-        "$pass" login
+        pass_cli login || echo "pass-cli login did not complete; run 'pass-cli login', then 'mise run dotfiles:update'" >&2
     else
         echo "pass-cli is not logged in; run 'pass-cli login', then 'mise run dotfiles:update'" >&2
     fi
@@ -94,7 +119,7 @@ proton_login() {
 
 media_secret() {
     local var=$1 item=$2 fallback=$3 field=${4:-Password} val extracted unwrapped
-    val="$("$pass" item view "$item" 2>/dev/null || true)"
+    val="$(pass_cli item view "$item" 2>/dev/null || true)"
     extracted="$(printf '%s' "$val" | sed -n "s/^ *- $field: //p" | head -1 | tr -d '\\')"
     unwrapped="$(printf '%s' "$extracted" | sed -n 's/^Text("\(.*\)")$/\1/p')"
     if [ -n "$unwrapped" ]; then
@@ -129,13 +154,13 @@ export_netfelix_secrets() {
 export_secrets() {
     if read_modules | grep -qx base; then
         proton_login
-        vibe_key="$("$pass" item view 'pass://Personal/Vibe/API Key' 2>/dev/null || true)"
+        vibe_key="$(pass_cli item view 'pass://Personal/Vibe/API Key' 2>/dev/null || true)"
         MISTRAL_API_KEY="${vibe_key:-${MISTRAL_API_KEY:-}}"
         export MISTRAL_API_KEY
     fi
     if read_modules | grep -qx dev; then
         proton_login
-        key="$("$pass" item view 'pass://Personal/Codestral/API Key' 2>/dev/null || true)"
+        key="$(pass_cli item view 'pass://Personal/Codestral/API Key' 2>/dev/null || true)"
         CODESTRAL_API_KEY="${key:-${CODESTRAL_API_KEY:-}}"
         export CODESTRAL_API_KEY
     fi

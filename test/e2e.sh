@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-groups=(local-files idempotent services secrets theme history smoke tools media identity tuios switch picker teardown)
+groups=(local-files idempotent services secrets theme history smoke tools proton media identity tuios switch picker teardown)
 if [ "${1:-}" = groups ]; then
     printf '%s\n' "${groups[@]}"
     exit 0
@@ -195,6 +195,7 @@ check_switch() {
     grep -q 1password "$HOME/.ssh/config.d/agent" || fail "config.d/agent does not point to 1password"
     [ ! -e "$HOME/.config/systemd/user/dev.mise.proton-pass-ssh-agent.service" ] || fail "the proton unit remains after the switch"
     [ ! -e "$HOME/.local/bin/proton-pass-ssh-agent" ] || fail "the proton wrapper remains after the switch"
+    [ ! -e "$HOME/.local/bin/pass-cli" ] || fail "the pass-cli wrapper remains after the switch"
     [ ! -e "$HOME/.config/codestral/env" ] || fail "the codestral key remains after the switch"
     if has_module gaming; then
         [ ! -e "$HOME/.config/containers/systemd/netfelix/questarr.container" ] || fail "the questarr quadlet remains after the switch"
@@ -238,6 +239,42 @@ check_tools() {
         expect_tool github:kunchenguid/no-mistakes absent
     fi
     expect_tool npm:@agentclientprotocol/claude-agent-acp absent
+}
+
+check_proton() {
+    if ! has_module base && ! has_module dev && ! has_module media && ! has_module gaming && ! has_module proton-pass; then
+        return $skip
+    fi
+    local real=$HOME/.local/share/proton-pass-cli/pass-cli out link
+    [ -x "$real" ] || fail "the pass-cli binary is not installed at $real"
+    if has_module proton-pass; then
+        [ -L "$HOME/.local/bin/pass-cli" ] || fail "~/.local/bin/pass-cli is not the deployed wrapper"
+        link="$(readlink "$HOME/.local/bin/pass-cli")"
+        case "$link" in
+        *"proton-pass/.local/bin/pass-cli") ;;
+        *) fail "the pass-cli wrapper does not point into the checkout: $link" ;;
+        esac
+        out=$(env -u PROTON_PASS_KEY_PROVIDER -u PROTON_PASS_LINUX_KEYRING "$HOME/.local/bin/pass-cli" info 2>&1 || true)
+        if printf '%s\n' "$out" | grep -qiE 'keyring|encryption key|secret service'; then
+            fail "the wrapper still hits a keyring error without a system keyring: $out"
+        fi
+        printf '%s\n' "$out" | grep -q 'authenticated client' || fail "pass-cli info does not report the missing session: $out"
+        out=$(timeout 10 env -u PROTON_PASS_KEY_PROVIDER -u PROTON_PASS_LINUX_KEYRING "$HOME/.local/bin/pass-cli" login 2>&1 || true)
+        printf '%s\n' "$out" | grep -q 'account.proton.me' || fail "pass-cli login does not reach the web flow through the wrapper: $out"
+    else
+        [ ! -e "$HOME/.local/bin/pass-cli" ] || fail "~/.local/bin/pass-cli exists without the proton-pass module"
+    fi
+    if [ "$scenario" = fresh ] && { has_module base || has_module dev || has_module proton-pass; }; then
+        mv "$real" "$real.stub"
+        printf '#!/bin/sh\nexit 1\n' >"$real"
+        chmod +x "$real"
+        if ! script -qec "DOTFILES_ENV=$modules '$HOME/.local/bin/dotfiles-setup' update ${bootstrap_args[*]}" /dev/null >"$work/proton-tty.log" 2>&1; then
+            mv -f "$real.stub" "$real"
+            fail "setup on a terminal aborted when pass-cli login failed: $(tail -5 "$work/proton-tty.log")"
+        fi
+        grep -q 'pass-cli login did not complete' "$work/proton-tty.log" || fail "setup did not warn about the failed login"
+        mv -f "$real.stub" "$real"
+    fi
 }
 
 check_media() {
@@ -375,13 +412,13 @@ STUB
     out=$(EDITOR=$edstub "$dotfiles/home/.local/bin/dotfiles-choose" --edit)
     [ "$out" = "base,media" ] || fail "profile edit did not read back the env list: $out"
     cp "$work/miserc.bak" "$miserc"
-    if has_module base || has_module media || has_module gaming || has_module proton-pass; then
-        [ -x "$HOME/.local/bin/pass-cli" ] || fail "pass-cli is not installed although a proton module is active"
+    if has_module base || has_module dev || has_module media || has_module gaming || has_module proton-pass; then
+        [ -x "$HOME/.local/share/proton-pass-cli/pass-cli" ] || fail "the pass-cli binary is not installed although a proton module is active"
     else
-        [ ! -e "$HOME/.local/bin/pass-cli" ] || fail "pass-cli is installed without a proton module"
+        [ ! -e "$HOME/.local/share/proton-pass-cli/pass-cli" ] || fail "the pass-cli binary is installed without a proton module"
     fi
     if has_module proton-pass; then
-        grep -qx 'env = \["proton-pass"\]' "$dotfiles/home/.config/mise/miserc.local.toml" || fail "miserc.local.toml does not list proton-pass"
+        grep -q '"proton-pass"' "$dotfiles/home/.config/mise/miserc.local.toml" || fail "miserc.local.toml does not list proton-pass"
     fi
     if [ "$scenario" = fresh ]; then
         before=$(cat "$dotfiles/home/.config/mise/miserc.local.toml")

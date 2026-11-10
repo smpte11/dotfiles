@@ -26,8 +26,14 @@ runs. Set `DOTFILES_ENV=base,dev` to skip the questions. To add a module,
 add a `config.<name>.toml` and a `[module.<name>]` entry in `modules.toml`. The
 `work` module is no longer offered by the picker but still works through
 `DOTFILES_ENV=work`. `dotfiles-setup` adds `ssh` to every machine that has an
-identity module. The `proton-pass` module installs `pass-cli` and logs in on
-any machine; the `base` module includes it. The `ssh-agent` module is optional
+identity module. The `proton-pass` module installs the `pass-cli` binary under
+`~/.local/share/proton-pass-cli/` and deploys a `~/.local/bin/pass-cli`
+wrapper that picks a key provider that actually works on this machine (D-Bus
+Secret Service when available, kernel keyring, filesystem fallback in
+headless environments), so `pass-cli login` works everywhere; the `base`
+module includes it. A failed `pass-cli login` no longer aborts the install:
+setup prints a warning, and you finish with `pass-cli login` followed by
+`mise run dotfiles:update`. The `ssh-agent` module is optional
 and adds the Proton Pass SSH agent. On a `dev` machine the Codestral key is
 passed to `mise bootstrap` as the `CODESTRAL_API_KEY` bootstrap secret. To
 change the key, remove `~/.config/codestral/env` and run
@@ -56,6 +62,7 @@ entries remain as the bootstrap source.
 | `ssh/` | `ssh` | `~/.ssh/config`; the module also builds the tuios fork |
 | `base/` | `base` | Personal signing key, Vibe config and key |
 | `dev/` | `dev` | Codestral key |
+| `proton-pass/` | `proton-pass` | `pass-cli` wrapper that picks a working key provider |
 | `ssh-agent/` | `ssh-agent` | Proton Pass SSH agent wrapper and `~/.ssh/config.d/agent` |
 | `work/` | `work` | 1Password agent, work identity, k9s skin, Claude keybindings |
 | `desktop/` | `desktop` | Journal reminder and check-ins, OpenDeck journal and pixel clock and timer plugins, OpenDeck profiles |

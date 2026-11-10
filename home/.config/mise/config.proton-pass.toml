@@ -1,2 +1,5 @@
 [env]
 PROTON_PASS_LINUX_KEYRING = "dbus"
+
+[dotfile_groups.proton-pass]
+root = "proton-pass"

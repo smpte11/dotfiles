@@ -1,0 +1,82 @@
+#!/bin/sh
+set -eu
+
+real="$HOME/.local/share/proton-pass-cli/pass-cli"
+state_dir="$HOME/.local/share/proton-pass-cli"
+state="$state_dir/provider"
+
+if [ ! -x "$real" ]; then
+    mkdir -p "$state_dir"
+    if command -v mise >/dev/null 2>&1; then
+        export PROTON_PASS_CLI_INSTALL_DIR="$state_dir"
+        curl -fsSL https://proton.me/download/pass-cli/install.sh | mise exec jq@latest -- bash
+    elif command -v jq >/dev/null 2>&1; then
+        export PROTON_PASS_CLI_INSTALL_DIR="$state_dir"
+        curl -fsSL https://proton.me/download/pass-cli/install.sh | bash
+    else
+        echo "pass-cli is not installed and jq is unavailable to install it; run dotfiles-setup" >&2
+        exit 1
+    fi
+fi
+
+if [ -n "${PROTON_PASS_KEY_PROVIDER:-}" ]; then
+    exec "$real" "$@"
+fi
+
+provider_broken() {
+    case "$1" in
+    *keyring*|*"encryption key"*|*"secret service"*) return 0 ;;
+    esac
+    return 1
+}
+
+probe() {
+    case "$1" in
+    dbus) set -- PROTON_PASS_KEY_PROVIDER=keyring PROTON_PASS_LINUX_KEYRING=dbus ;;
+    fs) set -- PROTON_PASS_KEY_PROVIDER=fs ;;
+    *) set -- -u PROTON_PASS_KEY_PROVIDER -u PROTON_PASS_LINUX_KEYRING ;;
+    esac
+    if env "$@" "$real" info >/dev/null 2>&1; then
+        return 0
+    fi
+    out="$(env "$@" "$real" info 2>&1 >/dev/null || true)"
+    ! provider_broken "$out"
+}
+
+choose_provider() {
+    if [ -s "$state" ]; then
+        cached="$(cat "$state")"
+        if probe "$cached"; then
+            printf '%s\n' "$cached"
+            return 0
+        fi
+    fi
+    if [ "$(uname -s)" = "Linux" ] && [ "${PROTON_PASS_LINUX_KEYRING:-}" = "dbus" ] && probe dbus; then
+        echo dbus
+    elif probe kernel; then
+        echo kernel
+    else
+        echo fs
+    fi
+}
+
+provider="$(choose_provider)"
+mkdir -p "$state_dir"
+printf '%s\n' "$provider" >"$state"
+
+case "$provider" in
+dbus)
+    export PROTON_PASS_KEY_PROVIDER=keyring
+    export PROTON_PASS_LINUX_KEYRING=dbus
+    ;;
+fs)
+    export PROTON_PASS_KEY_PROVIDER=fs
+    unset PROTON_PASS_LINUX_KEYRING
+    ;;
+*)
+    unset PROTON_PASS_KEY_PROVIDER
+    unset PROTON_PASS_LINUX_KEYRING
+    ;;
+esac
+
+exec "$real" "$@"
