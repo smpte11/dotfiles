@@ -1,0 +1,7 @@
+<Config>
+  <Port>7879</Port>
+{%- set key = secret(name="radarr_kids_api_key") | trim %}
+{%- if key %}
+  <ApiKey>{{ key }}</ApiKey>
+{%- endif %}
+</Config>

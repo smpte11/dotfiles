@@ -93,9 +93,13 @@ proton_login() {
 }
 
 media_secret() {
-    local var=$1 item=$2 fallback=$3 val extracted
+    local var=$1 item=$2 fallback=$3 field=${4:-Password} val extracted unwrapped
     val="$("$pass" item view "$item" 2>/dev/null || true)"
-    extracted="$(printf '%s' "$val" | sed -n 's/^ - Password: //p' | head -1)"
+    extracted="$(printf '%s' "$val" | sed -n "s/^ *- $field: //p" | head -1 | tr -d '\\')"
+    unwrapped="$(printf '%s' "$extracted" | sed -n 's/^Text("\(.*\)")$/\1/p')"
+    if [ -n "$unwrapped" ]; then
+        extracted="$unwrapped"
+    fi
     if [ -n "$extracted" ]; then
         val="$extracted"
     fi
@@ -114,6 +118,7 @@ export_netfelix_secrets() {
     proton_login
     media_secret SONARR_API_KEY 'pass://Media/Netfelix/SONARR_API_KEY' "$HOME/.config/sonarr/config.xml"
     media_secret RADARR_API_KEY 'pass://Media/Netfelix/RADARR_API_KEY' "$HOME/.config/radarr/config.xml"
+    media_secret RADARR_KIDS_API_KEY 'pass://Media/radarr-kids' "$HOME/.config/radarr-kids/config.xml" apiKey
     media_secret PROWLARR_API_KEY 'pass://Media/Netfelix/PROWLARR_API_KEY' "$HOME/.config/prowlarr/config.xml"
     media_secret QUESTARR_API_KEY 'pass://Media/Netfelix/QUESTARR_API_KEY' ""
     media_secret QBIT_USERNAME 'pass://Media/Netfelix/QBIT_USERNAME' ""
