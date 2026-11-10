@@ -28,3 +28,7 @@ allow_empty = true
 env = "QBIT_PASSWORD"
 description = "qBittorrent password (pass://Media/Netfelix/QBIT_PASSWORD)"
 allow_empty = true
+
+[bootstrap.directories."~/.config/questarr"]
+
+[bootstrap.directories."~/.local/share/questarr/games"]
