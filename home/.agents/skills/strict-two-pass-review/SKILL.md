@@ -1,6 +1,6 @@
 ---
 name: strict-two-pass-review
-description: Run two sequential review passes over findings, reports, or plans: first a standard pass that re-verifies every claim against primary sources, then a strict adversarial pass that attacks biases and reclassifies weak claims. Use when a review must get stricter in stages, or to check whether previous findings hold.
+description: "Run two sequential review passes over findings, reports, or plans: first a standard pass that re-verifies every claim against primary sources, then a strict adversarial pass that attacks biases and reclassifies weak claims. Use when a review must get stricter in stages, or to check whether previous findings hold."
 ---
 
 # Strict two-pass review
