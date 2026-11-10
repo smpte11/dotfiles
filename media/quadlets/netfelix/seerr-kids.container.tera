@@ -1,0 +1,20 @@
+[Container]
+ContainerName=seerr-kids
+Environment=LOG_LEVEL=debug TZ=Europe/Stockholm PORT=5056
+Image=ghcr.io/seerr-team/seerr:latest
+Label=io.containers.autoupdate=registry
+RunInit=true
+Volume={{ env.HOME }}/.config/seerr-kids:/app/config:Z
+User=0:0
+Pod=netfelix.pod
+AutoUpdate=registry
+
+[Service]
+Restart=always
+
+[Unit]
+After=jellyfin.container radarr-kids.container
+Requires=jellyfin.container
+
+[Install]
+WantedBy=default.target

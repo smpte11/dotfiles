@@ -247,12 +247,14 @@ check_media() {
     if ! has_module media; then
         [ ! -e "$HOME/.config/containers/systemd/netfelix/netfelix.pod" ] || fail "netfelix quadlets deployed without the media module"
         [ ! -e "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" ] || fail "the qbittorrent quadlet is deployed without the media module"
+        [ ! -e "$HOME/.config/containers/systemd/netfelix/radarr-kids.container" ] || fail "the radarr-kids quadlet is deployed without the media module"
+        [ ! -e "$HOME/.config/containers/systemd/netfelix/seerr-kids.container" ] || fail "the seerr-kids quadlet is deployed without the media module"
         [ ! -e "$HOME/.config/systemd/user/qbit-vpn-guard.service" ] || fail "the qbit-vpn-guard service is deployed without the media module"
         [ ! -e "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is deployed without the media module"
         [ ! -e "$HOME/.agents/machine/protect-media-drives.md" ] || fail "the media drive guard is deployed without the media module"
         return $skip
     fi
-    for f in netfelix.pod sonarr.container radarr.container prowlarr.container jellyfin.container seerr.container byparr.container configarr.container qbittorrent.container; do
+    for f in netfelix.pod sonarr.container radarr.container radarr-kids.container prowlarr.container jellyfin.container seerr.container seerr-kids.container byparr.container configarr.container qbittorrent.container; do
         [ -f "$HOME/.config/containers/systemd/netfelix/$f" ] || fail "quadlet $f is not deployed"
         if grep -qE '\{\{|\{%' "$HOME/.config/containers/systemd/netfelix/$f"; then
             fail "$f has unrendered template syntax"
@@ -276,7 +278,12 @@ check_media() {
     [ "$(stat -c %a "$HOME/.config/media/configarr/config.yml")" = 600 ] || fail "the configarr config is not 0600"
     grep -q 'api_key: !env SONARR_API_KEY' "$HOME/.config/media/configarr/config.yml" || fail "the configarr config does not read the sonarr key from the environment"
     grep -q 'Secret=sonarr_api_key,type=env,target=SONARR_API_KEY' "$HOME/.config/containers/systemd/netfelix/configarr.container" || fail "the configarr quadlet does not inject the sonarr key secret"
-    for app in sonarr radarr prowlarr; do
+    grep -q 'Secret=radarr_kids_api_key,type=env,target=RADARR_KIDS_API_KEY' "$HOME/.config/containers/systemd/netfelix/configarr.container" || fail "the configarr quadlet does not inject the radarr-kids key secret"
+    grep -q 'PublishPort=7879:7879/tcp' "$HOME/.config/containers/systemd/netfelix/netfelix.pod" || fail "the pod does not publish the radarr-kids port"
+    grep -q 'PublishPort=5056:5056/tcp' "$HOME/.config/containers/systemd/netfelix/netfelix.pod" || fail "the pod does not publish the seerr-kids port"
+    grep -q 'movie_category: radarr-kids' "$HOME/.config/media/configarr/config.yml" || fail "the configarr config does not route radarr-kids downloads to their own qbit category"
+    grep -q 'baseUrl: http://localhost:7879' "$HOME/.config/media/configarr/config.yml" || fail "the configarr config does not sync prowlarr to radarr-kids"
+    for app in sonarr radarr radarr-kids prowlarr; do
         [ -f "$HOME/.config/$app/config.xml" ] || fail "the $app seed config is not deployed"
         [ "$(stat -c %a "$HOME/.config/$app/config.xml")" = 600 ] || fail "the $app seed config is not 0600"
         if grep -qE '\{\{|\{%' "$HOME/.config/$app/config.xml"; then

@@ -9,6 +9,8 @@ exclude = ["quadlets", "configarr", "seed", "systemd", "scripts"]
 "~/.config/containers/systemd/netfelix/netfelix.pod" = { mode = "copy", source = "quadlets/netfelix/netfelix.pod" }
 "~/.config/containers/systemd/netfelix/sonarr.container" = { mode = "template", source = "quadlets/netfelix/sonarr.container.tera" }
 "~/.config/containers/systemd/netfelix/radarr.container" = { mode = "template", source = "quadlets/netfelix/radarr.container.tera" }
+"~/.config/containers/systemd/netfelix/radarr-kids.container" = { mode = "template", source = "quadlets/netfelix/radarr-kids.container.tera" }
+"~/.config/containers/systemd/netfelix/seerr-kids.container" = { mode = "template", source = "quadlets/netfelix/seerr-kids.container.tera" }
 "~/.config/containers/systemd/netfelix/prowlarr.container" = { mode = "template", source = "quadlets/netfelix/prowlarr.container.tera" }
 "~/.config/containers/systemd/netfelix/jellyfin.container" = { mode = "template", source = "quadlets/netfelix/jellyfin.container.tera" }
 "~/.config/containers/systemd/netfelix/seerr.container" = { mode = "template", source = "quadlets/netfelix/seerr.container.tera" }
@@ -21,7 +23,14 @@ exclude = ["quadlets", "configarr", "seed", "systemd", "scripts"]
 "~/.config/media/configarr/config.yml" = { mode = "copy", source = "configarr/config.yml", permissions = "0600" }
 "~/.config/sonarr/config.xml" = { mode = "template", source = "seed/sonarr.config.xml.tera", create_if_missing = true, permissions = "0600" }
 "~/.config/radarr/config.xml" = { mode = "template", source = "seed/radarr.config.xml.tera", create_if_missing = true, permissions = "0600" }
+"~/.config/radarr-kids/config.xml" = { mode = "template", source = "seed/radarr-kids.config.xml.tera", create_if_missing = true, permissions = "0600" }
 "~/.config/prowlarr/config.xml" = { mode = "template", source = "seed/prowlarr.config.xml.tera", create_if_missing = true, permissions = "0600" }
+
+[bootstrap.directories."~/.config/radarr-kids"]
+mode = "0700"
+
+[bootstrap.directories."~/.config/seerr-kids"]
+mode = "0700"
 
 [bootstrap.secrets.sonarr_api_key]
 env = "SONARR_API_KEY"
@@ -31,6 +40,11 @@ allow_empty = true
 [bootstrap.secrets.radarr_api_key]
 env = "RADARR_API_KEY"
 description = "Radarr API key (pass://Media/Netfelix/RADARR_API_KEY)"
+allow_empty = true
+
+[bootstrap.secrets.radarr_kids_api_key]
+env = "RADARR_KIDS_API_KEY"
+description = "Radarr Kids API key (pass://Media/radarr-kids apiKey)"
 allow_empty = true
 
 [bootstrap.secrets.prowlarr_api_key]

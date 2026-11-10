@@ -1,0 +1,14 @@
+[Container]
+ContainerName=radarr-kids
+Image=lscr.io/linuxserver/radarr:latest
+Label=io.containers.autoupdate=registry
+Environment=PUID=0 PGID=0 TZ=Europe/Stockholm
+Volume={{ env.HOME }}/.config/radarr-kids:/config:Z
+Volume=/run/media/system/media:/data:z
+Pod=netfelix.pod
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
