@@ -13,6 +13,17 @@ root = "dev"
 
 [dotfile_groups.dev.entries]
 "~/.config/codestral/env" = { mode = "template", create_if_missing = true, permissions = "0600" }
+"~/.config/tuios/config.toml" = { mode = "template", variants = [{ os = "macos", target = "~/Library/Application Support/tuios/config.toml" }, { default = true }] }
+
+[dotfiles]
+"~/.local/state/firstmate/config/backend" = { content = "herdr\n" }
+
+[bootstrap.repos]
+"~/.local/share/firstmate" = { url = "https://github.com/kunchenguid/firstmate" }
+
+[tasks.bootstrap]
+description = "Build the tuios fork"
+run = "test -x ~/.local/bin/tuios || ~/.local/bin/fork-sync build"
 
 [bootstrap.secrets.codestral_api_key]
 env = "CODESTRAL_API_KEY"

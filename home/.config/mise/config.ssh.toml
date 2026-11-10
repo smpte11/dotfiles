@@ -3,7 +3,3 @@ root = "ssh"
 
 [bootstrap.directories."~/.ssh"]
 mode = "0700"
-
-[tasks.bootstrap]
-description = "Build the tuios fork"
-run = "test -x ~/.local/bin/tuios || ~/.local/bin/fork-sync build"

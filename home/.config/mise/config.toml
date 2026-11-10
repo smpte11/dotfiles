@@ -58,7 +58,6 @@ exclude = [".config/mise"]
 "~/.config/television/themes/active-theme.toml" = { mode = "template" }
 "~/.config/nvim/plugin/25_theme.lua" = { mode = "template" }
 "~/.config/nvim-snacks/plugin/25_theme.lua" = { mode = "template", source = ".config/nvim/plugin/25_theme.lua.tera" }
-"~/.config/tuios/config.toml" = { mode = "template", variants = [{ os = "macos", target = "~/Library/Application Support/tuios/config.toml" }, { default = true }] }
 "~/.local/share/claude-lsp/.claude-plugin/marketplace.json" = { mode = "template" }
 "~/.local/share/claude-lsp/plugins/elixir-lsp/.claude-plugin/plugin.json" = { mode = "template" }
 "~/.local/share/claude-lsp/plugins/erlang-lsp/.claude-plugin/plugin.json" = { mode = "template" }
@@ -69,7 +68,6 @@ exclude = [".config/mise"]
 [dotfiles]
 "~/.dotfiles/home/.config/mise/conf.d/theme.toml" = { mode = "track" }
 "~/.local/share/org.gnome.Ptyxis/palettes/Active Theme.palette" = { source = "~/.dotfiles/home/.local/share/org.gnome.Ptyxis/palettes/Active Theme.palette.tera", mode = "template" }
-"~/.local/state/firstmate/config/backend" = { content = "herdr\n" }
 
 [history.reload]
 "~/.dotfiles/home/.config/mise/conf.d/theme.toml" = "mise dot apply --yes"
@@ -77,7 +75,6 @@ exclude = [".config/mise"]
 [bootstrap.repos]
 "~/.local/share/zsh/plugins/fzf-tab" = { url = "https://github.com/Aloxaf/fzf-tab.git" }
 "~/.local/share/zsh/plugins/zsh-autosuggestions" = { url = "https://github.com/zsh-users/zsh-autosuggestions.git" }
-"~/.local/share/firstmate" = { url = "https://github.com/kunchenguid/firstmate" }
 
 [bootstrap.mise_shell_activate]
 zprofile = "shims"
@@ -93,6 +90,7 @@ post-dotfiles = [
 [tasks."dotfiles:update"]
 description = "Pull the dotfiles repository and bootstrap this machine again"
 dir = "{{ env.HOME }}/.dotfiles"
+raw = true
 run = """
 set -eu
 if [ -d .jj ]; then
