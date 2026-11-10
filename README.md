@@ -28,10 +28,15 @@ add a `config.<name>.toml` and a `[module.<name>]` entry in `modules.toml`. The
 `DOTFILES_ENV=work`. `dotfiles-setup` adds `ssh` to every machine that has an
 identity module. The `proton-pass` module installs `pass-cli` and logs in on
 any machine; the `base` module includes it. The `ssh-agent` module is optional
-and adds the Proton Pass SSH agent. On a `base` machine the Codestral key is
-passed to `mise bootstrap` as the `CODESTRAL_API_KEY` bootstrap secret. To change
-the key, remove `~/.config/codestral/env` and run `mise run dotfiles:update`.
-On a `media` or `gaming` machine it reads the `pass://Media/Netfelix/*` items
+and adds the Proton Pass SSH agent. On a `dev` machine the Codestral key is
+passed to `mise bootstrap` as the `CODESTRAL_API_KEY` bootstrap secret. To
+change the key, remove `~/.config/codestral/env` and run
+`mise run dotfiles:update`. On a `base` machine the base module deploys
+`~/.vibe/config.toml` and renders `~/.vibe/.env` (0600) with `MISTRAL_API_KEY`
+read from `pass://Personal/Vibe/API Key`, so one run of the installer or
+`mise run dotfiles:update` configures Vibe on a fresh machine; to change the
+key, remove `~/.vibe/.env` and run `mise run dotfiles:update`. On a `media` or
+`gaming` machine it reads the `pass://Media/Netfelix/*` items
 from Proton Pass and gives them to `mise bootstrap` as the matching bootstrap
 secrets (`SONARR_API_KEY`, `RADARR_API_KEY`, `PROWLARR_API_KEY`,
 `QUESTARR_API_KEY`, `QBIT_USERNAME`, `QBIT_PASSWORD`, `YTS_API_URL`), falling
@@ -49,7 +54,8 @@ entries remain as the bootstrap source.
 | --- | --- | --- |
 | `home/` | always | Shared files, linked file by file into `~` |
 | `ssh/` | `ssh` | `~/.ssh/config`; the module also builds the tuios fork |
-| `base/` | `base` | Personal signing key, Codestral key |
+| `base/` | `base` | Personal signing key, Vibe config and key |
+| `dev/` | `dev` | Codestral key |
 | `ssh-agent/` | `ssh-agent` | Proton Pass SSH agent wrapper and `~/.ssh/config.d/agent` |
 | `work/` | `work` | 1Password agent, work identity, k9s skin, Claude keybindings |
 | `desktop/` | `desktop` | Journal reminder and check-ins, OpenDeck journal and pixel clock and timer plugins, OpenDeck profiles |

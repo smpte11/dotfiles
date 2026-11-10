@@ -1,0 +1,8 @@
+theme = "auto"
+active_model = ""
+
+[[models]]
+name = "mistral-large-4-0"
+alias = "mistral-large-4-0-3"
+provider = "mistral"
+thinking = "high"

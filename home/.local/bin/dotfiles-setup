@@ -129,6 +129,12 @@ export_netfelix_secrets() {
 export_secrets() {
     if read_modules | grep -qx base; then
         proton_login
+        vibe_key="$("$pass" item view 'pass://Personal/Vibe/API Key' 2>/dev/null || true)"
+        MISTRAL_API_KEY="${vibe_key:-${MISTRAL_API_KEY:-}}"
+        export MISTRAL_API_KEY
+    fi
+    if read_modules | grep -qx dev; then
+        proton_login
         key="$("$pass" item view 'pass://Personal/Codestral/API Key' 2>/dev/null || true)"
         CODESTRAL_API_KEY="${key:-${CODESTRAL_API_KEY:-}}"
         export CODESTRAL_API_KEY

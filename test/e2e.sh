@@ -53,17 +53,30 @@ check_services() {
 }
 
 check_secrets() {
-    has_module base || return $skip
-    local codestral=$HOME/.config/codestral/env status_output
-    [ -f "$codestral" ] && [ ! -s "$codestral" ] || fail "$codestral is not an empty file without a key"
-    rm "$codestral"
-    status_output=$(CODESTRAL_API_KEY=e2e-secret mise dot status --verbose 2>&1)
-    if grep -q e2e-secret <<<"$status_output"; then fail "mise dot status prints the codestral key"; fi
-    CODESTRAL_API_KEY=e2e-secret mise dot apply --yes >/dev/null
-    [ "$(cat "$codestral")" = CODESTRAL_API_KEY=e2e-secret ] || fail "$codestral does not hold the key"
-    [ "$(stat -c %a "$codestral")" = 600 ] || fail "$codestral is not 0600"
-    [ "$(mise env --json | jq -r .CODESTRAL_API_KEY)" = e2e-secret ] || fail "mise env does not load the codestral key"
-    mise bootstrap --yes "${bootstrap_args[@]}" >/dev/null || fail "bootstrap fails without the key in the environment"
+    has_module base || has_module dev || return $skip
+    local codestral=$HOME/.config/codestral/env vibe=$HOME/.vibe/.env status_output
+    if has_module dev; then
+        [ -f "$codestral" ] && [ ! -s "$codestral" ] || fail "$codestral is not an empty file without a key"
+        rm "$codestral"
+        status_output=$(CODESTRAL_API_KEY=e2e-secret mise dot status --verbose 2>&1)
+        if grep -q e2e-secret <<<"$status_output"; then fail "mise dot status prints the codestral key"; fi
+        CODESTRAL_API_KEY=e2e-secret mise dot apply --yes >/dev/null
+        [ "$(cat "$codestral")" = CODESTRAL_API_KEY=e2e-secret ] || fail "$codestral does not hold the key"
+        [ "$(stat -c %a "$codestral")" = 600 ] || fail "$codestral is not 0600"
+        [ "$(mise env --json | jq -r .CODESTRAL_API_KEY)" = e2e-secret ] || fail "mise env does not load the codestral key"
+        mise bootstrap --yes "${bootstrap_args[@]}" >/dev/null || fail "bootstrap fails without the key in the environment"
+    fi
+    if has_module base; then
+        [ -f "$vibe" ] && [ ! -s "$vibe" ] || fail "$vibe is not an empty file without a key"
+        rm "$vibe"
+        status_output=$(MISTRAL_API_KEY=e2e-secret-vibe mise dot status --verbose 2>&1)
+        if grep -q e2e-secret-vibe <<<"$status_output"; then fail "mise dot status prints the vibe key"; fi
+        MISTRAL_API_KEY=e2e-secret-vibe mise dot apply --yes >/dev/null
+        [ "$(cat "$vibe")" = MISTRAL_API_KEY=e2e-secret-vibe ] || fail "$vibe does not hold the key"
+        [ "$(stat -c %a "$vibe")" = 600 ] || fail "$vibe is not 0600"
+        [ "$(mise env --json | jq -r .MISTRAL_API_KEY)" = e2e-secret-vibe ] || fail "mise env does not load the vibe key"
+        mise bootstrap --yes "${bootstrap_args[@]}" >/dev/null || fail "bootstrap fails without the vibe key in the environment"
+    fi
 }
 
 check_theme() {

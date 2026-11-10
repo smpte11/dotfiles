@@ -1,5 +1,20 @@
+[env]
+NVIM_AI_PROVIDER = "codestral"
+_.file = { path = "{{ env.HOME }}/.config/codestral/env", redact = true }
+
 [tools]
 devcontainer-cli = "latest"
 "github:fgrehm/crib" = "latest"
 ollama = "latest"
 "github:kunchenguid/no-mistakes" = "latest"
+
+[dotfile_groups.dev]
+root = "dev"
+
+[dotfile_groups.dev.entries]
+"~/.config/codestral/env" = { mode = "template", create_if_missing = true, permissions = "0600" }
+
+[bootstrap.secrets.codestral_api_key]
+env = "CODESTRAL_API_KEY"
+description = "Codestral API key"
+allow_empty = true

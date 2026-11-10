@@ -1,9 +1,9 @@
 [module.base]
-description = "base config with signing key and Codestral key"
+description = "base config with signing key and vibe config"
 modules = ["base", "proton-pass"]
 
 [module.dev]
-description = "dev tools: devcontainers and local models"
+description = "dev tools: devcontainers, local models and the Codestral key"
 modules = ["dev"]
 
 [module.media]
