@@ -12,6 +12,7 @@ SecurityLabelDisable=true
 [Service]
 Restart=always
 ExecStartPre=/usr/bin/nvidia-smi
+ExecStartPre=/bin/sh -c "sed -i 's|<EnableIPv6>[^<]*</EnableIPv6>|<EnableIPv6>true</EnableIPv6>|' /config/config/network.xml 2>/dev/null || true"
 
 [Install]
 WantedBy=default.target
