@@ -9,6 +9,7 @@ The followings are the instructions for using Felix's agents. Please read them c
 - Do not leave unnecessary artifacts in the repository.
 If an artifact is required, for example as an output of a task or an E2E test, yet not necessary, cleanup afterwards.
 - If `~/.agents/machine/` exists, read every file in it before doing anything else; each machine keeps its own rules there.
+- Respect the machine pin (`/etc/machine-id`) and treat mounts you do not know as read-only; ask before any write outside the work directory.
 
 ### Writing
 - Never use em dashes "—" in anything you write: chat responses, explanations, code, commit messages, PR bodies. Use hyphens "-" instead. This holds for every task type; a coding, review or debugging task does not exempt your own prose.
@@ -37,5 +38,14 @@ If you see a flaky test, fix it.
 If you see a lint error, fix it.
 If you see a failing test, fix it. If you see a failing test that is not your code, fix it.
 If you see a failing test that is not your code and you don't know how to fix it, ask for help.
+
+### Planning and Verification
+- Verify facts against the live source before stating them: image tags against the registry, config paths against the deployed file on the machine, secret names against the vault entry, port behavior against the container runtime. If you cannot verify in the sandbox, write "unverified" and name the check that would falsify it.
+- Run the narrowest authoritative test locally before reporting done. If the environment cannot run it (no docker, no network), mark verification as pending in the PR. Never write "CI covers it" when CI was removed or is not the gate.
+- Before adding any CI or automation, assess what it exposes: no `workflow_dispatch` job may run PR-controlled code with secrets. Prefer local gates (`mise run test:fresh`) over hosted runners.
+- Every plan gets an "open questions" list. Each item gets a falsification step (e2e or source check) that runs before merge, not after.
+- Any side-effecting orchestration you build must be idempotent: record the intent before running the effect, skip effects whose result is already recorded, use a single event reader, and keep a long-running core that outlives one-shot commands.
+- Prefer small verified batches: merge a change together with the follow-ups it already needs, or live-verify on the target machine in the same session.
+- End every PR body with a short retrospective: what the plan got wrong and the rule it implies.
 
 
