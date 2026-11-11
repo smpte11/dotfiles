@@ -6,9 +6,6 @@ profile = "personal"
 email = "felix@brouss.eu"
 theme = { default = "eldritch" }
 
-[env]
-FM_HARNESS = "pi"
-
 [tools]
 usage = "latest"
 bat = "latest"
@@ -30,7 +27,6 @@ jjui = "latest"
 neovim = "latest"
 node = "24.13.0"
 oh-my-posh = "latest"
-pi = "latest"
 ripgrep = "latest"
 television = "latest"
 tree-sitter = "latest"
@@ -63,7 +59,6 @@ exclude = [".config/mise"]
 "~/.local/share/claude-lsp/plugins/erlang-lsp/.claude-plugin/plugin.json" = { mode = "template" }
 "~/.local/share/claude-lsp/plugins/scala-lsp/.claude-plugin/plugin.json" = { mode = "template" }
 "~/.claude/settings.json/output-style" = { merge = true }
-"~/.pi/agent/settings.json/extensions" = { merge = true }
 
 [dotfiles]
 "~/.dotfiles/home/.config/mise/conf.d/theme.toml" = { mode = "track" }

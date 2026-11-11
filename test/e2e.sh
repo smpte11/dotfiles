@@ -53,30 +53,39 @@ check_services() {
 }
 
 check_secrets() {
-    has_module base || has_module dev || return $skip
     local codestral=$HOME/.config/codestral/env vibe=$HOME/.vibe/.env status_output
-    if has_module dev; then
-        [ -f "$codestral" ] && [ ! -s "$codestral" ] || fail "$codestral is not an empty file without a key"
-        rm "$codestral"
-        status_output=$(CODESTRAL_API_KEY=e2e-secret mise dot status --verbose 2>&1)
-        if grep -q e2e-secret <<<"$status_output"; then fail "mise dot status prints the codestral key"; fi
-        CODESTRAL_API_KEY=e2e-secret mise dot apply --yes >/dev/null
-        [ "$(cat "$codestral")" = CODESTRAL_API_KEY=e2e-secret ] || fail "$codestral does not hold the key"
-        [ "$(stat -c %a "$codestral")" = 600 ] || fail "$codestral is not 0600"
-        [ "$(mise env --json | jq -r .CODESTRAL_API_KEY)" = e2e-secret ] || fail "mise env does not load the codestral key"
-        mise bootstrap --yes "${bootstrap_args[@]}" >/dev/null || fail "bootstrap fails without the key in the environment"
-    fi
     if has_module base; then
-        [ -f "$vibe" ] && [ ! -s "$vibe" ] || fail "$vibe is not an empty file without a key"
-        rm "$vibe"
-        status_output=$(MISTRAL_API_KEY=e2e-secret-vibe mise dot status --verbose 2>&1)
-        if grep -q e2e-secret-vibe <<<"$status_output"; then fail "mise dot status prints the vibe key"; fi
-        MISTRAL_API_KEY=e2e-secret-vibe mise dot apply --yes >/dev/null
-        [ "$(cat "$vibe")" = MISTRAL_API_KEY=e2e-secret-vibe ] || fail "$vibe does not hold the key"
-        [ "$(stat -c %a "$vibe")" = 600 ] || fail "$vibe is not 0600"
-        [ "$(mise env --json | jq -r .MISTRAL_API_KEY)" = e2e-secret-vibe ] || fail "mise env does not load the vibe key"
-        mise bootstrap --yes "${bootstrap_args[@]}" >/dev/null || fail "bootstrap fails without the vibe key in the environment"
+        check_vibe_secret
+    else
+        [ ! -e "$vibe" ] || fail "$vibe is deployed without the base module"
     fi
+    if ! has_module dev-private; then
+        [ ! -e "$codestral" ] || fail "$codestral is deployed without the dev-private module"
+        [ "$(mise env --json | jq -r '.NVIM_AI_PROVIDER // empty')" != codestral ] || fail "NVIM_AI_PROVIDER is codestral without the dev-private module"
+        return 0
+    fi
+    [ -f "$codestral" ] && [ ! -s "$codestral" ] || fail "$codestral is not an empty file without a key"
+    rm "$codestral"
+    status_output=$(CODESTRAL_API_KEY=e2e-secret mise dot status --verbose 2>&1)
+    if grep -q e2e-secret <<<"$status_output"; then fail "mise dot status prints the codestral key"; fi
+    CODESTRAL_API_KEY=e2e-secret mise dot apply --yes >/dev/null
+    [ "$(cat "$codestral")" = CODESTRAL_API_KEY=e2e-secret ] || fail "$codestral does not hold the key"
+    [ "$(stat -c %a "$codestral")" = 600 ] || fail "$codestral is not 0600"
+    [ "$(mise env --json | jq -r .CODESTRAL_API_KEY)" = e2e-secret ] || fail "mise env does not load the codestral key"
+    mise bootstrap --yes "${bootstrap_args[@]}" >/dev/null || fail "bootstrap fails without the key in the environment"
+}
+
+check_vibe_secret() {
+    local vibe=$HOME/.vibe/.env status_output
+    [ -f "$vibe" ] && [ ! -s "$vibe" ] || fail "$vibe is not an empty file without a key"
+    rm "$vibe"
+    status_output=$(MISTRAL_API_KEY=e2e-secret-vibe mise dot status --verbose 2>&1)
+    if grep -q e2e-secret-vibe <<<"$status_output"; then fail "mise dot status prints the vibe key"; fi
+    MISTRAL_API_KEY=e2e-secret-vibe mise dot apply --yes >/dev/null
+    [ "$(cat "$vibe")" = MISTRAL_API_KEY=e2e-secret-vibe ] || fail "$vibe does not hold the key"
+    [ "$(stat -c %a "$vibe")" = 600 ] || fail "$vibe is not 0600"
+    [ "$(mise env --json | jq -r .MISTRAL_API_KEY)" = e2e-secret-vibe ] || fail "mise env does not load the vibe key"
+    mise bootstrap --yes "${bootstrap_args[@]}" >/dev/null || fail "bootstrap fails without the vibe key in the environment"
 }
 
 check_theme() {
@@ -102,7 +111,9 @@ check_smoke() {
     zsh -i -c exit || fail "zsh does not start"
     reshim_err=$(mise reshim 2>&1 >/dev/null) || true
     [ -z "$reshim_err" ] || fail "mise reshim warns about unusable tool executables: $reshim_err"
-    pi --version >/dev/null 2>&1 || fail "pi is not runnable through its mise shim"
+    if has_module dev-private; then
+        pi --version >/dev/null 2>&1 || fail "pi is not runnable through its mise shim"
+    fi
     moor --version >/dev/null 2>&1 || fail "moor, the jj pager, is not runnable through its mise shim"
     login_jq=$(env -i HOME="$HOME" PATH=/usr/bin:/bin zsh -l -c 'command -v jq') || fail "a zsh login shell does not find jq"
     [ "$login_jq" = "$HOME/.local/share/mise/shims/jq" ] || fail "a zsh login shell does not use the mise shims: $login_jq"
@@ -119,9 +130,14 @@ check_smoke() {
 }
 
 check_identity() {
-    local expected_email=felix@brouss.eu expected_harness=pi signing_key plugin_js
+    local expected_email=felix@brouss.eu expected_harness=null signing_key plugin_js
     if has_module work; then
         expected_email=felix.brousseau-tremblay@kivra.com
+    fi
+    if has_module dev-private; then
+        expected_harness=pi
+    fi
+    if has_module dev-work; then
         expected_harness=claude
     fi
     [ "$(jj config get user.email)" = "$expected_email" ] || fail "jj user.email is not $expected_email"
@@ -154,8 +170,11 @@ check_identity() {
         ssh -G workgit | grep -qx 'hostname github.com' || fail "ssh does not know workgit"
         ssh -G workgit | grep -qx "identityagent $HOME/.1password/agent.sock" || fail "work ssh agent is not 1password"
         [ "$(jj config get signing.backends.ssh.program)" = /opt/1Password/op-ssh-sign ] || fail "jj does not sign with op-ssh-sign"
-        [ -s "$HOME/.config/k9s/skins/active-theme.yaml" ] || fail "k9s skin is missing"
+    fi
+    if has_module dev-work; then
         [ -L "$HOME/.claude/keybindings.json" ] || fail "claude keybindings are missing"
+    else
+        [ ! -e "$HOME/.claude/keybindings.json" ] || fail "claude keybindings are deployed without the dev-work module"
     fi
     if has_module desktop; then
         plugin_js=$HOME/.config/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js
@@ -226,18 +245,25 @@ check_tools() {
         expect_tool aqua:nushell/nushell absent
     fi
     if has_module dev; then
-        expect_tool ollama present
+        [ -s "$HOME/.config/k9s/skins/active-theme.yaml" ] || fail "k9s skin is missing"
         expect_tool devcontainer-cli present
-        expect_tool github:fgrehm/crib present
-    else
-        expect_tool ollama absent
-        expect_tool devcontainer-cli absent
-        expect_tool github:fgrehm/crib absent
-    fi
-    if has_module desktop || has_module work || has_module dev; then
         expect_tool github:kunchenguid/no-mistakes present
     else
+        expect_tool devcontainer-cli absent
         expect_tool github:kunchenguid/no-mistakes absent
+    fi
+    if has_module dev-private; then
+        [ -s "$HOME/.pi/agent/AGENTS.md" ] || fail "the pi agent instructions are missing"
+        [ -s "$HOME/.config/crib/config.toml" ] || fail "the crib config is missing"
+        expect_tool ollama present
+        expect_tool github:fgrehm/crib present
+        expect_tool pi present
+    else
+        [ ! -e "$HOME/.pi/agent/AGENTS.md" ] || fail "the pi agent instructions are deployed without the dev-private module"
+        [ ! -e "$HOME/.config/crib/config.toml" ] || fail "the crib config is deployed without the dev-private module"
+        expect_tool ollama absent
+        expect_tool github:fgrehm/crib absent
+        expect_tool pi absent
     fi
     expect_tool npm:@agentclientprotocol/claude-agent-acp absent
 }
@@ -404,14 +430,16 @@ choose)
     if [ -n "$sel" ]; then
         printf '%s\n' "$sel" | tr ',' '\n'
     else
-        printf 'media - pick one\ndev - pick two\n'
+        grep -E '^(work|dev) - '
     fi
     ;;
 esac
 STUB
     chmod +x "$stub"
     out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "")
-    [ "$out" = "media,dev" ] || fail "the picker did not resolve labels to modules: $out"
+    [ "$out" = "dev,work" ] || fail "the picker did not offer and resolve dev and work: $out"
+    out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "dev-work")
+    [ "$out" = "dev,dev-work" ] || fail "the picker did not pull dev in with dev-work: $out"
     out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "gaming,ssh")
     [ "$out" = "gaming" ] || fail "the picker did not pre-select the deployed modules: $out"
     out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "base,proton-pass,ssh")
@@ -427,6 +455,9 @@ STUB
     out=$(EDITOR=$edstub "$dotfiles/home/.local/bin/dotfiles-choose" --edit)
     [ "$out" = "base,media" ] || fail "profile edit did not read back the env list: $out"
     cp "$work/miserc.bak" "$miserc"
+    if has_module dev; then
+        grep -q '"dev"' "$dotfiles/home/.config/mise/miserc.local.toml" || fail "miserc.local.toml does not list dev"
+    fi
     if uses_pass; then
         [ -x "$HOME/.local/share/proton-pass-cli/pass-cli" ] || fail "the pass-cli binary is not installed although a proton module is active"
     else

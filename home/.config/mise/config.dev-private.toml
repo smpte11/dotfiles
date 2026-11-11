@@ -1,0 +1,21 @@
+[env]
+FM_HARNESS = "pi"
+NVIM_AI_PROVIDER = "codestral"
+_.file = { path = "{{ env.HOME }}/.config/codestral/env", redact = true }
+
+[tools]
+"github:fgrehm/crib" = "latest"
+ollama = "latest"
+pi = "latest"
+
+[dotfile_groups.dev-private]
+root = "dev-private"
+
+[dotfile_groups.dev-private.entries]
+"~/.config/codestral/env" = { mode = "template", create_if_missing = true, permissions = "0600" }
+"~/.pi/agent/settings.json/extensions" = { merge = true }
+
+[bootstrap.secrets.codestral_api_key]
+env = "CODESTRAL_API_KEY"
+description = "Codestral API key"
+allow_empty = true

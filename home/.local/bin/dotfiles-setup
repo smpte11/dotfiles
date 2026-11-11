@@ -87,6 +87,14 @@ unapply_removed_modules() {
     done
 }
 
+with_dev() {
+    case ",$1," in
+    *,dev,*) echo "$1" ;;
+    *,dev-private,* | *,dev-work,*) echo "$1,dev" ;;
+    *) echo "$1" ;;
+    esac
+}
+
 with_ssh() {
     case ",$1," in
     *,ssh,*) echo "$1" ;;
@@ -95,9 +103,13 @@ with_ssh() {
     esac
 }
 
+with_implied() {
+    with_ssh "$(with_dev "$1")"
+}
+
 write_modules() {
     export_netfelix_secrets
-    modules="$(with_ssh "$(printf '%s' "$1" | tr -d ' ' | sed 's/,*$//')")"
+    modules="$(with_implied "$(printf '%s' "$1" | tr -d ' ' | sed 's/,*$//')")"
     unapply_removed_modules "$(read_modules | paste -sd' ' -)" ",$modules,"
     list="$(printf '%s' "$modules" | tr ',' '\n' | sed '/^$/d; s/.*/"&"/' | paste -sd, -)"
     printf 'env = [%s]\n' "$list" >"$miserc"
@@ -106,9 +118,9 @@ write_modules() {
     fi
 }
 
-ensure_ssh_module() {
+ensure_implied_modules() {
     current="$(read_modules | paste -sd, -)"
-    [ "$(with_ssh "$current")" = "$current" ] || write_modules "$current"
+    [ "$(with_implied "$current")" = "$current" ] || write_modules "$current"
 }
 
 proton_login() {
@@ -169,7 +181,7 @@ export_personal_secrets() {
         MISTRAL_API_KEY="${vibe_key:-${MISTRAL_API_KEY:-}}"
         export MISTRAL_API_KEY
     fi
-    if read_modules | grep -qx dev; then
+    if read_modules | grep -qx dev-private; then
         key="$(personal_secret 'pass://Personal/Codestral/API Key')"
         CODESTRAL_API_KEY="${key:-${CODESTRAL_API_KEY:-}}"
         export CODESTRAL_API_KEY
@@ -203,12 +215,12 @@ fi
 
 if [ "${1:-}" = update ]; then
     shift
-    ensure_ssh_module
+    ensure_implied_modules
     export_secrets
     exec mise bootstrap --update --prune-dotfiles --yes "$@"
 fi
 
-ensure_ssh_module
+ensure_implied_modules
 export_secrets
 
 exec mise bootstrap --from "$(git -C "$dotfiles" remote get-url origin)" \

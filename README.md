@@ -22,10 +22,11 @@ first offers to edit the raw profile file in your editor instead of using the
 picker (`dotfiles-choose --edit` does the same standalone). The choice is
 written to
 `home/.config/mise/miserc.local.toml` (not committed) and `mise bootstrap`
-runs. Set `DOTFILES_ENV=base,dev` to skip the questions. To add a module,
-add a `config.<name>.toml` and a `[module.<name>]` entry in `modules.toml`. The
-`work` module is no longer offered by the picker but still works through
-`DOTFILES_ENV=work`. `dotfiles-setup` adds `ssh` to every machine that has an
+runs. Set `DOTFILES_ENV=base,dev-private` to skip the questions. To add a
+module, add a `config.<name>.toml` and a `[module.<name>]` entry in
+`modules.toml`. `dev` holds the common dev setup; `dev-private` and `dev-work`
+hold the tooling for one setup and both pull in `dev`. A home machine selects
+`base` and `dev-private`; a work machine selects `work` and `dev-work`. `dotfiles-setup` adds `ssh` to every machine that has an
 identity module. The `proton-pass` module installs the `pass-cli` binary under
 `~/.local/share/proton-pass-cli/` and deploys a `~/.local/bin/pass-cli`
 wrapper that picks a key provider that actually works on this machine (D-Bus
@@ -36,10 +37,10 @@ login, except on `media` and `gaming` machines, which read their keys from
 Proton Pass. A failed `pass-cli login` does not abort the install:
 setup prints a warning, and you finish with `pass-cli login` followed by
 `mise run dotfiles:update`. The `ssh-agent` module is optional
-and adds the Proton Pass SSH agent. On a `dev` machine the Codestral key is
+and adds the Proton Pass SSH agent. With the `dev-private` module the Codestral key is
 passed to `mise bootstrap` as the `CODESTRAL_API_KEY` bootstrap secret. To
 change the key, remove `~/.config/codestral/env` and run
-`mise run dotfiles:update`. On a `base` machine the base module deploys
+`mise run dotfiles:update`. The `base` module deploys
 `~/.vibe/config.toml` and renders `~/.vibe/.env` (0600) with `MISTRAL_API_KEY`,
 read from `pass://Personal/Vibe/API Key` with the `proton-pass` module and from
 the environment without it, so one run of the installer or
@@ -64,10 +65,12 @@ entries remain as the bootstrap source.
 | `home/` | always | Shared files, linked file by file into `~` |
 | `ssh/` | `ssh` | `~/.ssh/config`; the module also builds the tuios fork |
 | `base/` | `base` | Personal signing key, Vibe config and key |
-| `dev/` | `dev` | Codestral key |
+| `dev/` | `dev` | k9s skin, tuios config |
+| `dev-private/` | `dev-private` | pi agent config, Codestral key, crib config |
+| `dev-work/` | `dev-work` | Claude keybindings |
 | `proton-pass/` | `proton-pass` | `pass-cli` wrapper that picks a working key provider |
 | `ssh-agent/` | `ssh-agent` | Proton Pass SSH agent wrapper and `~/.ssh/config.d/agent` |
-| `work/` | `work` | 1Password agent, work identity, k9s skin, Claude keybindings |
+| `work/` | `work` | 1Password agent, work identity |
 | `desktop/` | `desktop` | Journal reminder and check-ins, OpenDeck journal and pixel clock and timer plugins, OpenDeck profiles |
 | `media/` | `media` | netfelix quadlets, Configarr config, *arr seed configs, media drive guard for agents |
 | `gaming/` | `gaming` | Questarr quadlets, config and timer for the games library |

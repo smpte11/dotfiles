@@ -17,7 +17,11 @@ local_files=(
 
 fail() { echo "FAIL: $*" >&2; exit 1; }
 step() { echo "--- $*"; }
-has_module() { case ",$modules," in *",$1,"*) return 0 ;; esac; return 1; }
+has_module() {
+    case ",$modules," in *",$1,"*) return 0 ;; esac
+    case "$1:,$modules," in dev:*,dev-private,* | dev:*,dev-work,*) return 0 ;; esac
+    return 1
+}
 has_identity() { has_module ssh || has_module base || has_module work; }
 
 snapshot() {

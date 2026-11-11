@@ -1,10 +1,18 @@
 [module.base]
-description = "base config with signing key and vibe config"
+description = "personal identity with the signing key and Vibe"
 modules = ["base"]
 
 [module.dev]
-description = "dev tools: devcontainers, local models and the Codestral key"
+description = "common dev tools: devcontainers, k9s skin, no-mistakes, firstmate and the tuios fork"
 modules = ["dev"]
+
+[module.dev-private]
+description = "dev plus private tooling: pi, Codestral, ollama and crib"
+modules = ["dev", "dev-private"]
+
+[module.dev-work]
+description = "dev plus work tooling: the Claude harness and keybindings"
+modules = ["dev", "dev-work"]
 
 [module.media]
 description = "media player and server with the netfelix pod and a VPN-gated qbittorrent"
@@ -25,3 +33,7 @@ modules = ["proton-pass"]
 [module.ssh-agent]
 description = "Proton Pass SSH agent for git signing"
 modules = ["ssh-agent"]
+
+[module.work]
+description = "work identity with the 1Password agent"
+modules = ["work"]

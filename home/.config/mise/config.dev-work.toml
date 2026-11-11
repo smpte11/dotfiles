@@ -1,0 +1,5 @@
+[env]
+FM_HARNESS = "claude"
+
+[dotfile_groups.dev-work]
+root = "dev-work"

@@ -1,7 +1,6 @@
 [tools]
 "aqua:nushell/nushell" = "latest"
 helix = "latest"
-"github:kunchenguid/no-mistakes" = "latest"
 
 [bootstrap.packages]
 "flatpak-user:me.amankhanna.opendeck" = { os = "linux" }
