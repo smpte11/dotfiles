@@ -177,6 +177,12 @@ check_identity() {
         [ ! -e "$HOME/.claude/keybindings.json" ] || fail "claude keybindings are deployed without the dev-work module"
     fi
     if has_module desktop; then
+        grep -qx 'Exec=flatpak run me.amankhanna.opendeck --hide' "$HOME/.config/autostart/opendeck.desktop" || fail "opendeck does not start at login"
+        if mise dot status 2>&1 | grep -q 'ignoring group'; then fail "mise ignores a dotfile group: $(mise dot status 2>&1 | grep 'ignoring group')"; fi
+    else
+        [ ! -e "$HOME/.config/autostart/opendeck.desktop" ] || fail "opendeck autostart is deployed without the desktop module"
+    fi
+    if has_module desktop; then
         plugin_js=$HOME/.config/opendeck/plugins/com.felbro.journal.sdPlugin/plugin.js
         [ "$(stat -c %a "$plugin_js")" = 755 ] || fail "$plugin_js is not 0755"
         if grep -qE '\{\{|\{%' "$plugin_js"; then fail "$plugin_js has unrendered template syntax"; fi
