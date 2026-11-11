@@ -280,6 +280,11 @@ uses_pass() {
 
 check_proton() {
     local real=$HOME/.local/share/proton-pass-cli/pass-cli out link
+    if has_module proton-pass; then
+        grep -qx 'PROTON_PASS_LINUX_KEYRING=dbus' "$HOME/.config/environment.d/proton-pass.conf" || fail "the proton-pass session env is missing"
+    else
+        [ ! -e "$HOME/.config/environment.d/proton-pass.conf" ] || fail "the proton-pass session env is deployed without the proton-pass module"
+    fi
     if ! uses_pass; then
         [ ! -e "$real" ] || fail "the pass-cli binary is installed without a proton module"
         [ ! -e "$HOME/.local/bin/pass-cli" ] || fail "~/.local/bin/pass-cli exists without the proton-pass module"
