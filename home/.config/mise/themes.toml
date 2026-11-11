@@ -432,3 +432,92 @@
   plugin = "https://github.com/folke/tokyonight.nvim"
   colorscheme = "tokyonight-day"
   background = "light"
+
+[modus-operandi-tinted]
+  background = "#fbf7f0"
+  foreground = "#000000"
+  ribbon_bg = "#0031a9"
+  ribbon_sel_bg = "#006800"
+  ribbon_fg = "#fbf7f0"
+  cursor = "#d00000"
+  selection_bg = "#c2bcb5"
+  selection_fg = "#000000"
+
+[modus-operandi-tinted.palette]
+  black = "#000000"
+  red = "#a60000"
+  green = "#006800"
+  yellow = "#6f5500"
+  blue = "#0031a9"
+  magenta = "#721045"
+  cyan = "#005e8b"
+  silver = "#a6a6a6"
+  bright_black = "#595959"
+  bright_red = "#972500"
+  bright_green = "#00663f"
+  bright_yellow = "#884900"
+  bright_blue = "#3548cf"
+  bright_magenta = "#531ab6"
+  bright_cyan = "#005f5f"
+  white = "#595959"
+
+[modus-operandi-tinted.base]
+  b00 = "#fbf7f0"
+  b01 = "#efe9dd"
+  b02 = "#9f9690"
+  b03 = "#595959"
+  b04 = "#595959"
+  b05 = "#000000"
+  b06 = "#000000"
+  b07 = "#000000"
+
+[modus-operandi-tinted.nvim]
+  plugin = "https://github.com/miikanissi/modus-themes.nvim"
+  colorscheme = "modus_operandi"
+  background = "light"
+
+[modus-operandi-tinted.nvim.setup.modus-themes.variants]
+  modus_operandi = "tinted"
+
+[flexoki-light]
+  background = "#fffcf0"
+  foreground = "#100f0f"
+  ribbon_bg = "#205ea6"
+  ribbon_sel_bg = "#66800b"
+  ribbon_fg = "#fffcf0"
+  cursor = "#100f0f"
+  selection_bg = "#cecdc3"
+  selection_fg = "#100f0f"
+
+[flexoki-light.palette]
+  black = "#100f0f"
+  red = "#af3029"
+  green = "#66800b"
+  yellow = "#ad8301"
+  blue = "#205ea6"
+  magenta = "#a02f6f"
+  cyan = "#24837b"
+  silver = "#6f6e69"
+  bright_black = "#b7b5ac"
+  bright_red = "#d14d41"
+  bright_green = "#879a39"
+  bright_yellow = "#d0a215"
+  bright_blue = "#4385be"
+  bright_magenta = "#ce5d97"
+  bright_cyan = "#3aa99f"
+  white = "#cecdc3"
+
+[flexoki-light.base]
+  b00 = "#fffcf0"
+  b01 = "#f2f0e5"
+  b02 = "#cecdc3"
+  b03 = "#6f6e69"
+  b04 = "#575653"
+  b05 = "#100f0f"
+  b06 = "#100f0f"
+  b07 = "#100f0f"
+
+[flexoki-light.nvim]
+  plugin = "https://github.com/kepano/flexoki-neovim"
+  colorscheme = "flexoki-light"
+  background = "light"

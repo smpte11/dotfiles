@@ -9,6 +9,11 @@ Config.now(function()
 	vim.g.{{ k }} = "{{ v }}"
 {%- endfor %}
 {%- endif %}
+{%- if nv.setup is defined %}
+{%- for module, options in nv.setup %}
+	require("{{ module }}").setup(vim.json.decode([[{{ options | json_encode() }}]]))
+{%- endfor %}
+{%- endif %}
 	vim.o.background = "{{ nv.background }}"
 	vim.cmd("colorscheme {{ nv.colorscheme }}")
 	vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
