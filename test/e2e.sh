@@ -189,8 +189,9 @@ check_switch() {
     [ "$scenario" = fresh ] && has_module base || return $skip
     (
         stub_systemd
-        DOTFILES_ENV=work "$HOME/.local/bin/dotfiles-setup" "${bootstrap_args[@]}" >/dev/null
-    )
+        DOTFILES_ENV=work script -qec "'$HOME/.local/bin/dotfiles-setup' ${bootstrap_args[*]}" /dev/null >"$work/switch.log" 2>&1
+    ) || fail "the switch to work failed: $(tail -5 "$work/switch.log")"
+    if ! uses_pass && grep -qE 'pass-cli (login|is not logged in)' "$work/switch.log"; then fail "the switch to work asks for a pass-cli login: $(grep pass-cli "$work/switch.log")"; fi
     ssh -G workgit | grep -qx "identityagent $HOME/.1password/agent.sock" || fail "the ssh agent is not 1password after the switch"
     grep -q 1password "$HOME/.ssh/config.d/agent" || fail "config.d/agent does not point to 1password"
     [ ! -e "$HOME/.config/systemd/user/dev.mise.proton-pass-ssh-agent.service" ] || fail "the proton unit remains after the switch"
@@ -241,11 +242,21 @@ check_tools() {
     expect_tool npm:@agentclientprotocol/claude-agent-acp absent
 }
 
+uses_pass() {
+    has_module proton-pass || has_module media || has_module gaming
+}
+
 check_proton() {
-    if ! has_module base && ! has_module dev && ! has_module media && ! has_module gaming && ! has_module proton-pass; then
-        return $skip
-    fi
     local real=$HOME/.local/share/proton-pass-cli/pass-cli out link
+    if ! uses_pass; then
+        [ ! -e "$real" ] || fail "the pass-cli binary is installed without a proton module"
+        [ ! -e "$HOME/.local/bin/pass-cli" ] || fail "~/.local/bin/pass-cli exists without the proton-pass module"
+        [ "$scenario" = fresh ] || return 0
+        script -qec "DOTFILES_ENV=$modules '$HOME/.local/bin/dotfiles-setup' update ${bootstrap_args[*]}" /dev/null >"$work/proton-tty.log" 2>&1 || fail "setup without proton-pass failed: $(tail -5 "$work/proton-tty.log")"
+        if grep -qE 'pass-cli (login|is not logged in)' "$work/proton-tty.log"; then fail "setup without proton-pass asks for pass-cli: $(grep pass-cli "$work/proton-tty.log")"; fi
+        [ ! -e "$real" ] || fail "setup without proton-pass installed the pass-cli binary"
+        return 0
+    fi
     [ -x "$real" ] || fail "the pass-cli binary is not installed at $real"
     if has_module proton-pass; then
         [ -L "$HOME/.local/bin/pass-cli" ] || fail "~/.local/bin/pass-cli is not the deployed wrapper"
@@ -264,7 +275,7 @@ check_proton() {
     else
         [ ! -e "$HOME/.local/bin/pass-cli" ] || fail "~/.local/bin/pass-cli exists without the proton-pass module"
     fi
-    if [ "$scenario" = fresh ] && { has_module base || has_module dev || has_module proton-pass; }; then
+    if [ "$scenario" = fresh ] && has_module proton-pass; then
         mv "$real" "$real.stub"
         printf '#!/bin/sh\nexit 1\n' >"$real"
         chmod +x "$real"
@@ -404,7 +415,7 @@ STUB
     out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "gaming,ssh")
     [ "$out" = "gaming" ] || fail "the picker did not pre-select the deployed modules: $out"
     out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "base,proton-pass,ssh")
-    [ "$out" = "base,proton-pass" ] || fail "the picker did not expand a module group: $out"
+    [ "$out" = "base,proton-pass" ] || fail "the picker did not keep proton-pass beside base: $out"
     miserc="$dotfiles/home/.config/mise/miserc.local.toml"
     edstub=$work/editor-stub
     cat >"$edstub" <<'STUB'
@@ -416,7 +427,7 @@ STUB
     out=$(EDITOR=$edstub "$dotfiles/home/.local/bin/dotfiles-choose" --edit)
     [ "$out" = "base,media" ] || fail "profile edit did not read back the env list: $out"
     cp "$work/miserc.bak" "$miserc"
-    if has_module base || has_module dev || has_module media || has_module gaming || has_module proton-pass; then
+    if uses_pass; then
         [ -x "$HOME/.local/share/proton-pass-cli/pass-cli" ] || fail "the pass-cli binary is not installed although a proton module is active"
     else
         [ ! -e "$HOME/.local/share/proton-pass-cli/pass-cli" ] || fail "the pass-cli binary is installed without a proton module"

@@ -74,11 +74,15 @@ deployed_codestral_key() {
     sed -n 's/^CODESTRAL_API_KEY=//p' "$HOME/.config/codestral/env" 2>/dev/null || true
 }
 
+deployed_vibe_key() {
+    sed -n 's/^MISTRAL_API_KEY=//p' "$HOME/.vibe/.env" 2>/dev/null || true
+}
+
 unapply_removed_modules() {
     for module in $1; do
         case "$2" in
         *",$module,"*) ;;
-        *) CODESTRAL_API_KEY="${CODESTRAL_API_KEY:-$(deployed_codestral_key)}" mise bootstrap unapply "$module" --yes ;;
+        *) CODESTRAL_API_KEY="${CODESTRAL_API_KEY:-$(deployed_codestral_key)}" MISTRAL_API_KEY="${MISTRAL_API_KEY:-$(deployed_vibe_key)}" mise bootstrap unapply "$module" --yes ;;
         esac
     done
 }
@@ -92,7 +96,7 @@ with_ssh() {
 }
 
 write_modules() {
-    export_secrets
+    export_netfelix_secrets
     modules="$(with_ssh "$(printf '%s' "$1" | tr -d ' ' | sed 's/,*$//')")"
     unapply_removed_modules "$(read_modules | paste -sd' ' -)" ",$modules,"
     list="$(printf '%s' "$modules" | tr ',' '\n' | sed '/^$/d; s/.*/"&"/' | paste -sd, -)"
@@ -151,23 +155,30 @@ export_netfelix_secrets() {
     media_secret YTS_API_URL 'pass://Media/Netfelix/YTS_API_URL' ""
 }
 
-export_secrets() {
-    if read_modules | grep -qx base; then
+personal_secret() {
+    read_modules | grep -qx proton-pass || return 0
+    pass_cli item view "$1" 2>/dev/null || true
+}
+
+export_personal_secrets() {
+    if read_modules | grep -qx proton-pass; then
         proton_login
-        vibe_key="$(pass_cli item view 'pass://Personal/Vibe/API Key' 2>/dev/null || true)"
+    fi
+    if read_modules | grep -qx base; then
+        vibe_key="$(personal_secret 'pass://Personal/Vibe/API Key')"
         MISTRAL_API_KEY="${vibe_key:-${MISTRAL_API_KEY:-}}"
         export MISTRAL_API_KEY
     fi
     if read_modules | grep -qx dev; then
-        proton_login
-        key="$(pass_cli item view 'pass://Personal/Codestral/API Key' 2>/dev/null || true)"
+        key="$(personal_secret 'pass://Personal/Codestral/API Key')"
         CODESTRAL_API_KEY="${key:-${CODESTRAL_API_KEY:-}}"
         export CODESTRAL_API_KEY
     fi
+}
+
+export_secrets() {
+    export_personal_secrets
     export_netfelix_secrets
-    if read_modules | grep -qx proton-pass; then
-        proton_login
-    fi
 }
 
 check_machine_id

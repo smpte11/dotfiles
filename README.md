@@ -30,16 +30,19 @@ identity module. The `proton-pass` module installs the `pass-cli` binary under
 `~/.local/share/proton-pass-cli/` and deploys a `~/.local/bin/pass-cli`
 wrapper that picks a key provider that actually works on this machine (D-Bus
 Secret Service when available, kernel keyring, filesystem fallback in
-headless environments), so `pass-cli login` works everywhere; the `base`
-module includes it. A failed `pass-cli login` no longer aborts the install:
+headless environments), so `pass-cli login` works everywhere. The module is
+opt-in: without it, setup does not install `pass-cli` and does not ask for a
+login, except on `media` and `gaming` machines, which read their keys from
+Proton Pass. A failed `pass-cli login` does not abort the install:
 setup prints a warning, and you finish with `pass-cli login` followed by
 `mise run dotfiles:update`. The `ssh-agent` module is optional
 and adds the Proton Pass SSH agent. On a `dev` machine the Codestral key is
 passed to `mise bootstrap` as the `CODESTRAL_API_KEY` bootstrap secret. To
 change the key, remove `~/.config/codestral/env` and run
 `mise run dotfiles:update`. On a `base` machine the base module deploys
-`~/.vibe/config.toml` and renders `~/.vibe/.env` (0600) with `MISTRAL_API_KEY`
-read from `pass://Personal/Vibe/API Key`, so one run of the installer or
+`~/.vibe/config.toml` and renders `~/.vibe/.env` (0600) with `MISTRAL_API_KEY`,
+read from `pass://Personal/Vibe/API Key` with the `proton-pass` module and from
+the environment without it, so one run of the installer or
 `mise run dotfiles:update` configures Vibe on a fresh machine; to change the
 key, remove `~/.vibe/.env` and run `mise run dotfiles:update`. On a `media` or
 `gaming` machine it reads the `pass://Media/Netfelix/*` items

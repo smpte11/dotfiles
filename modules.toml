@@ -1,6 +1,6 @@
 [module.base]
 description = "base config with signing key and vibe config"
-modules = ["base", "proton-pass"]
+modules = ["base"]
 
 [module.dev]
 description = "dev tools: devcontainers, local models and the Codestral key"
