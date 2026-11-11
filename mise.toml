@@ -1,4 +1,12 @@
+[tools]
+shellcheck = "latest"
+
+[tasks.lint]
+description = "Check the shell scripts with shellcheck"
+run = "test/lint.sh"
+
 [tasks."test:fresh"]
+depends = ["lint"]
 description = "Install the dotfiles in Linux containers and check them (usage: mise run test:fresh [modules...] [--only group,...] [--fresh])"
 run = "test/run.sh fresh"
 

@@ -25,8 +25,7 @@ ensure_pass_cli() {
         fi
     fi
     if [ ! -x "$pass_real" ]; then
-        export PROTON_PASS_CLI_INSTALL_DIR="$(dirname "$pass_real")"
-        curl -fsSL https://proton.me/download/pass-cli/install.sh | mise exec jq@latest -- bash
+        curl -fsSL https://proton.me/download/pass-cli/install.sh | PROTON_PASS_CLI_INSTALL_DIR="$(dirname "$pass_real")" mise exec jq@latest -- bash
     fi
     if [ ! -e "$pass" ] && read_modules | grep -qx proton-pass; then
         ln -s "$dotfiles/proton-pass/.local/bin/pass-cli" "$pass"
@@ -62,7 +61,6 @@ read_modules() {
 check_machine_id() {
     if in_container; then return 0; fi
     [ -n "$machine_id" ] || return 0
-    local recorded
     recorded="$(sed -n 's/^machine_id = "\(.*\)"$/\1/p' "$miserc" 2>/dev/null || true)"
     if [ -n "$recorded" ] && [ "$recorded" != "$machine_id" ]; then
         echo "refusing to bootstrap: $miserc records machine_id $recorded, but this machine is $machine_id" >&2
@@ -134,9 +132,9 @@ proton_login() {
 }
 
 media_secret() {
-    local var=$1 item=$2 fallback=$3 field=${4:-Password} val extracted unwrapped
+    var=$1 item=$2 fallback=$3 field=${4:-Password}
     val="$(pass_cli item view "$item" 2>/dev/null || true)"
-    extracted="$(printf '%s' "$val" | sed -n "s/^ *- $field: //p" | head -1 | tr -d '\\')"
+    extracted="$(printf '%s' "$val" | sed -n "s/^ *- $field: //p" | head -1 | sed 's/\\//g')"
     unwrapped="$(printf '%s' "$extracted" | sed -n 's/^Text("\(.*\)")$/\1/p')"
     if [ -n "$unwrapped" ]; then
         extracted="$unwrapped"

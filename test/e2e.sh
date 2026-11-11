@@ -287,7 +287,7 @@ check_proton() {
     fi
     if ! uses_pass; then
         [ ! -e "$real" ] || fail "the pass-cli binary is installed without a proton module"
-        [ ! -e "$HOME/.local/bin/pass-cli" ] || fail "~/.local/bin/pass-cli exists without the proton-pass module"
+        [ ! -e "$HOME/.local/bin/pass-cli" ] || fail "$HOME/.local/bin/pass-cli exists without the proton-pass module"
         [ "$scenario" = fresh ] || return 0
         script -qec "DOTFILES_ENV=$modules '$HOME/.local/bin/dotfiles-setup' update ${bootstrap_args[*]}" /dev/null >"$work/proton-tty.log" 2>&1 || fail "setup without proton-pass failed: $(tail -5 "$work/proton-tty.log")"
         if grep -qE 'pass-cli (login|is not logged in)' "$work/proton-tty.log"; then fail "setup without proton-pass asks for pass-cli: $(grep pass-cli "$work/proton-tty.log")"; fi
@@ -296,7 +296,7 @@ check_proton() {
     fi
     [ -x "$real" ] || fail "the pass-cli binary is not installed at $real"
     if has_module proton-pass; then
-        [ -L "$HOME/.local/bin/pass-cli" ] || fail "~/.local/bin/pass-cli is not the deployed wrapper"
+        [ -L "$HOME/.local/bin/pass-cli" ] || fail "$HOME/.local/bin/pass-cli is not the deployed wrapper"
         link="$(readlink "$HOME/.local/bin/pass-cli")"
         case "$link" in
         *"proton-pass/.local/bin/pass-cli") ;;
@@ -310,7 +310,7 @@ check_proton() {
         out=$(timeout 10 env -u PROTON_PASS_KEY_PROVIDER -u PROTON_PASS_LINUX_KEYRING "$HOME/.local/bin/pass-cli" login 2>&1 || true)
         printf '%s\n' "$out" | grep -q 'account.proton.me' || fail "pass-cli login does not reach the web flow through the wrapper: $out"
     else
-        [ ! -e "$HOME/.local/bin/pass-cli" ] || fail "~/.local/bin/pass-cli exists without the proton-pass module"
+        [ ! -e "$HOME/.local/bin/pass-cli" ] || fail "$HOME/.local/bin/pass-cli exists without the proton-pass module"
     fi
     if [ "$scenario" = fresh ] && has_module proton-pass; then
         mv "$real" "$real.stub"
@@ -422,10 +422,10 @@ STUB
     [ ! -e "$HOME/.local/bin/mise" ] || fail "mise remains after teardown"
     [ ! -e "$HOME/.local/share/mise" ] || fail "the mise data dir remains after teardown"
     [ ! -L "$HOME/.config/mise" ] || fail "the mise config link remains after teardown"
-    [ ! -e "$HOME/.zshrc" ] || fail "~/.zshrc remains after teardown"
+    [ ! -e "$HOME/.zshrc" ] || fail "$HOME/.zshrc remains after teardown"
     [ ! -e "$HOME/.local/bin/dotfiles-teardown" ] || fail "the teardown script link remains after teardown"
     if has_identity; then
-        [ ! -e "$HOME/.ssh/config" ] || fail "~/.ssh/config remains after teardown"
+        [ ! -e "$HOME/.ssh/config" ] || fail "$HOME/.ssh/config remains after teardown"
     fi
 }
 
