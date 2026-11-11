@@ -5,6 +5,7 @@
 - If a task or an E2E test needs an artifact that the repository does not need, clean it up afterwards.
 - If `~/.agents/machine/` exists, read every file in it before doing anything else; each machine keeps its own rules there.
 - Respect the machine pin (`/etc/machine-id`) and treat mounts you do not know as read-only; ask before any write outside the work directory.
+- Verify facts against the live source before stating them: image tags against the registry, config paths against the deployed file on the machine, secret names against the vault entry, port behavior against the container runtime. If you cannot verify in the sandbox, write "unverified" and name the check that would falsify it.
 
 ## Writing
 - Never use em dashes "—" in anything you write: chat responses, explanations, code, commit messages, PR bodies. Use hyphens "-" instead. This holds for every task type; a coding, review or debugging task does not exempt your own prose.
@@ -15,19 +16,6 @@
 
 ## Version Control System (VCS)
 - Use Jujutsu for version control, including read-only inspection: reach for `jj st`, `jj diff`, `jj log`, `jj git clone` rather than their `git` equivalents. Fall back to Git only for what Jujutsu cannot do.
-- Write commit messages in conventional commit format and the imperative mood, for example "feat: add new feature", not "feat: added new feature". Never add yourself as a co-author; agents may be added as co-reviewers in PRs and commits only when the commit is authored from my work account.
 
 ## Engineering
-- Avoid comments in code. If a comment seems necessary, refactor the code until it is clear without one. This rule overrides local convention: do not add or extend comments to match surrounding code. When editing a block that has verbose comments, prefer trimming them.
-- Do not give too much weight to development cost when making technical decisions. Focus on the long-term maintainability, scalability, quality, simplicity and robustness of the codebase.
-- When investigating or debugging an issue, always start by reproducing the bug in an E2E test that is as closely aligned with how the end user would use the feature as possible. Do this even when reading the code, the logs or a schema already suggests a cause; a static diagnosis is a hypothesis, not a reproduction.
-- Fix every lint error, failing test and flaky test you see, whether or not it is your code. If you cannot fix a failing test, ask for help.
-
-## Planning and Verification
-- Verify facts against the live source before stating them: image tags against the registry, config paths against the deployed file on the machine, secret names against the vault entry, port behavior against the container runtime. If you cannot verify in the sandbox, write "unverified" and name the check that would falsify it.
-- Run the narrowest authoritative test locally before reporting done. If the environment cannot run it (no docker, no network), mark verification as pending in the PR. Never write "CI covers it" when CI was removed or is not the gate.
-- Before adding any CI or automation, assess what it exposes: no `workflow_dispatch` job may run PR-controlled code with secrets. Prefer local gates (`mise run test:fresh`) over hosted runners.
-- Every plan gets an "open questions" list. Each item gets a falsification step (e2e or source check) that runs before merge, not after.
-- Any side-effecting orchestration you build must be idempotent: record the intent before running the effect, skip effects whose result is already recorded, use a single event reader, and keep a long-running core that outlives one-shot commands.
-- Prefer small verified batches: merge a change together with the follow-ups it already needs, or live-verify on the target machine in the same session.
-- End every PR body with a short retrospective: what the plan got wrong and the rule it implies.
+- Before you write or change code, debug, run tests or lint, plan, add CI or automation, build orchestration, commit, or open a PR, read `~/CODING_STANDARDS.md`, my engineering standards.
