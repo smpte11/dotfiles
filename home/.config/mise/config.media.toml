@@ -1,5 +1,6 @@
 [vars]
 vpn_interface = "proton0"
+questarr_games = "/run/media/system/media/media/games"
 
 [dotfile_groups.media]
 root = "media"
@@ -25,9 +26,6 @@ exclude = ["quadlets", "configarr", "seed", "systemd", "scripts"]
 "~/.config/radarr/config.xml" = { mode = "template", source = "seed/radarr.config.xml.tera", create_if_missing = true, permissions = "0600" }
 "~/.config/radarr-kids/config.xml" = { mode = "template", source = "seed/radarr-kids.config.xml.tera", create_if_missing = true, permissions = "0600" }
 "~/.config/prowlarr/config.xml" = { mode = "template", source = "seed/prowlarr.config.xml.tera", create_if_missing = true, permissions = "0600" }
-
-[dotfiles]
-"~/.local/share/questarr/games" = { mode = "symlink", source = "/run/media/system/media/media/games" }
 
 [bootstrap.directories."~/.config/radarr-kids"]
 mode = "0700"

@@ -30,5 +30,3 @@ description = "qBittorrent password (pass://Media/Netfelix/QBIT_PASSWORD)"
 allow_empty = true
 
 [bootstrap.directories."~/.config/questarr"]
-
-[bootstrap.directories."~/.local/share/questarr"]

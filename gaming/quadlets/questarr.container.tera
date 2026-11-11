@@ -1,3 +1,8 @@
+{%- if vars.questarr_games is defined -%}
+{%- set games = vars.questarr_games -%}
+{%- else -%}
+{%- set games = env.HOME ~ "/.local/share/questarr/games" -%}
+{%- endif -%}
 [Container]
 ContainerName=questarr
 Image=ghcr.io/doezer/questarr:latest
@@ -5,11 +10,13 @@ Label=io.containers.autoupdate=registry
 PublishPort=5000:5000
 Environment=PUID=0 PGID=0 TZ=Europe/Stockholm
 Volume={{ env.HOME }}/.config/questarr:/app/data:Z
-Volume={{ env.HOME }}/.local/share/questarr/games:/data:z
+Volume={{ games }}:/data:z
 Network=host
 
 [Service]
-ExecStartPre=/bin/mkdir -p {{ env.HOME }}/.local/share/questarr/games
+{% if vars.questarr_games is not defined -%}
+ExecStartPre=/bin/mkdir -p {{ games }}
+{% endif -%}
 Restart=always
 
 [Install]
