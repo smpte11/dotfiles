@@ -9,6 +9,7 @@ Volume={{ env.HOME }}/.local/share/questarr/games:/data:z
 Network=host
 
 [Service]
+ExecStartPre=/bin/mkdir -p {{ env.HOME }}/.local/share/questarr/games
 Restart=always
 
 [Install]

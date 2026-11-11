@@ -290,6 +290,10 @@ check_media() {
         [ -f "$HOME/.config/media/questarr/config.json" ] || fail "the questarr config is not deployed"
         [ "$(stat -c %a "$HOME/.config/media/questarr/config.json")" = 600 ] || fail "the questarr config is not 0600"
         [ -f "$HOME/.config/media/questarr/apply.py" ] || fail "the questarr apply script is not deployed"
+        grep -qx "ExecStartPre=/bin/mkdir -p $HOME/.local/share/questarr/games" "$HOME/.config/containers/systemd/netfelix/questarr.container" || fail "the questarr quadlet does not create the games dir"
+        if has_module media; then
+            [ "$(readlink "$HOME/.local/share/questarr/games")" = /run/media/system/media/media/games ] || fail "the questarr games dir is not linked to the media pool"
+        fi
     else
         [ ! -e "$HOME/.config/containers/systemd/netfelix/questarr.container" ] || fail "a questarr quadlet is deployed without the gaming module"
         [ ! -e "$HOME/.config/media/questarr" ] || fail "the questarr config is deployed without the gaming module"

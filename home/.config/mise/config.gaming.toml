@@ -31,4 +31,4 @@ allow_empty = true
 
 [bootstrap.directories."~/.config/questarr"]
 
-[bootstrap.directories."~/.local/share/questarr/games"]
+[bootstrap.directories."~/.local/share/questarr"]
