@@ -25,8 +25,9 @@ written to
 runs. Set `DOTFILES_ENV=base,dev-private` to skip the questions. To add a
 module, add a `config.<name>.toml` and a `[module.<name>]` entry in
 `modules.toml`. `dev` holds the common dev setup; `dev-private` and `dev-work`
-hold the tooling for one setup and both pull in `dev`. A home machine selects
-`base` and `dev-private`; a work machine selects `work` and `dev-work`. `dotfiles-setup` adds `ssh` to every machine that has an
+hold the tooling for one setup and both pull in `dev`. The `machine:` entries
+at the top of `modules.toml` pick the full set for one machine: `work-mac`,
+`home-desktop`, `media-server` and `tablet`. `dotfiles-setup` adds `ssh` to every machine that has an
 identity module. The `proton-pass` module installs the `pass-cli` binary under
 `~/.local/share/proton-pass-cli/` and deploys a `~/.local/bin/pass-cli`
 wrapper that picks a key provider that actually works on this machine (D-Bus

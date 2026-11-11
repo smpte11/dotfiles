@@ -78,7 +78,20 @@ edit_profile() {
     sed -n 's/^env = \[\(.*\)\]$/\1/p' "$miserc" 2>/dev/null | tr -d '" ' | tr ',' '\n' | sed '/^$/d' | paste -sd, -
 }
 
+expand_modules() {
+    printf '%s\n' "$1" | tr ',' '\n' | while read -r name; do
+        if [ -n "$name" ]; then
+            mods=$(manifest_rows | awk -F'\t' -v n="$name" '$1 == n { print $3; exit }')
+            printf '%s\n' "${mods:-$name}"
+        fi
+    done | tr ',' '\n' | awk 'NF && !seen[$0]++' | paste -sd, -
+}
+
 main() {
+    if [ "${1:-}" = --expand ]; then
+        expand_modules "${2:-}"
+        return
+    fi
     if [ "${1:-}" = --edit ]; then
         edit_profile
         return

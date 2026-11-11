@@ -196,7 +196,7 @@ export_secrets() {
 check_machine_id
 
 if [ -n "${DOTFILES_ENV+set}" ]; then
-    write_modules "$DOTFILES_ENV"
+    write_modules "$("$dotfiles/home/.local/bin/dotfiles-choose" --expand "$DOTFILES_ENV")"
 elif [ -t 0 ] && ! in_container; then
     mode=pick
     if gum confirm "Edit the profile file ($config_dir/miserc.local.toml) in ${EDITOR:-editor} instead of picking modules?"; then
