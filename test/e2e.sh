@@ -136,7 +136,6 @@ check_identity() {
         if mise bootstrap files status --missing >/dev/null 2>&1; then fail "mise bootstrap files status does not report the mode of $HOME/.ssh"; fi
         mise bootstrap files apply --yes >/dev/null
         [ "$(stat -c %a "$HOME/.ssh")" = 700 ] || fail "mise bootstrap files apply does not restore the mode of $HOME/.ssh"
-        mise bootstrap --dry-run --only task 2>&1 | grep -q 'fork-sync build' || fail "the bootstrap task does not build the tuios fork"
     else
         [ ! -e "$HOME/.ssh/config" ] || fail "an ssh config was deployed without the ssh module"
     fi
@@ -176,7 +175,8 @@ check_identity() {
 }
 
 check_tuios() {
-    has_identity || return $skip
+    has_module dev || return $skip
+    mise bootstrap --dry-run --only task 2>&1 | grep -q 'fork-sync build' || fail "the bootstrap task does not build the tuios fork"
     (
         make_forks
         mise bootstrap --only task --yes >"$work/task.log" 2>&1 || fail "the bootstrap task fails: $(cat "$work/task.log")"
