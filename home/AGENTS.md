@@ -4,5 +4,6 @@
 - Dashes: use hyphens "-". The em dash "—" is banned in everything you write, including code, commits, PR bodies and replies during coding tasks.
 - Version control: use Jujutsu (`jj`), also for read-only inspection. Fall back to Git only for what jj cannot do.
 - Explanations: when you answer or explain to me, follow `~/.agents/output-styles/ste-80.md`.
+- Reply layout: in a reply, put the prose first: decisions, reasons and questions to me. Put code examples at the bottom. A long code block at the top pushes the decisions and questions out of the visible terminal viewport.
 - Voice: when you write for publication or in my voice, follow `~/VOICE.md` instead of STE.
 - Engineering: before you plan, debug or change code or a repo, read `~/CODING_STANDARDS.md`.
