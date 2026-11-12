@@ -50,6 +50,14 @@ check_services() {
         [ -s "$HOME/.config/systemd/user/dev.mise.proton-pass-ssh-agent.service" ] || fail "the proton ssh agent unit is missing"
         [ -x "$HOME/.local/bin/proton-pass-ssh-agent" ] || fail "the proton ssh agent wrapper is not executable"
     fi
+    if has_module base; then
+        [ -s "$HOME/.config/systemd/user/protonvpn-connect.service" ] || fail "the protonvpn connect unit is missing"
+        grep -q "com.protonvpn.www" "$HOME/.config/systemd/user/protonvpn-connect.service" || fail "the protonvpn connect unit does not run the flatpak cli"
+        grep -q 'Status: Connected' "$HOME/.config/systemd/user/protonvpn-connect.service" || fail "the protonvpn connect unit does not skip connect when already connected"
+        grep -q "X-GNOME-Autostart-enabled=false" "$HOME/.config/autostart/proton.desktop" || fail "the protonvpn gui autostart is not disabled"
+    else
+        [ ! -e "$HOME/.config/systemd/user/protonvpn-connect.service" ] || fail "the protonvpn connect unit is deployed without the base module"
+    fi
 }
 
 check_secrets() {

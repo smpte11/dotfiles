@@ -1,0 +1,13 @@
+[Unit]
+Description=Connect Proton VPN at startup and keep it connected
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/bin/sh -c 'while true; do if ! /usr/bin/flatpak run --command=protonvpn com.protonvpn.www status 2>/dev/null | grep -q "^Status: Connected"; then /usr/bin/flatpak run --command=protonvpn com.protonvpn.www connect; fi; sleep 60; done'
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=default.target

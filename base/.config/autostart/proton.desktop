@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=ProtonVPN
+Exec=flatpak run com.protonvpn.www
+Comment=Start ProtonVPN
+X-GNOME-Autostart-enabled=false

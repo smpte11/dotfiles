@@ -65,7 +65,7 @@ entries remain as the bootstrap source.
 | --- | --- | --- |
 | `home/` | always | Shared files, linked file by file into `~` |
 | `ssh/` | `ssh` | `~/.ssh/config`; the module also builds the tuios fork |
-| `base/` | `base` | Personal signing key, Vibe config and key |
+| `base/` | `base` | Personal signing key, Vibe config and key, Proton VPN flatpak and CLI autostart on Linux |
 | `dev/` | `dev` | k9s skin, tuios config |
 | `dev-private/` | `dev-private` | pi agent config, Codestral key, crib config |
 | `dev-work/` | `dev-work` | Claude keybindings |
@@ -101,7 +101,12 @@ A `qbit-vpn-guard.service` user unit runs qbittorrent only while the Proton VPN
 interface is up (`vars.vpn_interface`, `proton0`) and pins qBittorrent's
 `NetworkInterface` to that interface, so the client stays inactive and cannot
 leak traffic when the VPN is down; the post-dotfiles hook enables the guard
-alongside the timers. The `gaming` module deploys Questarr
+alongside the timers. On every non-work machine the `base` module installs the
+Proton VPN flatpak and deploys `protonvpn-connect.service`, which connects the
+Proton VPN CLI at startup and re-connects within a minute if the tunnel drops,
+plus a disabled `proton.desktop` autostart entry so the GUI never fights the
+CLI; the post-dotfiles hook enables the unit when the file is present. The
+`gaming` module deploys Questarr
 the same way (a oneshot `questarr-config.container` plus a daily
 `questarr-config.timer` apply `gaming/questarr/config.json` through Questarr's
 admin-scope API) but with `Network=host` instead of joining the netfelix pod, so

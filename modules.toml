@@ -15,7 +15,7 @@ description = "machine: handheld tablet with base for Vibe"
 modules = ["base"]
 
 [module.base]
-description = "personal identity with the signing key and Vibe"
+description = "personal identity with the signing key, Vibe and Proton VPN autostart"
 modules = ["base"]
 
 [module.dev]

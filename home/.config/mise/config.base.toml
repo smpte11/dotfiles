@@ -14,10 +14,13 @@ pre-packages = [
 
 [dotfile_groups.base]
 root = "base"
+exclude = [".config/autostart", ".config/systemd"]
 
 [dotfile_groups.base.entries]
 "~/.vibe/config.toml" = { mode = "copy", source = ".vibe/config.toml", create_if_missing = true, permissions = "0600" }
 "~/.vibe/.env" = { mode = "template", source = ".vibe/env.tera", create_if_missing = true, permissions = "0600" }
+"~/.config/autostart/proton.desktop" = { mode = "copy", source = ".config/autostart/proton.desktop", variants = [{ os = "linux" }] }
+"~/.config/systemd/user/protonvpn-connect.service" = { mode = "copy", source = ".config/systemd/user/protonvpn-connect.service", variants = [{ os = "linux" }] }
 
 [bootstrap.directories."~/.vibe"]
 mode = "0700"
