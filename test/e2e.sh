@@ -378,6 +378,7 @@ check_media() {
     [ ! -e "$HOME/.config/containers/systemd/netfelix/flaresolverr.container" ] || fail "the flaresolverr quadlet is still deployed"
     grep -q "Network=host" "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" || fail "the qbittorrent quadlet does not use host networking"
     grep -q "/run/media/system/media/torrents" "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" || fail "the qbittorrent quadlet does not mount the torrents folder"
+    grep -q "torrents:/run/media/system/media/torrents:z" "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" || fail "the qbittorrent torrents mount does not use the shared :z label, so the arr containers cannot read downloads"
     [ -f "$HOME/.config/systemd/user/qbit-vpn-guard.service" ] || fail "the qbit-vpn-guard service is not deployed"
     [ -f "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is not deployed"
     [ -x "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is not executable"
