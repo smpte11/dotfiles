@@ -3,12 +3,12 @@ description = "machine: work Mac with work, dev-work and desktop"
 modules = ["work", "dev", "dev-work", "desktop"]
 
 [module.home-desktop]
-description = "machine: home desktop with base, dev-private, desktop and the Proton Pass agent"
-modules = ["base", "dev", "dev-private", "desktop", "proton-pass", "ssh-agent"]
+description = "machine: home desktop with base, dev-private, desktop, gaming and the Proton Pass agent"
+modules = ["base", "dev", "dev-private", "desktop", "torrent", "gaming", "proton-pass", "ssh-agent"]
 
 [module.media-server]
-description = "machine: media server with base, media, gaming and the Proton Pass agent"
-modules = ["base", "media", "gaming", "proton-pass", "ssh-agent"]
+description = "machine: media server with base, media and the Proton Pass agent"
+modules = ["base", "torrent", "media", "proton-pass", "ssh-agent"]
 
 [module.tablet]
 description = "machine: handheld tablet with base for Vibe"
@@ -30,17 +30,21 @@ modules = ["dev", "dev-private"]
 description = "dev plus work tooling: the Claude harness and keybindings"
 modules = ["dev", "dev-work"]
 
+[module.torrent]
+description = "netfelix pod with prowlarr, byparr and a VPN-gated qbittorrent"
+modules = ["torrent"]
+
 [module.media]
-description = "media player and server with the netfelix pod and a VPN-gated qbittorrent"
-modules = ["media"]
+description = "torrent plus the media player and server: sonarr, radarr, jellyfin and seerr"
+modules = ["torrent", "media"]
 
 [module.desktop]
 description = "desktop extras with OpenDeck plugins and reminders"
 modules = ["desktop"]
 
 [module.gaming]
-description = "questarr game manager with qbit and prowlarr secrets"
-modules = ["gaming"]
+description = "torrent plus the questarr game manager"
+modules = ["torrent", "gaming"]
 
 [module.proton-pass]
 description = "Proton Pass CLI (pass-cli) on any machine"

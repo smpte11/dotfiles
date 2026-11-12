@@ -1,0 +1,28 @@
+[vars]
+vpn_interface = "proton0"
+
+[dotfile_groups.torrent]
+root = "torrent"
+exclude = ["quadlets", "configarr", "seed", "systemd", "scripts"]
+
+[dotfile_groups.torrent.entries]
+"~/.config/containers/systemd/netfelix/netfelix.pod" = { mode = "copy", source = "quadlets/netfelix.pod" }
+"~/.config/containers/systemd/netfelix/prowlarr.container" = { mode = "template", source = "quadlets/prowlarr.container.tera" }
+"~/.config/containers/systemd/netfelix/byparr.container" = { mode = "template", source = "quadlets/byparr.container.tera" }
+"~/.config/containers/systemd/netfelix/prowlarr-config.container" = { mode = "template", source = "quadlets/prowlarr-config.container.tera" }
+"~/.config/containers/systemd/netfelix/qbittorrent.container" = { mode = "template", source = "quadlets/qbittorrent.container.tera" }
+"~/.config/systemd/user/prowlarr-config.timer" = { mode = "copy", source = "systemd/prowlarr-config.timer" }
+"~/.config/systemd/user/qbit-vpn-guard.service" = { mode = "template", source = "systemd/qbit-vpn-guard.service.tera" }
+"~/.config/media/qbit-vpn-guard.sh" = { mode = "template", source = "scripts/qbit-vpn-guard.sh.tera", permissions = "0700" }
+"~/.config/media/prowlarr-config/config.yml" = { mode = "copy", source = "configarr/config.yml", permissions = "0600" }
+"~/.config/prowlarr/config.xml" = { mode = "template", source = "seed/prowlarr.config.xml.tera", create_if_missing = true, permissions = "0600" }
+
+[bootstrap.secrets.prowlarr_api_key]
+env = "PROWLARR_API_KEY"
+description = "Prowlarr API key (pass://Media/Netfelix/PROWLARR_API_KEY)"
+allow_empty = true
+
+[bootstrap.secrets.yts_api_url]
+env = "YTS_API_URL"
+description = "YTS indexer apiurl including its key (pass://Media/Netfelix/YTS_API_URL)"
+allow_empty = true

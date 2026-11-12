@@ -1,0 +1,10 @@
+[Unit]
+Description=Apply the declarative prowlarr indexers to the netfelix stack
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+Unit=prowlarr-config.service
+
+[Install]
+WantedBy=timers.target

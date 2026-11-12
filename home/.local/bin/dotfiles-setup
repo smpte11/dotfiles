@@ -101,8 +101,16 @@ with_ssh() {
     esac
 }
 
+with_torrent() {
+    case ",$1," in
+    *,torrent,*) echo "$1" ;;
+    *,media,* | *,gaming,*) echo "$1,torrent" ;;
+    *) echo "$1" ;;
+    esac
+}
+
 with_implied() {
-    with_ssh "$(with_dev "$1")"
+    with_torrent "$(with_ssh "$(with_dev "$1")")"
 }
 
 write_modules() {
@@ -153,7 +161,7 @@ media_secret() {
 }
 
 export_netfelix_secrets() {
-    read_modules | grep -qxE 'media|gaming' || return 0
+    read_modules | grep -qx torrent || return 0
     proton_login
     media_secret SONARR_API_KEY 'pass://Media/Netfelix/SONARR_API_KEY' "$HOME/.config/sonarr/config.xml"
     media_secret RADARR_API_KEY 'pass://Media/Netfelix/RADARR_API_KEY' "$HOME/.config/radarr/config.xml"

@@ -235,6 +235,11 @@ check_switch() {
         [ ! -e "$HOME/.config/containers/systemd/netfelix/questarr.container" ] || fail "the questarr quadlet remains after the switch"
         [ ! -e "$HOME/.config/media/questarr" ] || fail "the questarr config remains after the switch"
     fi
+    if has_module torrent; then
+        [ ! -e "$HOME/.config/containers/systemd/netfelix/netfelix.pod" ] || fail "the netfelix pod remains after the switch"
+        [ ! -e "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" ] || fail "the qbittorrent quadlet remains after the switch"
+        [ ! -e "$HOME/.config/systemd/user/qbit-vpn-guard.service" ] || fail "the qbit-vpn-guard service remains after the switch"
+    fi
     [ -L "$HOME/.ssh/config" ] || fail "the ssh config was pruned by the switch"
     [ "$(stat -c %a "$HOME/.ssh")" = 700 ] || fail "$HOME/.ssh is not 0700 after the switch"
     grep -qx 'env = \["work","ssh"\]' "$dotfiles/home/.config/mise/miserc.local.toml" || fail "the modules are not work and ssh after the switch"
@@ -283,7 +288,7 @@ check_tools() {
 }
 
 uses_pass() {
-    has_module proton-pass || has_module media || has_module gaming
+    has_module proton-pass || has_module torrent
 }
 
 check_proton() {
@@ -334,11 +339,12 @@ check_proton() {
 }
 
 check_media() {
-    local f app
+    local f app pod=$HOME/.config/containers/systemd/netfelix torrents=$HOME/.local/share/torrents
+    has_module media && torrents=/run/media/system/media/torrents
     if has_module gaming; then
         for f in questarr.container questarr-config.container; do
-            [ -f "$HOME/.config/containers/systemd/netfelix/$f" ] || fail "quadlet $f is not deployed"
-            if grep -qE '\{\{|\{%' "$HOME/.config/containers/systemd/netfelix/$f"; then
+            [ -f "$pod/$f" ] || fail "quadlet $f is not deployed"
+            if grep -qE '\{\{|\{%' "$pod/$f"; then
                 fail "$f has unrendered template syntax"
             fi
         done
@@ -346,59 +352,87 @@ check_media() {
         [ -f "$HOME/.config/media/questarr/config.json" ] || fail "the questarr config is not deployed"
         [ "$(stat -c %a "$HOME/.config/media/questarr/config.json")" = 600 ] || fail "the questarr config is not 0600"
         [ -f "$HOME/.config/media/questarr/apply.py" ] || fail "the questarr apply script is not deployed"
-        if has_module media; then
-            grep -qx 'Volume=/run/media/system/media/media/games:/data:z' "$HOME/.config/containers/systemd/netfelix/questarr.container" || fail "questarr does not mount the games dir of the media pool"
-            if grep -q 'ExecStartPre=' "$HOME/.config/containers/systemd/netfelix/questarr.container"; then fail "questarr creates a games dir on a media machine"; fi
-        else
-            grep -qx "Volume=$HOME/.local/share/questarr/games:/data:z" "$HOME/.config/containers/systemd/netfelix/questarr.container" || fail "questarr does not mount the games dir in home"
-            grep -qx "ExecStartPre=/bin/mkdir -p $HOME/.local/share/questarr/games" "$HOME/.config/containers/systemd/netfelix/questarr.container" || fail "the questarr quadlet does not create the games dir"
-        fi
+        grep -qx "Volume=$HOME/.local/share/questarr/games:/data:z" "$pod/questarr.container" || fail "questarr does not mount the games dir in home"
+        grep -qx "ExecStartPre=/bin/mkdir -p $HOME/.local/share/questarr/games" "$pod/questarr.container" || fail "the questarr quadlet does not create the games dir"
+        grep -qx "Volume=$torrents:$torrents:z" "$pod/questarr.container" || fail "questarr does not mount the torrents dir at the qbittorrent path"
+        grep -q "TORRENTS_DIR=$torrents\$" "$pod/questarr-config.container" || fail "the questarr-config quadlet does not pass the torrents dir"
+        [ "$(jq -r '.downloaders[] | select(.name == "qBittorrent") | .downloadPath' "$HOME/.config/media/questarr/config.json")" = "\$TORRENTS_DIR/questarr" ] || fail "the questarr config does not save downloads under the torrents dir"
         [ ! -L "$HOME/.local/share/questarr/games" ] || fail "the questarr games dir is a symlink"
     else
-        [ ! -e "$HOME/.config/containers/systemd/netfelix/questarr.container" ] || fail "a questarr quadlet is deployed without the gaming module"
+        [ ! -e "$pod/questarr.container" ] || fail "a questarr quadlet is deployed without the gaming module"
         [ ! -e "$HOME/.config/media/questarr" ] || fail "the questarr config is deployed without the gaming module"
     fi
+    if ! has_module torrent; then
+        for f in netfelix.pod prowlarr.container byparr.container prowlarr-config.container qbittorrent.container; do
+            [ ! -e "$pod/$f" ] || fail "quadlet $f is deployed without the torrent module"
+        done
+        [ ! -e "$HOME/.config/systemd/user/qbit-vpn-guard.service" ] || fail "the qbit-vpn-guard service is deployed without the torrent module"
+        [ ! -e "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is deployed without the torrent module"
+        [ ! -e "$HOME/.config/systemd/user/prowlarr-config.timer" ] || fail "the prowlarr-config timer is deployed without the torrent module"
+    else
+        for f in netfelix.pod prowlarr.container byparr.container prowlarr-config.container qbittorrent.container; do
+            [ -f "$pod/$f" ] || fail "quadlet $f is not deployed"
+            if grep -qE '\{\{|\{%' "$pod/$f"; then
+                fail "$f has unrendered template syntax"
+            fi
+        done
+        grep -qx 'PublishPort=9696:9696/tcp' "$pod/netfelix.pod" || fail "the pod does not publish the prowlarr port"
+        grep -qx 'PublishPort=8191:8191/tcp' "$pod/netfelix.pod" || fail "the pod does not publish the byparr port"
+        if grep -q 'PublishPort=8989' "$pod/netfelix.pod"; then fail "the base pod publishes a media port"; fi
+        grep -qx 'Pod=netfelix.pod' "$pod/prowlarr.container" || fail "prowlarr does not join the netfelix pod"
+        grep -qx 'Pod=netfelix.pod' "$pod/byparr.container" || fail "byparr does not join the netfelix pod"
+        grep -q "ghcr.io/thephaseless/byparr" "$pod/byparr.container" || fail "the byparr quadlet does not use the byparr image"
+        [ ! -e "$pod/flaresolverr.container" ] || fail "the flaresolverr quadlet is still deployed"
+        grep -q "Network=host" "$pod/qbittorrent.container" || fail "the qbittorrent quadlet does not use host networking"
+        grep -qx "Volume=$torrents:$torrents:z" "$pod/qbittorrent.container" || fail "the qbittorrent torrents mount is not $torrents with the shared :z label"
+        if has_module media; then
+            if grep -q 'mkdir' "$pod/qbittorrent.container"; then fail "qbittorrent creates a torrents dir on the media pool"; fi
+        else
+            grep -qx "ExecStartPre=/bin/mkdir -p $torrents" "$pod/qbittorrent.container" || fail "the qbittorrent quadlet does not create the torrents dir"
+        fi
+        [ -f "$HOME/.config/systemd/user/qbit-vpn-guard.service" ] || fail "the qbit-vpn-guard service is not deployed"
+        [ -x "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is not executable"
+        if grep -qE "\{{|\{%" "$HOME/.config/systemd/user/qbit-vpn-guard.service" "$HOME/.config/media/qbit-vpn-guard.sh"; then
+            fail "the qbit-vpn-guard files have unrendered template syntax"
+        fi
+        grep -q "proton0" "$HOME/.config/media/qbit-vpn-guard.sh" || fail "the qbit-vpn-guard script does not render the vpn interface"
+        grep -q "qbittorrent.service" "$HOME/.config/media/qbit-vpn-guard.sh" || fail "the qbit-vpn-guard script does not manage the qbittorrent unit"
+        grep -q 'Unit=prowlarr-config.service' "$HOME/.config/systemd/user/prowlarr-config.timer" || fail "the prowlarr-config timer does not target the prowlarr-config quadlet service"
+        [ "$(stat -c %a "$HOME/.config/media/prowlarr-config/config.yml")" = 600 ] || fail "the prowlarr configarr config is not 0600"
+        grep -q 'definition: Knaben' "$HOME/.config/media/prowlarr-config/config.yml" || fail "the prowlarr configarr config does not hold the indexers"
+        if grep -q 'applications:' "$HOME/.config/media/prowlarr-config/config.yml"; then fail "the prowlarr configarr config syncs the media applications"; fi
+        grep -q 'Secret=yts_api_url,type=env,target=YTS_API_URL' "$pod/prowlarr-config.container" || fail "the prowlarr-config quadlet does not inject the yts secret"
+        [ "$(stat -c %a "$HOME/.config/prowlarr/config.xml")" = 600 ] || fail "the prowlarr seed config is not 0600"
+        if grep -qE '\{\{|\{%' "$HOME/.config/prowlarr/config.xml"; then fail "the prowlarr seed config has unrendered template syntax"; fi
+    fi
     if ! has_module media; then
-        [ ! -e "$HOME/.config/containers/systemd/netfelix/netfelix.pod" ] || fail "netfelix quadlets deployed without the media module"
-        [ ! -e "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" ] || fail "the qbittorrent quadlet is deployed without the media module"
-        [ ! -e "$HOME/.config/containers/systemd/netfelix/radarr-kids.container" ] || fail "the radarr-kids quadlet is deployed without the media module"
-        [ ! -e "$HOME/.config/containers/systemd/netfelix/seerr-kids.container" ] || fail "the seerr-kids quadlet is deployed without the media module"
-        [ ! -e "$HOME/.config/systemd/user/qbit-vpn-guard.service" ] || fail "the qbit-vpn-guard service is deployed without the media module"
-        [ ! -e "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is deployed without the media module"
+        for f in netfelix.pod.d/media.conf sonarr.container radarr-kids.container seerr-kids.container configarr.container; do
+            [ ! -e "$pod/$f" ] || fail "$f is deployed without the media module"
+        done
         [ ! -e "$HOME/.agents/machine/protect-media-drives.md" ] || fail "the media drive guard is deployed without the media module"
+        has_module torrent && return 0
         return $skip
     fi
-    for f in netfelix.pod sonarr.container radarr.container radarr-kids.container prowlarr.container jellyfin.container seerr.container seerr-kids.container byparr.container configarr.container qbittorrent.container; do
-        [ -f "$HOME/.config/containers/systemd/netfelix/$f" ] || fail "quadlet $f is not deployed"
-        if grep -qE '\{\{|\{%' "$HOME/.config/containers/systemd/netfelix/$f"; then
+    for f in sonarr.container radarr.container radarr-kids.container jellyfin.container seerr.container seerr-kids.container configarr.container; do
+        [ -f "$pod/$f" ] || fail "quadlet $f is not deployed"
+        if grep -qE '\{\{|\{%' "$pod/$f"; then
             fail "$f has unrendered template syntax"
         fi
     done
-    grep -q "ghcr.io/thephaseless/byparr" "$HOME/.config/containers/systemd/netfelix/byparr.container" || fail "the byparr quadlet does not use the byparr image"
-    [ ! -e "$HOME/.config/containers/systemd/netfelix/flaresolverr.container" ] || fail "the flaresolverr quadlet is still deployed"
-    grep -q "Network=host" "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" || fail "the qbittorrent quadlet does not use host networking"
-    grep -q "/run/media/system/media/torrents" "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" || fail "the qbittorrent quadlet does not mount the torrents folder"
-    grep -q "torrents:/run/media/system/media/torrents:z" "$HOME/.config/containers/systemd/netfelix/qbittorrent.container" || fail "the qbittorrent torrents mount does not use the shared :z label, so the arr containers cannot read downloads"
-    [ -f "$HOME/.config/systemd/user/qbit-vpn-guard.service" ] || fail "the qbit-vpn-guard service is not deployed"
-    [ -f "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is not deployed"
-    [ -x "$HOME/.config/media/qbit-vpn-guard.sh" ] || fail "the qbit-vpn-guard script is not executable"
-    if grep -qE "\{{|\{%" "$HOME/.config/systemd/user/qbit-vpn-guard.service" "$HOME/.config/media/qbit-vpn-guard.sh"; then
-        fail "the qbit-vpn-guard files have unrendered template syntax"
-    fi
-    grep -q "proton0" "$HOME/.config/media/qbit-vpn-guard.sh" || fail "the qbit-vpn-guard script does not render the vpn interface"
-    grep -q "qbittorrent.service" "$HOME/.config/media/qbit-vpn-guard.sh" || fail "the qbit-vpn-guard script does not manage the qbittorrent unit"
+    grep -qx 'PublishPort=8989:8989/tcp' "$pod/netfelix.pod.d/media.conf" || fail "the media drop-in does not publish the sonarr port"
+    grep -qx 'PublishPort=7879:7879/tcp' "$pod/netfelix.pod.d/media.conf" || fail "the media drop-in does not publish the radarr-kids port"
+    grep -qx 'PublishPort=5056:5056/tcp' "$pod/netfelix.pod.d/media.conf" || fail "the media drop-in does not publish the seerr-kids port"
     [ -f "$HOME/.config/systemd/user/configarr.timer" ] || fail "the configarr timer is not deployed"
     grep -q 'Unit=configarr.service' "$HOME/.config/systemd/user/configarr.timer" || fail "the configarr timer does not target the configarr quadlet service"
     [ -f "$HOME/.config/media/configarr/config.yml" ] || fail "the configarr config is not deployed"
     [ "$(stat -c %a "$HOME/.config/media/configarr/config.yml")" = 600 ] || fail "the configarr config is not 0600"
     grep -q 'api_key: !env SONARR_API_KEY' "$HOME/.config/media/configarr/config.yml" || fail "the configarr config does not read the sonarr key from the environment"
-    grep -q 'Secret=sonarr_api_key,type=env,target=SONARR_API_KEY' "$HOME/.config/containers/systemd/netfelix/configarr.container" || fail "the configarr quadlet does not inject the sonarr key secret"
-    grep -q 'Secret=radarr_kids_api_key,type=env,target=RADARR_KIDS_API_KEY' "$HOME/.config/containers/systemd/netfelix/configarr.container" || fail "the configarr quadlet does not inject the radarr-kids key secret"
-    grep -q 'PublishPort=7879:7879/tcp' "$HOME/.config/containers/systemd/netfelix/netfelix.pod" || fail "the pod does not publish the radarr-kids port"
-    grep -q 'PublishPort=5056:5056/tcp' "$HOME/.config/containers/systemd/netfelix/netfelix.pod" || fail "the pod does not publish the seerr-kids port"
+    if grep -qx '    indexers:' "$HOME/.config/media/configarr/config.yml"; then fail "the media configarr config still manages the prowlarr indexers"; fi
+    grep -q 'Secret=sonarr_api_key,type=env,target=SONARR_API_KEY' "$pod/configarr.container" || fail "the configarr quadlet does not inject the sonarr key secret"
+    grep -q 'Secret=radarr_kids_api_key,type=env,target=RADARR_KIDS_API_KEY' "$pod/configarr.container" || fail "the configarr quadlet does not inject the radarr-kids key secret"
     grep -q 'movie_category: radarr-kids' "$HOME/.config/media/configarr/config.yml" || fail "the configarr config does not route radarr-kids downloads to their own qbit category"
     grep -q 'baseUrl: http://localhost:7879' "$HOME/.config/media/configarr/config.yml" || fail "the configarr config does not sync prowlarr to radarr-kids"
-    for app in sonarr radarr radarr-kids prowlarr; do
+    for app in sonarr radarr radarr-kids; do
         [ -f "$HOME/.config/$app/config.xml" ] || fail "the $app seed config is not deployed"
         [ "$(stat -c %a "$HOME/.config/$app/config.xml")" = 600 ] || fail "the $app seed config is not 0600"
         if grep -qE '\{\{|\{%' "$HOME/.config/$app/config.xml"; then
@@ -469,7 +503,7 @@ STUB
     out=$("$dotfiles/home/.local/bin/dotfiles-choose" --expand "tablet,ssh,dev-work")
     [ "$out" = "base,ssh,dev,dev-work" ] || fail "--expand did not expand meta modules and keep plain ones: $out"
     out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "gaming,ssh")
-    [ "$out" = "gaming" ] || fail "the picker did not pre-select the deployed modules: $out"
+    [ "$out" = "torrent,gaming" ] || fail "the picker did not pre-select the deployed modules: $out"
     out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "base,proton-pass,ssh")
     [ "$out" = "base,proton-pass" ] || fail "the picker did not keep proton-pass beside base: $out"
     miserc="$dotfiles/home/.config/mise/miserc.local.toml"

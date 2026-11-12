@@ -1,0 +1,22 @@
+[Container]
+ContainerName=prowlarr-config
+Image=ghcr.io/raydak-labs/configarr:1.39.0
+Network=host
+Environment=TZ=Europe/Stockholm
+Volume={{ env.HOME }}/.config/media/prowlarr-config:/app/config:Z
+Volume=prowlarr-config-repos:/app/repos
+Secret=prowlarr_api_key,type=env,target=PROWLARR_API_KEY
+Secret=yts_api_url,type=env,target=YTS_API_URL
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sh -c "until wget -q -O /dev/null http://localhost:9696/ping; do sleep 2; done"
+Restart=on-failure
+RestartSec=30
+
+[Unit]
+After=prowlarr.service
+Wants=prowlarr.service
+
+[Install]
+WantedBy=default.target

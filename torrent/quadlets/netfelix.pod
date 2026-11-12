@@ -1,0 +1,10 @@
+[Unit]
+Description=My home Netflix
+
+[Pod]
+PodName=netfelix
+PublishPort=9696:9696/tcp
+PublishPort=8191:8191/tcp
+
+[Install]
+WantedBy=default.target

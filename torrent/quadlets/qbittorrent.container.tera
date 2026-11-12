@@ -1,3 +1,8 @@
+{%- if vars.torrents_dir is defined -%}
+{%- set torrents = vars.torrents_dir -%}
+{%- else -%}
+{%- set torrents = env.HOME ~ "/.local/share/torrents" -%}
+{%- endif -%}
 [Container]
 ContainerName=qbittorrent
 Image=lscr.io/linuxserver/qbittorrent:latest
@@ -5,14 +10,16 @@ Label=io.containers.autoupdate=registry
 PublishPort=8081:8081
 Environment=PUID=0 PGID=0 TZ=Europe/Stockholm WEBUI_PORT=8081
 Volume={{ env.HOME }}/.config/qBittorrent:/config:Z
-Volume=/run/media/system/media/torrents:/run/media/system/media/torrents:z
+Volume={{ torrents }}:{{ torrents }}:z
 Network=host
 
 [Service]
 Restart=on-failure
 RestartSec=30
 ExecStartPre=/bin/sh -c "ip -4 addr show dev {{ vars.vpn_interface }} | grep -q 'inet '"
-
+{% if vars.torrents_dir is not defined -%}
+ExecStartPre=/bin/mkdir -p {{ torrents }}
+{% endif %}
 [Unit]
 After=network-online.target
 

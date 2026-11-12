@@ -25,7 +25,8 @@ written to
 runs. Set `DOTFILES_ENV=base,dev-private` to skip the questions. To add a
 module, add a `config.<name>.toml` and a `[module.<name>]` entry in
 `modules.toml`. `dev` holds the common dev setup; `dev-private` and `dev-work`
-hold the tooling for one setup and both pull in `dev`. The `machine:` entries
+hold the tooling for one setup and both pull in `dev`. `torrent` holds the
+download stack; `media` and `gaming` both pull it in. The `machine:` entries
 at the top of `modules.toml` pick the full set for one machine: `work-mac`,
 `home-desktop`, `media-server` and `tablet`. `dotfiles-setup` adds `ssh` to every machine that has an
 identity module. The `proton-pass` module installs the `pass-cli` binary under
@@ -34,7 +35,7 @@ wrapper that picks a key provider that actually works on this machine (D-Bus
 Secret Service when available, kernel keyring, filesystem fallback in
 headless environments), so `pass-cli login` works everywhere. The module is
 opt-in: without it, setup does not install `pass-cli` and does not ask for a
-login, except on `media` and `gaming` machines, which read their keys from
+login, except on `torrent` machines (`media` or `gaming`), which read their keys from
 Proton Pass. A failed `pass-cli login` does not abort the install:
 setup prints a warning, and you finish with `pass-cli login` followed by
 `mise run dotfiles:update`. The `ssh-agent` module is optional
@@ -46,8 +47,8 @@ change the key, remove `~/.config/codestral/env` and run
 read from `pass://Personal/Vibe/API Key` with the `proton-pass` module and from
 the environment without it, so one run of the installer or
 `mise run dotfiles:update` configures Vibe on a fresh machine; to change the
-key, remove `~/.vibe/.env` and run `mise run dotfiles:update`. On a `media` or
-`gaming` machine it reads the `pass://Media/Netfelix/*` items
+key, remove `~/.vibe/.env` and run `mise run dotfiles:update`. On a `torrent`
+machine it reads the `pass://Media/Netfelix/*` items
 from Proton Pass and gives them to `mise bootstrap` as the matching bootstrap
 secrets (`SONARR_API_KEY`, `RADARR_API_KEY`, `PROWLARR_API_KEY`,
 `QUESTARR_API_KEY`, `QBIT_USERNAME`, `QBIT_PASSWORD`, `YTS_API_URL`), falling
@@ -73,7 +74,8 @@ entries remain as the bootstrap source.
 | `ssh-agent/` | `ssh-agent` | Proton Pass SSH agent wrapper and `~/.ssh/config.d/agent` |
 | `work/` | `work` | 1Password agent, work identity |
 | `desktop/` | `desktop` | Journal reminder and check-ins, OpenDeck journal and pixel clock and timer plugins, OpenDeck profiles |
-| `media/` | `media` | netfelix quadlets, Configarr config, *arr seed configs, media drive guard for agents |
+| `torrent/` | `torrent` | netfelix pod, prowlarr, byparr, VPN-gated qbittorrent, prowlarr Configarr config and seed config |
+| `media/` | `media` | netfelix pod ports drop-in, *arr quadlets, Configarr config, *arr seed configs, media drive guard for agents |
 | `gaming/` | `gaming` | Questarr quadlets, config and timer for the games library |
 | `home/.config/mise/config.toml` | always | Tools, groups, templates, repos |
 | `home/.config/mise/config.<module>.toml` | per module | The module's vars, env, groups, services and hooks |
@@ -86,40 +88,52 @@ and changes the theme for this machine by writing `home/.config/mise/conf.d/them
 tracked by mise history). Without a name it opens a picker. `mise dot rollback` of that file restores the
 previous theme and renders the templates again.
 
-## Media server (`media` and `gaming` modules)
+## Media server (`torrent`, `media` and `gaming` modules)
 
-The `media` module targets the media player. It deploys the netfelix quadlets
-to `~/.config/containers/systemd/netfelix/`, the Configarr config to
-`~/.config/media/configarr/config.yml`, and seed `config.xml` files (only when
-missing, so existing installs keep their keys) that pin each *arr API key. A
-oneshot `configarr.container` plus a daily `configarr.timer` apply the
-declarative settings through the *arr APIs. The module also deploys a headless
-qbittorrent quadlet on host networking (WebUI on port 8081, config migrated from
-`~/.config/qBittorrent`, downloads under `/run/media/system/media/torrents`), so
-the host qBittorrent must be stopped before the container takes over port 8081.
-A `qbit-vpn-guard.service` user unit runs qbittorrent only while the Proton VPN
-interface is up (`vars.vpn_interface`, `proton0`) and pins qBittorrent's
-`NetworkInterface` to that interface, so the client stays inactive and cannot
-leak traffic when the VPN is down; the post-dotfiles hook enables the guard
-alongside the timers. On every non-work machine the `base` module installs the
-Proton VPN flatpak and deploys `protonvpn-connect.service`, which connects the
-Proton VPN CLI at startup and re-connects within a minute if the tunnel drops,
-plus a disabled `proton.desktop` autostart entry so the GUI never fights the
-CLI; the post-dotfiles hook enables the unit when the file is present. The
-`gaming` module deploys Questarr
-the same way (a oneshot `questarr-config.container` plus a daily
-`questarr-config.timer` apply `gaming/questarr/config.json` through Questarr's
-admin-scope API) but with `Network=host` instead of joining the netfelix pod, so
-it works with or without `media` on the same host. One-time setup: create an
-`admin` API key in Questarr (Settings -> API keys) and store it as
-`pass://Media/Netfelix/QUESTARR_API_KEY`. Secrets reach the containers as
-podman secrets injected as environment variables that `config.yml` reads with
-`!env`: a single post-dotfiles hook in `home/.config/mise/config.toml` creates
-each podman secret once from its environment variable when set, so modules that
-share a dependency (qbit for both `media` and `gaming`) use the same secret.
-Each module only declares the `[bootstrap.secrets.*]` entries its containers
-consume, and the hook enables whichever timer units are deployed. The `media`
-module also deploys
+The `torrent` module is the download stack that `media` and `gaming` share.
+It deploys `netfelix.pod` to `~/.config/containers/systemd/netfelix/` with the
+prowlarr and byparr quadlets in it, and a headless qbittorrent quadlet on host
+networking (WebUI on port 8081, config migrated from `~/.config/qBittorrent`).
+qbittorrent mounts `vars.torrents_dir` at the same path inside the container;
+`media` sets it to `/run/media/system/media/torrents`, and without `media` it is
+`~/.local/share/torrents`. The host qBittorrent must be stopped before the
+container takes over port 8081. A `qbit-vpn-guard.service` user unit runs
+qbittorrent only while the Proton VPN interface is up (`vars.vpn_interface`,
+`proton0`) and pins qBittorrent's `NetworkInterface` to that interface, so the
+client stays inactive and cannot leak traffic when the VPN is down. A oneshot
+`prowlarr-config.container` plus a daily `prowlarr-config.timer` apply the
+prowlarr tags, sync profile, byparr proxy and indexers from
+`torrent/configarr/config.yml` through Configarr. On every non-work machine the
+`base` module installs the Proton VPN flatpak and deploys
+`protonvpn-connect.service`, which connects the Proton VPN CLI at startup and
+re-connects within a minute if the tunnel drops, plus a disabled
+`proton.desktop` autostart entry so the GUI never fights the CLI.
+
+The `media` module targets the media player. It adds the *arr, Jellyfin and
+Seerr quadlets to the same pod and publishes their ports through the drop-in
+`netfelix.pod.d/media.conf`, which Quadlet merges into `netfelix.pod`. It also
+deploys the Configarr config to `~/.config/media/configarr/config.yml`, and seed
+`config.xml` files (only when missing, so existing installs keep their keys)
+that pin each *arr API key. A oneshot `configarr.container` plus a daily
+`configarr.timer` apply the declarative settings through the *arr APIs,
+including the prowlarr applications that sync the indexers to Sonarr and Radarr.
+
+The `gaming` module deploys Questarr the same way (a oneshot
+`questarr-config.container` plus a daily `questarr-config.timer` apply
+`gaming/questarr/config.json` through Questarr's admin-scope API) but with
+`Network=host` instead of joining the netfelix pod. Games live in
+`~/.local/share/questarr/games`. Questarr mounts `vars.torrents_dir` at the same
+path as qbittorrent and saves its downloads to `torrents/questarr`, so imports
+need no path mapping. One-time setup: create an `admin` API key in Questarr
+(Settings -> API keys) and store it as `pass://Media/Netfelix/QUESTARR_API_KEY`.
+
+Secrets reach the containers as podman secrets injected as environment
+variables that `config.yml` reads with `!env`: a single post-dotfiles hook in
+`home/.config/mise/config.toml` creates each podman secret once from its
+environment variable when set, so modules that share a dependency (qbit for
+both `media` and `gaming`) use the same secret. Each module only declares the
+`[bootstrap.secrets.*]` entries its containers consume, and the hook enables
+whichever timer and guard units are deployed. The `media` module also deploys
 `~/.agents/machine/protect-media-drives.md`, which forbids agents from touching
 the mounted media pool; `~/.agents/machine/` files are read before anything else
 on machines that have them.

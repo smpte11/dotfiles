@@ -19,6 +19,7 @@ step() { echo "--- $*"; }
 has_module() {
     case ",$modules," in *",$1,"*) return 0 ;; esac
     case "$1:,$modules," in dev:*,dev-private,* | dev:*,dev-work,*) return 0 ;; esac
+    case "$1:,$modules," in torrent:*,media,* | torrent:*,gaming,*) return 0 ;; esac
     return 1
 }
 has_identity() { has_module ssh || has_module base || has_module work; }

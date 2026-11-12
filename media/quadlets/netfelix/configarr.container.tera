@@ -11,7 +11,6 @@ Secret=radarr_kids_api_key,type=env,target=RADARR_KIDS_API_KEY
 Secret=prowlarr_api_key,type=env,target=PROWLARR_API_KEY
 Secret=qbit_username,type=env,target=QBIT_USERNAME
 Secret=qbit_password,type=env,target=QBIT_PASSWORD
-Secret=yts_api_url,type=env,target=YTS_API_URL
 
 [Service]
 Type=oneshot

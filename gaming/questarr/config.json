@@ -12,6 +12,7 @@
       "username": "$QBIT_USERNAME",
       "password": "$QBIT_PASSWORD",
       "category": "questarr",
+      "downloadPath": "$TORRENTS_DIR/questarr",
       "enabled": true
     }
   ]

@@ -1,9 +1,14 @@
+{%- if vars.torrents_dir is defined -%}
+{%- set torrents = vars.torrents_dir -%}
+{%- else -%}
+{%- set torrents = env.HOME ~ "/.local/share/torrents" -%}
+{%- endif -%}
 [Container]
 ContainerName=questarr-config
 Image=docker.io/python:3.13-alpine
 Exec=/usr/local/bin/python3 /config/apply.py
 Network=host
-Environment=TZ=Europe/Stockholm QUESTARR_URL=http://localhost:5000 CONFIG_PATH=/config/config.json
+Environment=TZ=Europe/Stockholm QUESTARR_URL=http://localhost:5000 CONFIG_PATH=/config/config.json TORRENTS_DIR={{ torrents }}
 Volume={{ env.HOME }}/.config/media/questarr:/config:Z
 Secret=questarr_api_key,type=env,target=QUESTARR_API_KEY
 Secret=prowlarr_api_key,type=env,target=PROWLARR_API_KEY

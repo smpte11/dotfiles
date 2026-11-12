@@ -1,7 +1,8 @@
-{%- if vars.questarr_games is defined -%}
-{%- set games = vars.questarr_games -%}
-{%- else -%}
 {%- set games = env.HOME ~ "/.local/share/questarr/games" -%}
+{%- if vars.torrents_dir is defined -%}
+{%- set torrents = vars.torrents_dir -%}
+{%- else -%}
+{%- set torrents = env.HOME ~ "/.local/share/torrents" -%}
 {%- endif -%}
 [Container]
 ContainerName=questarr
@@ -11,11 +12,13 @@ PublishPort=5000:5000
 Environment=PUID=0 PGID=0 TZ=Europe/Stockholm
 Volume={{ env.HOME }}/.config/questarr:/app/data:Z
 Volume={{ games }}:/data:z
+Volume={{ torrents }}:{{ torrents }}:z
 Network=host
 
 [Service]
-{% if vars.questarr_games is not defined -%}
 ExecStartPre=/bin/mkdir -p {{ games }}
+{% if vars.torrents_dir is not defined -%}
+ExecStartPre=/bin/mkdir -p {{ torrents }}
 {% endif -%}
 Restart=always
 
