@@ -27,6 +27,11 @@ sonarr:
       update_password: true
       delete_unmanaged:
         enabled: false
+      remote_paths:
+        - host: host.containers.internal
+          remote_path: /run/media/system/media/torrents
+          local_path: /data/torrents
+      delete_unmanaged_remote_paths: true
 
 radarr:
   main:
@@ -58,6 +63,11 @@ radarr:
       update_password: true
       delete_unmanaged:
         enabled: false
+      remote_paths:
+        - host: host.containers.internal
+          remote_path: /run/media/system/media/torrents
+          local_path: /data/torrents
+      delete_unmanaged_remote_paths: true
 
   kids:
     base_url: http://localhost:7879
@@ -88,6 +98,11 @@ radarr:
       update_password: true
       delete_unmanaged:
         enabled: false
+      remote_paths:
+        - host: host.containers.internal
+          remote_path: /run/media/system/media/torrents
+          local_path: /data/torrents
+      delete_unmanaged_remote_paths: true
 
 prowlarr:
   main:

@@ -431,6 +431,8 @@ check_media() {
     grep -q 'Secret=sonarr_api_key,type=env,target=SONARR_API_KEY' "$pod/configarr.container" || fail "the configarr quadlet does not inject the sonarr key secret"
     grep -q 'Secret=radarr_kids_api_key,type=env,target=RADARR_KIDS_API_KEY' "$pod/configarr.container" || fail "the configarr quadlet does not inject the radarr-kids key secret"
     grep -q 'movie_category: radarr-kids' "$HOME/.config/media/configarr/config.yml" || fail "the configarr config does not route radarr-kids downloads to their own qbit category"
+    [ "$(grep -cF "remote_path: $torrents" "$HOME/.config/media/configarr/config.yml")" = 3 ] || fail "the configarr config does not map the qbit remote path for sonarr, radarr and radarr-kids"
+    grep -q 'host: host.containers.internal' "$HOME/.config/media/configarr/config.yml" || fail "the configarr remote path mapping does not match the host-network qbit download client"
     grep -q 'baseUrl: http://localhost:7879' "$HOME/.config/media/configarr/config.yml" || fail "the configarr config does not sync prowlarr to radarr-kids"
     for app in sonarr radarr radarr-kids; do
         [ -f "$HOME/.config/$app/config.xml" ] || fail "the $app seed config is not deployed"
