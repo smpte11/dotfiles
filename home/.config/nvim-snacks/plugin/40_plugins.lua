@@ -27,6 +27,9 @@ now_if_args(function()
 		"gotmpl",
 		"ocaml",
 		"ocaml_interface",
+		"typescript",
+		"tsx",
+		"graphql",
 	}
 	local isnt_installed = function(lang)
 		return #vim.api.nvim_get_runtime_file("parser/" .. lang .. ".*", false) == 0
@@ -57,6 +60,8 @@ now_if_args(function()
 		"expert",
 		"yamlls",
 		"ocamllsp",
+		"tsc",
+		"graphql",
 		"snippets",
 	})
 end)

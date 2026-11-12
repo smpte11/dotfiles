@@ -6,6 +6,10 @@ args = ["--stdio"]
 command = "basedpyright-langserver"
 args = ["--stdio"]
 
+[language-server.tsc]
+command = "tsc"
+args = ["--lsp", "--stdio"]
+
 [language-server.zk]
 command = "zk"
 args = ["lsp"]
@@ -63,21 +67,25 @@ formatter = { command = "ruff", args = ["format", "--silent", "--stdin-filename"
 
 [[language]]
 name = "typescript"
+language-servers = ["tsc", "graphql-language-service"]
 auto-format = true
 formatter = { command = "prettier", args = ["--stdin-filepath", "%{buffer_name}"] }
 
 [[language]]
 name = "tsx"
+language-servers = ["tsc", "graphql-language-service"]
 auto-format = true
 formatter = { command = "prettier", args = ["--stdin-filepath", "%{buffer_name}"] }
 
 [[language]]
 name = "javascript"
+language-servers = ["tsc"]
 auto-format = true
 formatter = { command = "prettier", args = ["--stdin-filepath", "%{buffer_name}"] }
 
 [[language]]
 name = "jsx"
+language-servers = ["tsc"]
 auto-format = true
 formatter = { command = "prettier", args = ["--stdin-filepath", "%{buffer_name}"] }
 

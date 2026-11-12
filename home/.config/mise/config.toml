@@ -42,6 +42,7 @@ zoxide = "latest"
 "npm:lavish-axi" = "0.1.79"
 "npm:quota-axi" = "0.1.55"
 "npm:tasks-axi" = "0.2.6"
+"npm:typescript" = "7.0.2"
 
 [dotfile_groups.home]
 root = "home"
