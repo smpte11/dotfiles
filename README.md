@@ -69,6 +69,8 @@ graph TD
     classDef meta fill:#f9c74f,stroke:#f8961e,color:#000,font-weight:bold
 ```
 
+A rendered copy of the diagram lives in `docs/module-dependencies.svg`.
+
 ## Secrets
 
 - `proton-pass` (opt-in) installs `pass-cli` under
