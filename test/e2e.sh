@@ -503,7 +503,7 @@ STUB
     out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "work-mac")
     [ "$out" = "work,dev,dev-work,desktop" ] || fail "the picker did not expand the work-mac machine: $out"
     out=$("$dotfiles/home/.local/bin/dotfiles-choose" --expand "tablet,ssh,dev-work")
-    [ "$out" = "base,ssh,dev,dev-work" ] || fail "--expand did not expand meta modules and keep plain ones: $out"
+    [ "$out" = "base,tablet,ssh,dev,dev-work" ] || fail "--expand did not expand meta modules and keep plain ones: $out"
     out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "gaming,ssh")
     [ "$out" = "torrent,gaming" ] || fail "the picker did not pre-select the deployed modules: $out"
     out=$(DOTFILES_GUM=$stub "$dotfiles/home/.local/bin/dotfiles-choose" "base,proton-pass,ssh")

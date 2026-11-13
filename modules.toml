@@ -11,8 +11,8 @@ description = "machine: media server with base, media and the Proton Pass agent"
 modules = ["base", "torrent", "media", "proton-pass", "ssh-agent"]
 
 [module.tablet]
-description = "machine: handheld tablet with base for Vibe"
-modules = ["base"]
+description = "machine: handheld tablet with base for Vibe and nvim-mini as the default editor"
+modules = ["base", "tablet"]
 
 [module.base]
 description = "personal identity with the signing key, Vibe and Proton VPN autostart"
