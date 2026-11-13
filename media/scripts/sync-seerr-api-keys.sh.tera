@@ -1,0 +1,45 @@
+#!/bin/bash
+set -u
+
+sync_settings() {
+    local file="$1" unit="$2" result
+    [ -f "$file" ] || return 0
+    result="$(python3 - "$file" <<'PY'
+import json
+import os
+import sys
+
+path = sys.argv[1]
+with open(path) as f:
+    settings = json.load(f)
+
+port_keys = {
+    "8989": os.environ.get("SONARR_API_KEY", ""),
+    "7878": os.environ.get("RADARR_API_KEY", ""),
+    "7879": os.environ.get("RADARR_KIDS_API_KEY", ""),
+}
+
+changed = False
+for section in ("sonarr", "radarr"):
+    for server in settings.get(section) or []:
+        want = port_keys.get(str(server.get("port", "")), "")
+        if want and server.get("apiKey") != want:
+            server["apiKey"] = want
+            changed = True
+
+if changed:
+    with open(path, "w") as f:
+        json.dump(settings, f, indent=1)
+print("changed" if changed else "unchanged")
+PY
+)"
+    if [ "$result" = changed ]; then
+        echo "sync-seerr-api-keys: updated $file"
+        if command -v systemctl >/dev/null 2>&1 && systemctl --user is-active --quiet "$unit" 2>/dev/null; then
+            systemctl --user restart "$unit"
+        fi
+    fi
+}
+
+sync_settings "$HOME/.config/seerr/settings.json" seerr.service
+sync_settings "$HOME/.config/seerr-kids/settings.json" seerr-kids.service

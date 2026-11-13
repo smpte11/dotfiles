@@ -3,7 +3,7 @@ torrents_dir = "/run/media/system/media/torrents"
 
 [dotfile_groups.media]
 root = "media"
-exclude = ["quadlets", "configarr", "seed", "systemd"]
+exclude = ["quadlets", "configarr", "seed", "systemd", "scripts"]
 
 [dotfile_groups.media.entries]
 "~/.config/containers/systemd/netfelix/netfelix.pod.d/media.conf" = { mode = "copy", source = "quadlets/netfelix/netfelix.pod.d/media.conf" }
@@ -16,9 +16,15 @@ exclude = ["quadlets", "configarr", "seed", "systemd"]
 "~/.config/containers/systemd/netfelix/configarr.container" = { mode = "template", source = "quadlets/netfelix/configarr.container.tera" }
 "~/.config/systemd/user/configarr.timer" = { mode = "copy", source = "systemd/configarr.timer" }
 "~/.config/media/configarr/config.yml" = { mode = "copy", source = "configarr/config.yml", permissions = "0600" }
+"~/.config/media/sync-seerr-api-keys.sh" = { mode = "template", source = "scripts/sync-seerr-api-keys.sh.tera", permissions = "0700" }
 "~/.config/sonarr/config.xml" = { mode = "template", source = "seed/sonarr.config.xml.tera", create_if_missing = true, permissions = "0600" }
 "~/.config/radarr/config.xml" = { mode = "template", source = "seed/radarr.config.xml.tera", create_if_missing = true, permissions = "0600" }
 "~/.config/radarr-kids/config.xml" = { mode = "template", source = "seed/radarr-kids.config.xml.tera", create_if_missing = true, permissions = "0600" }
+
+[bootstrap.hooks]
+post-dotfiles = [
+  'if [ -x "$HOME/.config/media/sync-seerr-api-keys.sh" ]; then "$HOME/.config/media/sync-seerr-api-keys.sh"; fi',
+]
 
 [bootstrap.directories."~/.config/radarr-kids"]
 mode = "0700"

@@ -417,6 +417,7 @@ check_media() {
         for f in netfelix.pod.d/media.conf sonarr.container radarr-kids.container seerr-kids.container configarr.container; do
             [ ! -e "$pod/$f" ] || fail "$f is deployed without the media module"
         done
+        [ ! -e "$HOME/.config/media/sync-seerr-api-keys.sh" ] || fail "the seerr api key sync script is deployed without the media module"
         [ ! -e "$HOME/.agents/machine/protect-media-drives.md" ] || fail "the media drive guard is deployed without the media module"
         has_module torrent && return 0
         return $skip
@@ -442,6 +443,11 @@ check_media() {
     [ "$(grep -cF "remote_path: $torrents" "$HOME/.config/media/configarr/config.yml")" = 3 ] || fail "the configarr config does not map the qbit remote path for sonarr, radarr and radarr-kids"
     grep -q 'host: host.containers.internal' "$HOME/.config/media/configarr/config.yml" || fail "the configarr remote path mapping does not match the host-network qbit download client"
     grep -q 'baseUrl: http://localhost:7879' "$HOME/.config/media/configarr/config.yml" || fail "the configarr config does not sync prowlarr to radarr-kids"
+    [ -x "$HOME/.config/media/sync-seerr-api-keys.sh" ] || fail "the seerr api key sync script is not deployed executable"
+    if grep -qE '\{\{|\{%' "$HOME/.config/media/sync-seerr-api-keys.sh"; then fail "the seerr api key sync script has unrendered template syntax"; fi
+    grep -q 'seerr-kids.service' "$HOME/.config/media/sync-seerr-api-keys.sh" || fail "the seerr api key sync script does not restart seerr-kids"
+    grep -q 'sync-seerr-api-keys.sh' "$dotfiles/home/.config/mise/config.media.toml" || fail "the media bootstrap does not run the seerr api key sync script"
+    grep -q '"~/.config/media/sync-seerr-api-keys.sh"' "$dotfiles/home/.config/mise/config.media.toml" || fail "the media dotfile group does not deploy the seerr api key sync script"
     for app in sonarr radarr radarr-kids; do
         [ -f "$HOME/.config/$app/config.xml" ] || fail "the $app seed config is not deployed"
         [ "$(stat -c %a "$HOME/.config/$app/config.xml")" = 600 ] || fail "the $app seed config is not 0600"
