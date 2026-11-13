@@ -43,6 +43,7 @@ zoxide = "latest"
 "npm:quota-axi" = "0.1.55"
 "npm:tasks-axi" = "0.2.6"
 "npm:typescript" = "7.0.2"
+"aqua:anomalyco/opencode" = "2.2.7"
 
 [dotfile_groups.home]
 root = "home"
