@@ -7,7 +7,7 @@
       "env": ["MISTRAL_API_KEY"],
       "npm": "@ai-sdk/mistral",
       "settings": {
-        "baseURL": "https://api.mistral.ai"
+        "baseURL": "https://api.mistral.ai/v1"
       },
       "models": {
         "mistral-large-4": {
