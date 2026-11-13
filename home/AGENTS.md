@@ -7,3 +7,17 @@
 - Reply layout: in a reply, put the prose first: decisions, reasons and questions to me. Put code examples at the bottom. A long code block at the top pushes the decisions and questions out of the visible terminal viewport.
 - Voice: when you write for publication or in my voice, follow `~/VOICE.md` instead of STE.
 - Engineering: before you plan, debug or change code or a repo, read `~/CODING_STANDARDS.md`.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as GitHub issues in `smpte11/dotfiles` (via the `gh` CLI). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five-label vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout: root `GLOSSARY.md` plus `docs/adr/`. See `docs/agents/domain.md`.
