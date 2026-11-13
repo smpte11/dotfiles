@@ -1,4 +1,6 @@
 {
+  "defaultProvider": "mistral",
+  "defaultModel": "mistral-large-4",
   "extensions": [
     "~/.local/share/firstmate/.pi/extensions/fm-calm.ts"
   ]
