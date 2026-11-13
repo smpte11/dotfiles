@@ -1,0 +1,9 @@
+{
+  "defaultProvider": "mistral",
+  "defaultModel": "mistral-large-4",
+  "extensions": [
+    "~/.local/share/firstmate/.pi/extensions/fm-calm.ts",
+    "~/.pi/agent/extensions/caveman-status.ts"
+  ],
+  "lastChangelogVersion": "1.5.0"
+}
