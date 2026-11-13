@@ -6,7 +6,9 @@
       "env": ["MISTRAL_API_KEY"],
       "package": "@opencode/ai/providers/openai-compatible",
       "settings": {
-        "baseURL": "https://api.mistral.ai/v1"
+        "baseURL": "https://api.mistral.ai/v1",
+        "stream": true,
+        "streamFormat": "sse"
       },
       "models": {
         "mistral-large-4": {
