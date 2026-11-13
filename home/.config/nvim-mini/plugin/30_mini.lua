@@ -89,6 +89,7 @@ Config.later(function()
       miniclue.gen_clues.windows(),
       miniclue.gen_clues.z(),
       Config.leader_group_clues,
+      Config.picker_clues,
     },
     window = { delay = 300 },
   })
