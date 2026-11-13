@@ -78,6 +78,7 @@ alias lm='eza -l --git --header --sort=modified --reverse --group-directories-fi
 alias l1='eza --oneline --group-directories-first --icons=auto --color=auto'
 alias lt='eza --tree --level=2 --group-directories-first --icons=auto --color=auto'
 alias l.='eza -a --oneline --color=never | grep -E "^\."'
+alias mnvim='NVIM_APPNAME=nvim-mini nvim'
 
 alias gearlever='flatpak run it.mijorus.gearlever'
 alias update-mlib="systemctl --user restart plex.service && systemctl --user restart jellyfin.service"

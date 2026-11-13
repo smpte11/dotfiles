@@ -20,6 +20,15 @@ Config.leader_group_clues = {
   { mode = 'n', keys = '<Leader>q', desc = '+Quit' },
 }
 
+-- Limited, curated selection of pickers, surfaced via 'mini.clue'
+Config.picker_clues = {
+  { mode = 'n', keys = '<Leader>ff', desc = 'Pick files' },
+  { mode = 'n', keys = '<Leader>fg', desc = 'Pick grep (live)' },
+  { mode = 'n', keys = '<Leader>fb', desc = 'Pick buffers' },
+  { mode = 'n', keys = '<Leader>fh', desc = 'Pick help tags' },
+  { mode = 'n', keys = '<Leader>fr', desc = 'Pick resume' },
+}
+
 local nmap_leader = function(suffix, rhs, desc, opts)
   opts = vim.tbl_extend('force', { desc = desc }, opts or {})
   vim.keymap.set('n', '<Leader>' .. suffix, rhs, opts)
