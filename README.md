@@ -34,39 +34,16 @@ with an identity module.
 
 ```mermaid
 graph TD
-    WM[work-mac]:::meta
-    HD[home-desktop]:::meta
-    MS[media-server]:::meta
-    TB[tablet]:::meta
-
-    WM --> work
-    WM --> dev
-    WM --> dev-work
-    WM --> desktop
-    HD --> base
-    HD --> dev
-    HD --> dev-private
-    HD --> desktop
-    HD --> torrent
-    HD --> gaming
-    HD --> proton-pass
-    HD --> ssh-agent
-    MS --> base
-    MS --> torrent
-    MS --> media
-    MS --> proton-pass
-    MS --> ssh-agent
-    TB --> base
-    TB --> tablet
-
-    dev-private -.-> dev
-    dev-work -.-> dev
-    media -.-> torrent
-    gaming -.-> torrent
-    base -.-> ssh
-    work -.-> ssh
-
-    classDef meta fill:#f9c74f,stroke:#f8961e,color:#000,font-weight:bold
+    dev-private --> dev
+    dev-work --> dev
+    media --> torrent
+    gaming --> torrent
+    base --> ssh
+    work --> ssh
+    desktop
+    proton-pass
+    ssh-agent
+    tablet
 ```
 
 A rendered copy of the diagram lives in `docs/module-dependencies.svg`.
