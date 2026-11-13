@@ -6,6 +6,11 @@ end
 
 nmap('<Esc>', '<cmd>noh<cr>', 'Clear Search')
 
+-- LSP
+nmap_leader('lf', function() vim.lsp.buf.format() end, 'Format buffer')
+nmap_leader('lr', '<cmd>lua vim.lsp.buf.rename()<cr>', 'Rename symbol')
+nmap_leader('la', '<cmd>lua vim.lsp.buf.code_action()<cr>', 'Code action')
+
 -- Prose helpers
 nmap('<Leader>pw', '<cmd>setlocal wrap!<cr>', 'Toggle Wrap')
 nmap('<Leader>ps', '<cmd>setlocal spell!<cr>', 'Toggle Spell')
@@ -15,6 +20,7 @@ Config.leader_group_clues = {
   { mode = 'n', keys = '<Leader>b', desc = '+Buffer' },
   { mode = 'n', keys = '<Leader>e', desc = '+Explore/Edit' },
   { mode = 'n', keys = '<Leader>f', desc = '+Find' },
+  { mode = 'n', keys = '<Leader>l', desc = '+LSP' },
   { mode = 'n', keys = '<Leader>p', desc = '+Prose' },
   { mode = 'n', keys = '<Leader>s', desc = '+Session' },
   { mode = 'n', keys = '<Leader>q', desc = '+Quit' },
