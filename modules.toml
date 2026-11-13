@@ -11,11 +11,11 @@ description = "machine: media server with base, media and the Proton Pass agent"
 modules = ["base", "torrent", "media", "proton-pass", "ssh-agent"]
 
 [module.tablet]
-description = "machine: handheld tablet with base for Vibe and nvim-mini as the default editor"
+description = "machine: handheld tablet with base for Vibe, pi, opencode and nvim-mini as the default editor"
 modules = ["base", "tablet"]
 
 [module.base]
-description = "personal identity with the signing key, Vibe and Proton VPN autostart"
+description = "personal identity with the signing key, Vibe, pi, opencode and Proton VPN autostart"
 modules = ["base"]
 
 [module.dev]
@@ -23,7 +23,7 @@ description = "common dev tools: devcontainers, k9s skin, no-mistakes, firstmate
 modules = ["dev"]
 
 [module.dev-private]
-description = "dev plus private tooling: pi, Codestral, ollama and crib"
+description = "dev plus private tooling: Codestral, ollama and crib"
 modules = ["dev", "dev-private"]
 
 [module.dev-work]

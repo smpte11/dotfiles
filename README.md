@@ -42,11 +42,16 @@ setup prints a warning, and you finish with `pass-cli login` followed by
 and adds the Proton Pass SSH agent. With the `dev-private` module the Codestral key is
 passed to `mise bootstrap` as the `CODESTRAL_API_KEY` bootstrap secret. To
 change the key, remove `~/.config/codestral/env` and run
-`mise run dotfiles:update`. The `base` module deploys
-`~/.vibe/config.toml` and renders `~/.vibe/.env` (0600) with `MISTRAL_API_KEY`,
+`mise run dotfiles:update`. The `base` module installs Vibe, pi and
+opencode, deploys `~/.vibe/config.toml`, `~/.config/opencode/opencode.json` and
+renders `~/.vibe/.env` (0600) with `MISTRAL_API_KEY`,
 read from `pass://Personal/Vibe/API Key` with the `proton-pass` module and from
 the environment without it, so one run of the installer or
-`mise run dotfiles:update` configures Vibe on a fresh machine; to change the
+`mise run dotfiles:update` configures the three agents on a fresh machine. mise loads
+the file into the environment with `redact = true`, so the key is never printed by
+mise; pi reads it from the environment as its Mistral provider key, and opencode
+reads it through the `mistral` provider in its config, which names `MISTRAL_API_KEY`
+as the credential. To change the
 key, remove `~/.vibe/.env` and run `mise run dotfiles:update`. On a `torrent`
 machine it reads the `pass://Media/Netfelix/*` items
 from Proton Pass and gives them to `mise bootstrap` as the matching bootstrap
@@ -66,9 +71,9 @@ entries remain as the bootstrap source.
 | --- | --- | --- |
 | `home/` | always | Shared files, linked file by file into `~` |
 | `ssh/` | `ssh` | `~/.ssh/config`; the module also builds the tuios fork |
-| `base/` | `base` | Personal signing key, Vibe config and key, Proton VPN flatpak and CLI autostart on Linux |
+| `base/` | `base` | Personal signing key, Vibe, pi and opencode with the Mistral key, Proton VPN flatpak and CLI autostart on Linux |
 | `dev/` | `dev` | k9s skin, tuios config |
-| `dev-private/` | `dev-private` | pi agent config, Codestral key, crib config |
+| `dev-private/` | `dev-private` | pi firstmate extension, Codestral key, crib config |
 | `dev-work/` | `dev-work` | Claude keybindings |
 | `proton-pass/` | `proton-pass` | `pass-cli` wrapper that picks a working key provider |
 | `ssh-agent/` | `ssh-agent` | Proton Pass SSH agent wrapper and `~/.ssh/config.d/agent` |

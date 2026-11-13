@@ -119,8 +119,9 @@ check_smoke() {
     zsh -i -c exit || fail "zsh does not start"
     reshim_err=$(mise reshim 2>&1 >/dev/null) || true
     [ -z "$reshim_err" ] || fail "mise reshim warns about unusable tool executables: $reshim_err"
-    if has_module dev-private; then
+    if has_module base; then
         pi --version >/dev/null 2>&1 || fail "pi is not runnable through its mise shim"
+        opencode --version >/dev/null 2>&1 || fail "opencode is not runnable through its mise shim"
     fi
     moor --version >/dev/null 2>&1 || fail "moor, the jj pager, is not runnable through its mise shim"
     login_jq=$(env -i HOME="$HOME" PATH=/usr/bin:/bin zsh -l -c 'command -v jq') || fail "a zsh login shell does not find jq"
@@ -271,18 +272,25 @@ check_tools() {
         expect_tool devcontainer-cli absent
         expect_tool github:kunchenguid/no-mistakes absent
     fi
-    if has_module dev-private; then
+    if has_module base; then
         [ -s "$HOME/.pi/agent/AGENTS.md" ] || fail "the pi agent instructions are missing"
+        [ -s "$HOME/.config/opencode/opencode.json" ] || fail "the opencode config is missing"
+        expect_tool pi present
+        expect_tool npm:@opencode/cli present
+    else
+        [ ! -e "$HOME/.pi/agent/AGENTS.md" ] || fail "the pi agent instructions are deployed without the base module"
+        [ ! -e "$HOME/.config/opencode/opencode.json" ] || fail "the opencode config is deployed without the base module"
+        expect_tool pi absent
+        expect_tool npm:@opencode/cli absent
+    fi
+    if has_module dev-private; then
         [ -s "$HOME/.config/crib/config.toml" ] || fail "the crib config is missing"
         expect_tool ollama present
         expect_tool github:fgrehm/crib present
-        expect_tool pi present
     else
-        [ ! -e "$HOME/.pi/agent/AGENTS.md" ] || fail "the pi agent instructions are deployed without the dev-private module"
         [ ! -e "$HOME/.config/crib/config.toml" ] || fail "the crib config is deployed without the dev-private module"
         expect_tool ollama absent
         expect_tool github:fgrehm/crib absent
-        expect_tool pi absent
     fi
     expect_tool npm:@agentclientprotocol/claude-agent-acp absent
 }
