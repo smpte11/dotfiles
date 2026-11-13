@@ -26,6 +26,7 @@ Config.picker_clues = {
   { mode = 'n', keys = '<Leader>fg', desc = 'Pick grep (live)' },
   { mode = 'n', keys = '<Leader>fb', desc = 'Pick buffers' },
   { mode = 'n', keys = '<Leader>fh', desc = 'Pick help tags' },
+  { mode = 'n', keys = '<Leader>fe', desc = 'Pick explorer' },
   { mode = 'n', keys = '<Leader>fr', desc = 'Pick resume' },
 }
 
@@ -46,6 +47,7 @@ nmap_leader('ff', '<cmd>Pick files<cr>', 'Find files')
 nmap_leader('fg', '<cmd>Pick grep_live<cr>', 'Grep live')
 nmap_leader('fb', '<cmd>Pick buffers<cr>', 'Find buffers')
 nmap_leader('fh', '<cmd>Pick help<cr>', 'Find helptags')
+nmap_leader('fe', '<cmd>Pick explorer<cr>', 'Pick explorer')
 nmap_leader('fr', '<cmd>Pick resume<cr>', 'Resume last picker')
 
 -- Session
