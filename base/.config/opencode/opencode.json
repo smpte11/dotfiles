@@ -1,12 +1,13 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "model": "mistral/mistral-large-4",
   "providers": {
     "mistral": {
       "name": "Mistral",
       "env": ["MISTRAL_API_KEY"],
       "npm": "@ai-sdk/mistral",
       "settings": {
-        "baseURL": "https://api.mistral.ai/v1"
+        "baseURL": "https://api.mistral.ai"
       },
       "models": {
         "mistral-large-4": {
