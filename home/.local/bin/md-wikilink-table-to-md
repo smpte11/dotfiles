@@ -1,0 +1,6 @@
+#!/bin/sh
+# On table-row lines only, rewrite aliased wiki links to markdown links:
+# `[[href|Label]]` -> `[Label](href.md)`. Skips bare wiki links (no pipe) and
+# anything outside tables, so prose `[[ ]]` links are untouched. Adds `.md`
+# unless href is a URL or already has an extension. Idempotent.
+exec perl -pe 'if (/^\s*\|/) { s{\[\[(.*?)\]\]}{ my $i=$1; if ($i=~/\|/) { my($h,$l)=split(/\|/,$i,2); $h=~s/^\s+|\s+$//g; $l=~s/^\s+|\s+$//g; $h.=".md" unless ($h=~m{://}||$h=~/\.[A-Za-z0-9]+$/); "[$l]($h)" } else { "[[$i]]" } }ge; }'
