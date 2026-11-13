@@ -33,8 +33,6 @@ tree-sitter = "latest"
 yq = "latest"
 zoxide = "latest"
 "aqua:zk-org/zk" = "latest"
-"aqua:mattn/efm-langserver" = "latest"
-"npm:prettier" = "latest"
 "aqua:tealdeer-rs/tealdeer" = "latest"
 "aqua:walles/moor" = { version = "latest", os = ["macos", "linux/x64"] }
 "go:github.com/walles/moor/v2/cmd/moor" = { version = "latest", os = ["linux/arm64"] }

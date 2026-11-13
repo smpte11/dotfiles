@@ -1,2 +1,6 @@
+[tools]
+"aqua:mattn/efm-langserver" = "latest"
+"npm:prettier" = "latest"
+
 [dotfile_groups.tablet]
 root = "tablet"
