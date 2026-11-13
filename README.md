@@ -67,9 +67,9 @@ with an identity module.
 | Path | Deployed | Holds |
 | --- | --- | --- |
 | `home/` | always | Shared files, linked file by file into `~` |
-| `ssh/` | `ssh` | `~/.ssh/config`; builds the tuios fork |
+| `ssh/` | `ssh` | `~/.ssh/config` |
 | `base/` | `base` | Signing key, Vibe, pi, opencode, Proton VPN autostart |
-| `dev/` | `dev` | k9s skin, tuios config |
+| `dev/` | `dev` | k9s skin, tuios config; builds the tuios fork |
 | `dev-private/` | `dev-private` | pi firstmate extension, Codestral key, crib config |
 | `dev-work/` | `dev-work` | Claude keybindings |
 | `proton-pass/` | `proton-pass` | `pass-cli` wrapper |
