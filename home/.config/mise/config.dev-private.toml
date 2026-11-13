@@ -6,7 +6,6 @@ _.file = { path = "{{ env.HOME }}/.config/codestral/env", redact = true }
 [tools]
 "github:fgrehm/crib" = "latest"
 ollama = "latest"
-pi = "latest"
 
 [dotfile_groups.dev-private]
 root = "dev-private"

@@ -3,6 +3,8 @@ _.file = { path = "{{ env.HOME }}/.vibe/.env", redact = true }
 
 [tools]
 "github:floatpane/matcha" = "latest"
+"npm:@opencode/cli" = "latest"
+pi = "latest"
 
 [bootstrap.packages]
 "flatpak-user:com.protonvpn.www" = { os = "linux" }
@@ -27,5 +29,5 @@ mode = "0700"
 
 [bootstrap.secrets.mistral_api_key]
 env = "MISTRAL_API_KEY"
-description = "Mistral API key for Vibe (pass://Personal/Vibe/API Key)"
+description = "Mistral API key for Vibe, pi and opencode (pass://Personal/Vibe/API Key)"
 allow_empty = true
